@@ -13,10 +13,10 @@ Options:
 --report REPORT                        file to write report (in PDF format) to
 --umitools UMITOOLS                    path to umitools [Default: umi_tools]
 --umitools-option UMITOOLSOPT          additional options to pass to "umitools group" (see umi_tools group --help)
---umi-sep UMISEP                       separator between read name and UMI [Default: :]
+--umi-sep UMISEP                       separator between read name and UMI (passed to umi_tools) [Default: :]
 --umipair-sep UMIPAIRSEP               separator between UMI on 1st and 2nd read in combined UMI of mate pair [Default: -]
---paired                               assume BAM file contains paired reads [Default: TRUE]
---mapping-quality MAPQ                 minimal required mapping quality [Default: 20]
+--paired                               assume BAM file contains paired reads (passed to umi_tools) [Default: TRUE]
+--mapping-quality MAPQ                 minimal required mapping quality (passed to umi_tools) [Default: 20]
 --combine-strand-umis                  combine UMIs belonging to the two strands of a fragment [Default: FALSE]
 --threshold THRESHOLD                  remove UMIs with fewer than THRESHOLD reads [Default: 2]
 --molecules MOLECULES                  number of copies (strands) before amplification [Default: 2]
