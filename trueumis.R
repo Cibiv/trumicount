@@ -25,8 +25,8 @@ Options:
 '
 OPTS.INVALID <- list(
   `input-bam`=c('input-umitools-group-out', 'input-grouped-umis'),
-  `input-umitools-group-out`=c('input-bam', 'input-grouped-umis', 'umitools', 'umitools-option', 'paired', 'mapping-quality'),
-  `input-grouped-umis`=c('input-bam', 'input-umitools-group-out', 'umitools', 'umitools-option', 'paired', 'mapping-quality')
+  `input-umitools-group-out`=c('input-bam', 'input-grouped-umis'),
+  `input-grouped-umis`=c('input-bam', 'input-umitools-group-out')
 )
 
 GZEXT <- "\\.(gz|gzip2)$"
