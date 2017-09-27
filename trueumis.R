@@ -131,6 +131,7 @@ umis_con <- if (!is.null(ARGS$`input-grouped-umis`)) {
                                     '-L', ifelse(ARGS$verbose, '/dev/stderr', '/dev/null'),
                                     '--umi-sep', shQuote(ARGS$`umi-sep`),
                                     ifelse(ARGS$paired, '--paired', ''),
+                                    '--mapping-quality', ARGS$`mapping-quality`,
                                     paste(shQuote(ARGS$`umitools-option`), collapse=' '), sep=' ')
   }
   else if (!is.null(ARGS$`input-umitools-group-out`)) {
