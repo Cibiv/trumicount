@@ -189,7 +189,7 @@ if (ARGS$threshold > 0) {
 }
 
 # Combine UMIs
-if (ARGS$`paired` && ARGS$`combine-strand-umis`) {
+if (ARGS$`combine-strand-umis`) {
   message('*** Merging UMIs belonging to the two strands of a single template molecule')
   # In combine-strand mode, UMIs that correspond to the two strands of a single
   # template molecule are joined together (this requires Y-shaped adapter which
@@ -216,8 +216,7 @@ if (ARGS$`paired` && ARGS$`combine-strand-umis`) {
   # Since the total read count is now the sum of the two strand's read counts,
   # the effective initial molecule size is doubled
   ARGS$molecules <- ARGS$molecules * 2
-} else if (ARGS$`combine-strand-umis`)
-  warning("*** Ignoring combine-strand-umis, this option is only supported in paired mode")
+}
 
 # Output final UMI table
 if (!is.null(ARGS$`output-final-umis`))
