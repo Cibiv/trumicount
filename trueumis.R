@@ -212,6 +212,9 @@ if (ARGS$`paired` && ARGS$`combine-strand-umis`) {
   umis <- umis[is.finite(reads.plus) & is.finite(reads.minus)]
   umis[, reads := reads.plus + reads.minus ]
 
+  # Since the total read count is now the sum of the two strand's read counts,
+  # the effective initial molecule size is doubled
+  ARGS$molecules <- ARGS$molecules * 2
 } else if (ARGS$`combine-strand-umis`)
   warning("*** Ignoring combine-strand-umis, this option is only supported in paired mode")
 
