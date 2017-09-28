@@ -17,7 +17,8 @@ Options:
 --umipair-sep UMIPAIRSEP               separator between UMI on 1st and 2nd read in combined UMI of mate pair [Default: ]
 --paired                               assume BAM file contains paired reads (passed to umi_tools) [Default: TRUE]
 --mapping-quality MAPQ                 minimal required mapping quality (passed to umi_tools) [Default: 20]
---combine-strand-umis                  combine UMIs belonging to the two strands of a fragment [Default: FALSE]
+--filter-strand-umis                   filtes UMIs where only one strands was observed [Default: FALSE]
+--combine-strand-umis                  combine UMIs strand pairs (implies --filter-strand-umis) [Default: FALSE]
 --threshold THRESHOLD                  remove UMIs with fewer than THRESHOLD reads [Default: 2]
 --molecules MOLECULES                  number of copies (strands) before amplification [Default: 2]
 --cores CORES                          number of CPU cores to use when fitting the gene-wise models [Default: 1]
@@ -188,36 +189,36 @@ if (ARGS$threshold > 0) {
   umis <- umis[reads >= ARGS$threshold]
 }
 
-# Combine UMIs
-if (ARGS$`combine-strand-umis`) {
-  message('*** Merging UMIs belonging to the two strands of a single template molecule')
-  # In combine-strand mode, UMIs that correspond to the two strands of a single
-  # template molecule are joined together (this requires Y-shaped adapter which
-  # allow the PCR products of the two strands to be distinguished). Such pairs
-  # are recognized by their "reciprocity" -- first and second read of the mate 
-  # pair are swapped, INCLUDING the UMIs found on these reads. For each of these
-  # UMIs, we keep only the one where the first read maps in forward direction,
-  # and (arbitrarily?) call it the one mapping to the plus strand. We keep the
-  # strand-specific read counts in two columns, reads.plus and reads.minus, and
-  # set the overall read count to the sum of the two. When applying the threshold,
-  # we filter based on the strand-specific counts, and require BOTH to be
-  # sufficiencly large.
+# Combine and/or filter UMI pairs stemming from the two strands of a single fragment
+# In combine-strand mode, UMIs that correspond to the two strands of a single
+# template molecule are joined together (this requires Y-shaped adapter which
+# allow the PCR products of the two strands to be distinguished). Such pairs
+# are recognized by their "reciprocity" -- first and second read of the mate
+# pair are swapped, INCLUDING the UMIs found on these reads.
+if (ARGS$`filter-strand-umis` || ARGS$`combine-strand-umis`) {
   umis.m <- if (ARGS$`umipair-sep` != '') {
     # Split at specified umi pair separator
-    umis[end < pos,
-         list(gene, sample, pos=end, end=pos,
-              umi=as.character(unlist(lapply(FUN=function(e) {paste(rev(e), collapse=ARGS$`umipair-sep`)},
-                                             strsplit(umi, ARGS$`umipair-sep`, fixed=TRUE)))),
-              reads=reads) ]
+    umis[,list(gene, sample, pos=end, end=pos,
+               umi=as.character(unlist(lapply(FUN=function(e) {paste(rev(e), collapse=ARGS$`umipair-sep`)},
+                                              strsplit(umi, ARGS$`umipair-sep`, fixed=TRUE)))),
+               reads=reads) ]
   } else {
     # Split in the middle
     if (any(nchar(umis$umi) %% 2 != 0))
       stop('If no umi pair separator is specified, umis are split in the middle and must have even length')
-    umis[end < pos,
-         list(gene, sample, pos=end, end=pos,
-              umi=paste0(substr(umi, nchar(umi)/2+1, nchar(umi)), substr(umi, 1, nchar(umi)/2)),
-              reads=reads) ]
+    umis[,list(gene, sample, pos=end, end=pos,
+               umi=paste0(substr(umi, nchar(umi)/2+1, nchar(umi)), substr(umi, 1, nchar(umi)/2)),
+               reads=reads) ]
   }
+}
+if (ARGS$`combine-strand-umis`) {
+  # For each reciprocal UMI pair, we keep only the one where the first read
+  # maps in forward direction, and (arbitrarily?) call it the one mapping to
+  # the plus strand. We keep the strand-specific read counts in two columns,
+  # reads.plus and reads.minus, and set the overall read count to the sum of
+  # the two. When applying the threshold, we filter based on the strand-
+  # -specific counts, and require BOTH to be sufficiencly large.
+  message('*** Merging UMIs belonging to the two strands of a single template molecule')
   umis <- umis[pos < end]
   umis[, reads.plus := reads ]
   umis[, reads.minus := umis.m[umis, reads, on=c("gene", "sample", "pos", "end", "umi")] ]
@@ -227,8 +228,13 @@ if (ARGS$`combine-strand-umis`) {
   # Since the total read count is now the sum of the two strand's read counts,
   # the effective initial molecule size is doubled
   ARGS$molecules <- ARGS$molecules * 2
+} else if (ARGS$`filter-strand-umis`) {
+  # We remove UMIs that are not part of a reciprocal pair, but keep the
+  # constituing UMIs of each pair as separate UMIs (unlike combine-strand-umis)
+  message('*** Filtering UMIs where only a single strand of the template was observed')
+  umis <- umis[umis.m[umis, !is.na(reads), on=c("gene", "sample", "pos", "end", "umi")]]
 }
-
+  
 # Output final UMI table
 if (!is.null(ARGS$`output-final-umis`))
   write.table(umis, file=open_byext(ARGS$`output-final-umis`, open='w'),
