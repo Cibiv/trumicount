@@ -1,0 +1,6 @@
+*.bam
+*.bai
+*.umis.tab.gz
+*.plot.pdf
+*.log
+.Rhistory

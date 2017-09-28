@@ -1,0 +1,1 @@
+--umi-sep '|' --threshold 5 --molecules 2 --plot-x-max 25 --plot-x-bin 1
