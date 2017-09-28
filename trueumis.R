@@ -180,6 +180,7 @@ umis <- data.table(read.table(umis_con, header=TRUE, sep="\t",
                               colClasses=c(gene='factor', sample='factor',
                                            pos='numeric', end='numeric', umi='character',
                                            rawumis='numeric', 'reads'='numeric')))
+close(umis_con)
 message('Found ', nrow(umis), ' UMIs for ', length(levels(umis$gene)), ' genes in ',
         length(unique(umis$sample)), ' samples after grouping of similar UMIs')
 
