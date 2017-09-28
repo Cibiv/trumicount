@@ -102,7 +102,9 @@ open_byext <- function(path, ...) {
     file(path, ...)
 }
 
-# Parse arguments
+# ******************************************************************************
+# *** Parse arguments **********************************************************
+# ******************************************************************************
 ARGS <- docopt::docopt(doc, strip_names=TRUE)
 ARGS$`mapping-quality` <- as.integer(ARGS$`mapping-quality`)
 ARGS$threshold <- as.integer(ARGS$threshold)
@@ -111,7 +113,9 @@ ARGS$cores <- as.integer(ARGS$cores)
 if (ARGS$verbose)
   print(list(`Command Line Arguments`=ARGS))
 
-# Create connection to read grouped UMI table from
+# ******************************************************************************
+# *** Create connection to read grouped UMI table from *************************
+# ******************************************************************************
 umis_con <- if (!is.null(ARGS$`input-grouped-umis`)) {
   # Simple read grouped UMI table from file as-is
   if (sum(!sapply(ARGS[OPTS.INVALID$`input-grouped-umis`], is.null)) > 0)
@@ -173,7 +177,9 @@ umis_con <- if (!is.null(ARGS$`input-grouped-umis`)) {
   }
 }
 
-# Read table using connection established above
+# ******************************************************************************
+# *** Read table using connection established above ****************************
+# ******************************************************************************
 library(data.table)
 message('*** Reading list of grouped UMIs')
 umis <- data.table(read.table(umis_con, header=TRUE, sep="\t",
@@ -184,13 +190,17 @@ close(umis_con)
 message('Found ', nrow(umis), ' UMIs for ', length(levels(umis$gene)), ' genes in ',
         length(unique(umis$sample)), ' samples after grouping of similar UMIs')
 
-# Filter UMIs
+# ******************************************************************************
+# *** Filter with read-count threshold *****************************************
+# ******************************************************************************
 if (ARGS$threshold > 0) {
   message('*** Filtering UMIs with fewer than ', ARGS$threshold, ' reads')
   umis <- umis[reads >= ARGS$threshold]
 }
 
-# Combine and/or filter UMI pairs stemming from the two strands of a single fragment
+# ******************************************************************************
+# *** Combine and/or filter UMI strand pairs stemming a single fragment ********
+# ******************************************************************************
 # In combine-strand mode, UMIs that correspond to the two strands of a single
 # template molecule are joined together (this requires Y-shaped adapter which
 # allow the PCR products of the two strands to be distinguished). Such pairs
@@ -235,13 +245,17 @@ if (ARGS$`combine-strand-umis`) {
   message('*** Filtering UMIs where only a single strand of the template was observed')
   umis <- umis[umis.m[umis, !is.na(reads), on=c("gene", "sample", "pos", "end", "umi")]]
 }
-  
-# Output final UMI table
+
+# ******************************************************************************
+# *** Output final UMI table ***************************************************
+# ******************************************************************************
 if (!is.null(ARGS$`output-final-umis`))
   write.table(umis, file=open_byext(ARGS$`output-final-umis`, open='w'),
               col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
 
-# Report final UMI count
+# ******************************************************************************
+# *** Report final UMI count ***************************************************
+# ******************************************************************************
 message(nrow(umis), ' UMIs remained for ', length(levels(umis$gene)), ' genes in ',
         length(unique(umis$sample)), ' samples after removing UMIs with fewer than ',
         ARGS$threshold, ' reads', ifelse(ARGS$`combine-strand-umis`,
@@ -249,7 +263,9 @@ message(nrow(umis), ' UMIs remained for ', length(levels(umis$gene)), ' genes in
 if (nrow(umis) < 2)
   stop("Too few UMIs to continue")
 
-# Fit global model
+# ******************************************************************************
+# *** Fit global model *********************************************************
+# ******************************************************************************
 message('*** Fitting global PCR and sequencing model')
 library(gwpcR)
 gm <- gwpcrpois.mom(mean(umis$reads, na.rm=TRUE), var(umis$reads, na.rm=TRUE),
