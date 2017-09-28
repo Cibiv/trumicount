@@ -278,3 +278,61 @@ library(gwpcR)
 gm <- gwpcrpois.mom(mean(umis$reads, na.rm=TRUE), var(umis$reads, na.rm=TRUE),
                     threshold=ARGS$threshold, molecules=ARGS$molecules)
 message('Overall efficiency ', round(100*gm$efficiency), '%, depth=', round(gm$lambda0, digits=3), ' reads/UMI')
+
+# ******************************************************************************
+# *** Plot global reads/UMI distribution ***************************************
+# ******************************************************************************
+if (!is.null(ARGS$`output-plot`)) {
+#  pdf(file=ARGS$`output-plot`, onefile=TRUE, height=3.5, width=5.5)
+  x.bin <- ifelse(!is.null(ARGS$`plot-x-bin`),
+                  ARGS$`plot-x-bin`,
+                  max(1, floor(max(umis$reads) / nclass.Sturges(umis$reads))))
+  h.breaks <- seq(from=0,
+                  to=x.bin*ceiling(max(umis$reads)/x.bin),
+                  by=x.bin)
+  x.max <- ifelse(!is.null(ARGS$`plot-x-max`),
+                  ARGS$`plot-x-max`,
+                  max(h.breaks))
+  # Setup plotting
+  par(mar=c(3.1, 2.1, 1.1, 0.1))
+  # Plot main histogram
+  h <- hist(umis$reads, freq = TRUE, right = FALSE, xlim=c(0, x.max), breaks=h.breaks,
+            xlab="", ylab="", yaxt="n", main="")
+  # Plot phantoms if requested
+  if (ARGS$`plot-phantoms`) {
+    hist(umis.prefilter[reads < ARGS$threshold, reads],  border="grey", add=TRUE,
+         freq = TRUE, right = FALSE, xlim=c(0, x.max), breaks=h.breaks)
+  }
+  # Compuse percentage of missed UMIs
+  p.miss <- pgwpcrpois(ARGS$threshold - 1, threshold=0,
+                       molecules=ARGS$molecules,
+                       efficiency=gm$efficiency,
+                       lambda0=gm$lambda0)
+  # Plot model, rescaled to fit the number of UMIs above the threshold
+  p <- diff(ifelse(h$breaks > 0,
+                   pgwpcrpois(pmax(h$breaks - 1, 0), threshold=0,
+                              molecules=gm$molecules,
+                              efficiency=gm$efficiency,
+                              lambda0=gm$lambda0) /
+                     (1 - p.miss),
+                   0))
+  points(h$mids, p * nrow(umis), pch=16, cex=0.7, xpd=TRUE,
+         col=ifelse(h$breaks >= ARGS$threshold, 'black', 'red'))
+  # Plot Loss
+  text(ARGS$threshold/2, par('usr')[4], adj=c(1.0,0.5),
+       paste0("Loss=", format(100*p.miss, digits=2), '%'),
+       col='red', srt=90, xpd=TRUE)
+  # Plot Threshold
+  lines(c(ARGS$threshold, ARGS$threshold), c(0, par("usr")[4]*2), lwd=2, xpd=TRUE)
+  text(ARGS$threshold, par('usr')[4], adj=c(-0.1, 0), xpd=TRUE,
+       paste0("Th.=", ARGS$threshold))
+  # Plot Model Parameters
+  text(par("usr")[2], par("usr")[4], adj=c(1.0, 0), xpd=NA,
+       paste0('Eff.=', round(100*gm$efficiency), '%'))
+  # Plot X-Axis
+  mtext(side=1, line=2, 'x (Reads)')
+  # Plot Y-Axis
+  axis(side=2, line=0, at=c(0, par("usr")[4]), labels=NA)
+  mtext(side=2, line=1, '#UMIs with x reads')
+#  dev.off()
+}
