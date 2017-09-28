@@ -299,13 +299,11 @@ if (!is.null(ARGS$`output-plot`)) {
                   max(h.breaks))
   # Setup plotting
   par(mar=c(3.1, 2.1, 1.1, 0.1))
-  # Plot main histogram
-  h <- hist(umis$reads, freq = TRUE, right = FALSE, xlim=c(0, x.max), breaks=h.breaks,
-            xlab="", ylab="", yaxt="n", main="")
   # Plot phantoms if requested
   if (!ARGS$`plot-skip-phantoms`) {
-    hist(umis.prefilter[reads < ARGS$threshold, reads],  border="grey", add=TRUE,
-         freq = TRUE, right = FALSE, xlim=c(0, x.max), breaks=h.breaks)
+    hist(umis.prefilter$reads, freq = TRUE, right = FALSE,
+         xlim=c(0, x.max), breaks=h.breaks,
+         border="grey", xlab="", ylab="", yaxt="n", main="")
   }
   # Compuse percentage of missed UMIs
   p.miss <- pgwpcrpois(ARGS$threshold - 1, threshold=0,
