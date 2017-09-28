@@ -281,6 +281,18 @@ library(gwpcR)
 gm <- gwpcrpois.mom(mean(umis$reads, na.rm=TRUE), var(umis$reads, na.rm=TRUE),
                     threshold=ARGS$threshold, molecules=ARGS$molecules)
 message('Overall efficiency ', round(100*gm$efficiency), '%, depth=', round(gm$lambda0, digits=3), ' reads/UMI')
+gm.loss <- if (ARGS$`combine-strand-umis`) {
+  # We filter UMIs which either have fewer than T reads, or whose reciprocal
+  # mate has fewer than T reads
+  1 - (1 - gm$p0) * (1 - gm$p0)
+} else if (ARGS$`filter-strand-umis`) {
+  # We filter UMIs whose reciprocal mate wasn't detected (0 reads), or
+  # which have fewer than T reads.
+  p.noread <- dgwpcrpois(0, threshold=0, molecules=gm$molecules,
+                         efficiency=gm$efficiency, lambda0=gm$lambda0)
+  1 - (1 - gm$p0) * (1 - p.noread)
+} else
+  gm$p0
 
 # ******************************************************************************
 # *** Plot global reads/UMI distribution ***************************************
@@ -305,24 +317,23 @@ if (!is.null(ARGS$`output-plot`)) {
          xlim=c(0, x.max), breaks=h.breaks,
          border="grey", xlab="", ylab="", yaxt="n", main="")
   }
-  # Compuse percentage of missed UMIs
-  p.miss <- pgwpcrpois(ARGS$threshold - 1, threshold=0,
-                       molecules=ARGS$molecules,
-                       efficiency=gm$efficiency,
-                       lambda0=gm$lambda0)
-  # Plot model, rescaled to fit the number of UMIs above the threshold
+  # Plot main histogram
+  h <- hist(umis$reads, freq = TRUE, right = FALSE,
+            xlim=c(0, x.max), breaks=h.breaks,
+            add=TRUE)
+  # Plot model
   p <- diff(ifelse(h$breaks > 0,
                    pgwpcrpois(pmax(h$breaks - 1, 0), threshold=0,
                               molecules=gm$molecules,
                               efficiency=gm$efficiency,
                               lambda0=gm$lambda0) /
-                     (1 - p.miss),
+                     (1 - gm$p0),
                    0))
   points(h$mids, p * nrow(umis), pch=16, cex=0.7, xpd=TRUE,
          col=ifelse(h$breaks >= ARGS$threshold, 'black', 'red'))
   # Plot Loss
   text(ARGS$threshold/2, par('usr')[4], adj=c(1.0,0.5),
-       paste0("Loss=", format(100*p.miss, digits=2), '%'),
+       paste0("Loss=", format(100*gm.loss, digits=2), '%'),
        col='red', srt=90, xpd=TRUE)
   # Plot Threshold
   lines(c(ARGS$threshold, ARGS$threshold), c(0, par("usr")[4]*2), lwd=2, xpd=TRUE)
