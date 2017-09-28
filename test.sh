@@ -17,6 +17,7 @@ exec > >(tee $log) 2>&1
 source ~/Installs/miniconda2/bin/activate
 
 for input_stem in $dollarstar; do
+        input_stem=${input_stem//.bam}
 	bam=${input_stem}.bam
 	grouped_umis=${input_stem}.umis.tab.gz
 	counts=${input_stem}.counts.tab.gz
