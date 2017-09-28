@@ -275,7 +275,6 @@ message('*** Fitting global PCR and sequencing model')
 library(gwpcR)
 gm <- gwpcrpois.mom(mean(umis$reads, na.rm=TRUE), var(umis$reads, na.rm=TRUE),
                     threshold=ARGS$threshold, molecules=ARGS$molecules)
-message('Overall efficiency ', round(100*gm$efficiency), '%, depth=', round(gm$lambda0, digits=3), ' reads/UMI')
 gm.loss <- if (ARGS$`combine-strand-umis`) {
   # We filter UMIs which either have fewer than T reads, or whose reciprocal
   # mate has fewer than T reads
