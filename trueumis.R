@@ -283,7 +283,8 @@ message('Overall efficiency ', round(100*gm$efficiency), '%, depth=', round(gm$l
 # *** Plot global reads/UMI distribution ***************************************
 # ******************************************************************************
 if (!is.null(ARGS$`output-plot`)) {
-#  pdf(file=ARGS$`output-plot`, onefile=TRUE, height=3.5, width=5.5)
+  message('*** Plotting reads/UMI distribution to ', ARGS$`output-plot`)
+  pdf(file=ARGS$`output-plot`, onefile=TRUE, height=3.5, width=5.5)
   x.bin <- ifelse(!is.null(ARGS$`plot-x-bin`),
                   ARGS$`plot-x-bin`,
                   max(1, floor(max(umis$reads) / nclass.Sturges(umis$reads))))
@@ -334,5 +335,5 @@ if (!is.null(ARGS$`output-plot`)) {
   # Plot Y-Axis
   axis(side=2, line=0, at=c(0, par("usr")[4]), labels=NA)
   mtext(side=2, line=1, '#UMIs with x reads')
-#  dev.off()
+  d <- dev.off()
 }
