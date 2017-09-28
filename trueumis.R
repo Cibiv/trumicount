@@ -252,10 +252,8 @@ if (ARGS$threshold > 0) {
   umis.prefilter <- umis
   umis <- if (ARGS$`combine-strand-umis`)
     umis[(reads.plus >= ARGS$threshold) & (reads.minus >= ARGS$threshold)]
-  else if (ARGS$`filter-strand-umis`)
-    umis[(reads >= ARGS$threshold) & (reads.other >= ARGS$threshold)]
   else
-    umis[(reads >= ARGS$threshold)]
+    umis[reads >= ARGS$threshold]
 }
 
 # ******************************************************************************
