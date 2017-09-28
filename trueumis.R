@@ -191,14 +191,6 @@ message('Found ', nrow(umis), ' UMIs for ', length(levels(umis$gene)), ' genes i
         length(unique(umis$sample)), ' samples after grouping of similar UMIs')
 
 # ******************************************************************************
-# *** Filter with read-count threshold *****************************************
-# ******************************************************************************
-if (ARGS$threshold > 0) {
-  message('*** Filtering UMIs with fewer than ', ARGS$threshold, ' reads')
-  umis <- umis[reads >= ARGS$threshold]
-}
-
-# ******************************************************************************
 # *** Combine and/or filter UMI strand pairs stemming a single fragment ********
 # ******************************************************************************
 # In combine-strand mode, UMIs that correspond to the two strands of a single
@@ -227,8 +219,7 @@ if (ARGS$`combine-strand-umis`) {
   # maps in forward direction, and (arbitrarily?) call it the one mapping to
   # the plus strand. We keep the strand-specific read counts in two columns,
   # reads.plus and reads.minus, and set the overall read count to the sum of
-  # the two. When applying the threshold, we filter based on the strand-
-  # -specific counts, and require BOTH to be sufficiencly large.
+  # the two.
   message('*** Merging UMIs belonging to the two strands of a single template molecule')
   umis <- umis[pos < end]
   umis[, reads.plus := reads ]
@@ -242,8 +233,24 @@ if (ARGS$`combine-strand-umis`) {
 } else if (ARGS$`filter-strand-umis`) {
   # We remove UMIs that are not part of a reciprocal pair, but keep the
   # constituing UMIs of each pair as separate UMIs (unlike combine-strand-umis)
-  message('*** Filtering UMIs where only a single strand of the template was observed')
-  umis <- umis[umis.m[umis, !is.na(reads), on=c("gene", "sample", "pos", "end", "umi")]]
+  umis[, reads.other := umis.m[umis, reads, on=c("gene", "sample", "pos", "end", "umi")] ]
+  umis <- umis[is.finite(reads) & is.finite(reads.other)]
+}
+
+# ******************************************************************************
+# *** Filter with read-count threshold *****************************************
+# ******************************************************************************
+# When applying the threshold, we filter based on the strand--specific counts, and
+# require BOTH to be sufficiencly large.
+if (ARGS$threshold > 0) {
+  message('*** Filtering UMIs with fewer than ', ARGS$threshold, ' reads')
+  umis.prefilter <- umis
+  umis <- if (ARGS$`combine-strand-umis`)
+    umis[(reads.plus >= ARGS$threshold) & (reads.minus >= ARGS$threshold)]
+  else if (ARGS$`filter-strand-umis`)
+    umis[(reads >= ARGS$threshold) & (reads.other >= ARGS$threshold)]
+  else
+    umis[(reads >= ARGS$threshold)]
 }
 
 # ******************************************************************************
