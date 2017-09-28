@@ -1,7 +1,7 @@
 #!/software/R/R-3.2.1/bin/Rscript
 
 doc <- '
-Usage: trueumi.R ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-grouped-umis GROUPEDUMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-grouped-umis GROUPEDUMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --verbose ]
+Usage: trueumi.R ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-grouped-umis GROUPEDUMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-grouped-umis GROUPEDUMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-x-bin PLOTXBIN ] [ --plot-x-max PLOTXMAX ] [ --plot-skip-phantoms ] [ --verbose ]
 
 Options:
 --input-bam INBAM                      file to read input from (mapped reads)
@@ -22,6 +22,9 @@ Options:
 --threshold THRESHOLD                  remove UMIs with fewer than THRESHOLD reads [Default: 2]
 --molecules MOLECULES                  number of copies (strands) before amplification [Default: 2]
 --cores CORES                          number of CPU cores to use when fitting the gene-wise models [Default: 1]
+--plot-x-bin PLOTXBIN                  the bin size for the histogram plot
+--plot-x-max PLOTXMAX                  limits x range of plot to show at most PLOTXMAX reads/UMI
+--plot-skip-phantoms                   do not show phantom UMIs in histogram plot [Default: FALSE]
 --verbose                              enable verbose output
 '
 OPTS.INVALID <- list(
@@ -110,6 +113,8 @@ ARGS$`mapping-quality` <- as.integer(ARGS$`mapping-quality`)
 ARGS$threshold <- as.integer(ARGS$threshold)
 ARGS$molecules <- as.integer(ARGS$molecules)
 ARGS$cores <- as.integer(ARGS$cores)
+ARGS$`plot-x-bin` <- if (!is.null(ARGS$`plot-x-bin`)) as.integer(ARGS$`plot-x-bin`) else NULL
+ARGS$`plot-x-max` <- if (!is.null(ARGS$`plot-x-max`)) as.numeric(ARGS$`plot-x-max`) else NULL
 if (ARGS$verbose)
   print(list(`Command Line Arguments`=ARGS))
 
@@ -300,7 +305,7 @@ if (!is.null(ARGS$`output-plot`)) {
   h <- hist(umis$reads, freq = TRUE, right = FALSE, xlim=c(0, x.max), breaks=h.breaks,
             xlab="", ylab="", yaxt="n", main="")
   # Plot phantoms if requested
-  if (ARGS$`plot-phantoms`) {
+  if (!ARGS$`plot-skip-phantoms`) {
     hist(umis.prefilter[reads < ARGS$threshold, reads],  border="grey", add=TRUE,
          freq = TRUE, right = FALSE, xlim=c(0, x.max), breaks=h.breaks)
   }
