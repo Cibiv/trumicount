@@ -14,7 +14,7 @@ Options:
 --umitools UMITOOLS                    path to umitools [Default: umi_tools]
 --umitools-option UMITOOLSOPT          additional options to pass to "umitools group" (see umi_tools group --help)
 --umi-sep UMISEP                       separator between read name and UMI (passed to umi_tools) [Default: :]
---umipair-sep UMIPAIRSEP               separator between UMI on 1st and 2nd read in combined UMI of mate pair [Default: -]
+--umipair-sep UMIPAIRSEP               separator between UMI on 1st and 2nd read in combined UMI of mate pair [Default: ]
 --paired                               assume BAM file contains paired reads (passed to umi_tools) [Default: TRUE]
 --mapping-quality MAPQ                 minimal required mapping quality (passed to umi_tools) [Default: 20]
 --combine-strand-umis                  combine UMIs belonging to the two strands of a fragment [Default: FALSE]
@@ -202,11 +202,22 @@ if (ARGS$`combine-strand-umis`) {
   # set the overall read count to the sum of the two. When applying the threshold,
   # we filter based on the strand-specific counts, and require BOTH to be
   # sufficiencly large.
-  umis.m <- umis[end < pos,
-                 list(gene, sample, pos=end, end=pos,
-                      umi=as.character(unlist(lapply(FUN=function(e) {paste(rev(e), collapse=ARGS$`umipair-sep`)},
-                                                     strsplit(umi, ARGS$`umipair-sep`, fixed=TRUE)))),
-                      reads=reads) ]
+  umis.m <- if (ARGS$`umipair-sep` != '') {
+    # Split at specified umi pair separator
+    umis[end < pos,
+         list(gene, sample, pos=end, end=pos,
+              umi=as.character(unlist(lapply(FUN=function(e) {paste(rev(e), collapse=ARGS$`umipair-sep`)},
+                                             strsplit(umi, ARGS$`umipair-sep`, fixed=TRUE)))),
+              reads=reads) ]
+  } else {
+    # Split in the middle
+    if (any(nchar(umis$umi) %% 2 != 0))
+      stop('If no umi pair separator is specified, umis are split in the middle and must have even length')
+    umis[end < pos,
+         list(gene, sample, pos=end, end=pos,
+              umi=paste0(substr(umi, nchar(umi)/2+1, nchar(umi)), substr(umi, 1, nchar(umi)/2)),
+              reads=reads) ]
+  }
   umis <- umis[pos < end]
   umis[, reads.plus := reads ]
   umis[, reads.minus := umis.m[umis, reads, on=c("gene", "sample", "pos", "end", "umi")] ]
