@@ -10,7 +10,7 @@ Options:
 --output-counts COUNTSTAB              file to write corrected per-gene counts and model parameters to
 --output-grouped-umis GROUPEDUMISTAB   file to write grouped UMIs to (to be later used with --input-grouped-umis)
 --output-final-umis FINALUMISTAB       file to write grouped, strand-combined and filtered UMIs to
---outut-plot PLOT                      file to write plot of the reads/UMI distribution (in PDF format) to
+--output-plot PLOT                     file to write plot of the reads/UMI distribution (in PDF format) to
 --umitools UMITOOLS                    path to umitools [Default: umi_tools]
 --umitools-option UMITOOLSOPT          additional options to pass to "umitools group" (see umi_tools group --help)
 --umi-sep UMISEP                       separator between read name and UMI (passed to umi_tools) [Default: :]
