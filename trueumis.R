@@ -1,7 +1,7 @@
 #!/software/R/R-3.2.1/bin/Rscript
 
 doc <- '
-Usage: trueumi.R ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-grouped-umis GROUPEDUMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-grouped-umis GROUPEDUMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --report REPORT ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --verbose ]
+Usage: trueumi.R ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-grouped-umis GROUPEDUMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-grouped-umis GROUPEDUMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --verbose ]
 
 Options:
 --input-bam INBAM                      file to read input from (mapped reads)
@@ -10,7 +10,7 @@ Options:
 --output-counts COUNTSTAB              file to write corrected per-gene counts and model parameters to
 --output-grouped-umis GROUPEDUMISTAB   file to write grouped UMIs to (to be later used with --input-grouped-umis)
 --output-final-umis FINALUMISTAB       file to write grouped, strand-combined and filtered UMIs to
---report REPORT                        file to write report (in PDF format) to
+--outut-plot PLOT                      file to write plot of the reads/UMI distribution (in PDF format) to
 --umitools UMITOOLS                    path to umitools [Default: umi_tools]
 --umitools-option UMITOOLSOPT          additional options to pass to "umitools group" (see umi_tools group --help)
 --umi-sep UMISEP                       separator between read name and UMI (passed to umi_tools) [Default: :]
