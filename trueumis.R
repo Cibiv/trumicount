@@ -230,11 +230,6 @@ if (ARGS$`combine-strand-umis`) {
   umis[, reads.plus := reads ]
   umis[, reads.minus := umis.m[umis, reads, on=c("gene", "sample", "pos", "end", "umi")] ]
   umis <- umis[is.finite(reads.plus) & is.finite(reads.minus)]
-  umis[, reads := reads.plus + reads.minus ]
-
-  # Since the total read count is now the sum of the two strand's read counts,
-  # the effective initial molecule size is doubled
-  ARGS$molecules <- ARGS$molecules * 2
 } else if (ARGS$`filter-strand-umis`) {
   # We remove UMIs that are not part of a reciprocal pair, but keep the
   # constituing UMIs of each pair as separate UMIs (unlike combine-strand-umis)
@@ -293,32 +288,41 @@ gm.loss <- if (ARGS$`combine-strand-umis`) {
   1 - (1 - gm$p0) * (1 - p.noread)
 } else
   gm$p0
+message('Overall efficiency ', round(100*gm$efficiency), '%, depth=', round(gm$lambda0, digits=3), ' reads/UMI',
+        'loss ', round(100*gm.loss), '%')
 
 # ******************************************************************************
 # *** Plot global reads/UMI distribution ***************************************
 # ******************************************************************************
 if (!is.null(ARGS$`output-plot`)) {
   message('*** Plotting reads/UMI distribution to ', ARGS$`output-plot`)
-  pdf(file=ARGS$`output-plot`, onefile=TRUE, height=3.5, width=5.5)
+  if (ARGS$`combine-strand-umis`) {
+    counts <- umis[, c(reads.plus, reads.minus)]
+    counts.prefilter <- umis.prefilter[, c(reads.plus, reads.minus)]
+  } else {
+    counts <- umis[, reads]
+    counts.prefilter <- umis.prefilter[, reads]
+  }
   x.bin <- ifelse(!is.null(ARGS$`plot-x-bin`),
                   ARGS$`plot-x-bin`,
-                  max(1, floor(max(umis$reads) / nclass.Sturges(umis$reads))))
+                  max(1, floor(max(counts) / nclass.Sturges(counts))))
   h.breaks <- seq(from=0,
-                  to=x.bin*ceiling(max(umis$reads)/x.bin),
+                  to=x.bin*ceiling(max(counts)/x.bin),
                   by=x.bin)
   x.max <- ifelse(!is.null(ARGS$`plot-x-max`),
                   ARGS$`plot-x-max`,
                   max(h.breaks))
   # Setup plotting
+  pdf(file=ARGS$`output-plot`, onefile=TRUE, height=3.5, width=5.5)
   par(mar=c(3.1, 2.1, 1.1, 0.1))
   # Plot phantoms if requested
   if (!ARGS$`plot-skip-phantoms`) {
-    hist(umis.prefilter$reads, freq = TRUE, right = FALSE,
+    hist(counts.prefilter, freq = TRUE, right = FALSE,
          xlim=c(0, x.max), breaks=h.breaks,
          border="grey", xlab="", ylab="", yaxt="n", main="")
   }
   # Plot main histogram
-  h <- hist(umis$reads, freq = TRUE, right = FALSE,
+  h <- hist(counts, freq = TRUE, right = FALSE,
             xlim=c(0, x.max), breaks=h.breaks,
             add=TRUE)
   # Plot model
@@ -329,7 +333,7 @@ if (!is.null(ARGS$`output-plot`)) {
                               lambda0=gm$lambda0) /
                      (1 - gm$p0),
                    0))
-  points(h$mids, p * nrow(umis), pch=16, cex=0.7, xpd=TRUE,
+  points(h$mids, p * length(counts), pch=16, cex=0.7, xpd=TRUE,
          col=ifelse(h$breaks >= ARGS$threshold, 'black', 'red'))
   # Plot Loss
   text(ARGS$threshold/2, par('usr')[4], adj=c(1.0,0.5),
