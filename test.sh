@@ -33,6 +33,5 @@ for input_stem in $dollarstar; do
 
 	./trueumis.R \
 		$input_opts --output-counts $counts --output-plot $plot \
-		$(cat $opts)
+		--cores 4 $(cat $opts)
 done
-
