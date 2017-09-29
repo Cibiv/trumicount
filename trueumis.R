@@ -381,7 +381,6 @@ if (!is.null(ARGS$`output-plot`)) {
 # XXX: In combine-strand-umis mode, we should use reads.plus and reads.minus as
 # separate samples!
 message('*** Fitting gene-wise models on ', ARGS$cores, ' cores')
-umis.s <- umis[gene %in% head(unique(umis$gene), 50)]
 gsm <- gwpcrpois.mom.groupwise(reads ~ sample + gene, data=umis.s,
                                threshold=ARGS$threshold, molecules=ARGS$molecules,
                                loss=loss.expr, ctrl=list(cores=ARGS$cores))
