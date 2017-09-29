@@ -268,9 +268,12 @@ if (ARGS$threshold > 0) {
 # ******************************************************************************
 # *** Output final UMI table ***************************************************
 # ******************************************************************************
-if (!is.null(ARGS$`output-final-umis`))
-  write.table(umis, file=open_byext(ARGS$`output-final-umis`, open='w'),
+if (!is.null(ARGS$`output-final-umis`)) {
+  f <- open_byext(ARGS$`output-final-umis`, open='w')
+  write.table(umis, file=f,
               col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
+  close(f)
+}
 
 # ******************************************************************************
 # *** Report final UMI count ***************************************************
@@ -391,6 +394,8 @@ umicounts <- gsm[, list(sample, gene, n.raw=n, n.tot,
 # *** Output count table *******************************************************
 # ******************************************************************************
 if (!is.null(ARGS$`output-counts`)) {
-  write.table(umicounts, file=open_byext(ARGS$`output-counts`, open='w'),
+  f <- open_byext(ARGS$`output-counts`, open='w')
+  write.table(umicounts, file=f,
               col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
+  close(f)
 }
