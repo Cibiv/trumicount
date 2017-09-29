@@ -242,6 +242,7 @@ if (ARGS$`combine-strand-umis`) {
 } else if (ARGS$`filter-strand-umis`) {
   # We remove UMIs that are not part of a reciprocal pair, but keep the
   # constituing UMIs of each pair as separate UMIs (unlike combine-strand-umis)
+  message('*** Filtering UMIs whose reciproal UMI belong to the other strand is missing')
   umis[, reads.other := umis.m[umis, reads, on=c("gene", "sample", "pos", "end", "umi")] ]
   umis <- umis[is.finite(reads) & is.finite(reads.other)]
 }
@@ -271,9 +272,7 @@ if (!is.null(ARGS$`output-final-umis`))
 # *** Report final UMI count ***************************************************
 # ******************************************************************************
 message(nrow(umis), ' UMIs remained for ', length(levels(umis$gene)), ' genes in ',
-        length(unique(umis$sample)), ' samples after removing UMIs with fewer than ',
-        ARGS$threshold, ' reads', ifelse(ARGS$`combine-strand-umis`,
-        ' and combining plus- and minus-strand UMIs', ''))
+        length(unique(umis$sample)), ' samples after applying filters')
 if (nrow(umis) < 2)
   stop("Too few UMIs to continue")
 
@@ -296,8 +295,8 @@ gm.loss <- if (ARGS$`combine-strand-umis`) {
   1 - (1 - gm$p0) * (1 - p.noread)
 } else
   gm$p0
-message('Overall efficiency ', round(100*gm$efficiency), '%, depth=', round(gm$lambda0, digits=3), ' reads/UMI',
-        'loss ', round(100*gm.loss), '%')
+message('Overall efficiency ', round(100*gm$efficiency), '%, depth ',
+        round(gm$lambda0, digits=3), ' reads/UMI, loss ', round(100*gm.loss), '%')
 
 # ******************************************************************************
 # *** Plot global reads/UMI distribution ***************************************
