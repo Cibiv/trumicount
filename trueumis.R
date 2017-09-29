@@ -370,3 +370,24 @@ if (!is.null(ARGS$`output-plot`)) {
   mtext(side=2, line=1, '#UMIs with x reads')
   d <- dev.off()
 }
+
+# ******************************************************************************
+# *** Fit gene-wise models *****************************************************
+# ******************************************************************************
+# XXX: In combine-strand-umis mode, we should use reads.plus and reads.minus as
+# separate samples!
+message('*** Fitting gene-wise models on ', ARGS$cores, ' cores')
+umis.s <- umis[gene %in% head(unique(umis$gene), 50)]
+gsm <- gwpcrpois.mom.groupwise(reads ~ sample + gene, data=umis.s,
+                               threshold=ARGS$threshold, molecules=ARGS$molecules,
+                               loss=loss.expr, ctrl=list(cores=ARGS$cores))
+umicounts <- gsm[, list(sample, gene, n.raw=n, n.tot,
+                        efficiency, depth=lambda0, loss)]
+
+# ******************************************************************************
+# *** Output count table *******************************************************
+# ******************************************************************************
+if (!is.null(ARGS$`output-counts`)) {
+  write.table(umicounts, file=open_byext(ARGS$`output-counts`, open='w'),
+              col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
+}
