@@ -126,6 +126,10 @@ ARGS$`plot-x-bin` <- if (!is.null(ARGS$`plot-x-bin`)) as.integer(ARGS$`plot-x-bi
 ARGS$`plot-x-max` <- if (!is.null(ARGS$`plot-x-max`)) as.numeric(ARGS$`plot-x-max`) else NULL
 if (ARGS$verbose)
   print(list(`Command Line Arguments`=ARGS))
+if (ARGS$cores > 1) {
+  message('*** Loading library `parallel` to allow computations on ', ARGS$cores, ' cores')
+  library(parallel)
+}
 
 # ******************************************************************************
 # *** Create connection to read grouped UMI table from *************************
