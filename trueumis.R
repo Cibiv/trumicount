@@ -1,5 +1,8 @@
 #!/software/R/R-3.2.1/bin/Rscript
 
+# ******************************************************************************
+# *** Arguments Definition *****************************************************
+# ******************************************************************************
 doc <- '
 Usage: trueumi.R ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-grouped-umis GROUPEDUMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-grouped-umis GROUPEDUMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-x-bin PLOTXBIN ] [ --plot-x-max PLOTXMAX ] [ --plot-skip-phantoms ] [ --verbose ]
 
@@ -36,6 +39,9 @@ OPTS.INVALID <- list(
 GZEXT <- "\\.(gz|gzip2)$"
 BZ2EXT <- "\\.(bz2|bzip2)$"
 
+# ******************************************************************************
+# *** AWK Programm to post-process umi_tools output  ***************************
+# ******************************************************************************
 # The AWK program to transfrom the output of "umitools group" into a table of grouped UMIs
 # We (crudely) remove newlines and comments, since we pass the program as a command-line
 # argument to awk
@@ -95,6 +101,10 @@ END {
   print ($Igene=="NA"?$Icontig:$Igene) "\\t" "" "\\t" $Iposition "\\t" (Iposition2>0?$Iposition2:"NA") "\\t" $Ifinal_umi "\\t" numis "\\t" $Ifinal_umi_count;
 }
 ')
+
+# ******************************************************************************
+# *** Utilities  ***************************************************************
+# ******************************************************************************
 
 open_byext <- function(path, ...) {
   if (grepl(GZEXT, path))
