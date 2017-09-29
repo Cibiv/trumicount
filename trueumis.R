@@ -4,7 +4,7 @@
 # *** Arguments Definition *****************************************************
 # ******************************************************************************
 doc <- '
-Usage: trueumi.R ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-grouped-umis GROUPEDUMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-grouped-umis GROUPEDUMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-x-bin PLOTXBIN ] [ --plot-x-max PLOTXMAX ] [ --plot-skip-phantoms ] [ --verbose ]
+Usage: trueumi.R ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-grouped-umis GROUPEDUMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-grouped-umis GROUPEDUMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-x-bin PLOTXBIN ] [ --plot-x-max PLOTXMAX ] [ --plot-skip-phantoms ] [ --verbose ]
 
 Options:
 --input-bam INBAM                      file to read input from (mapped reads)
@@ -14,6 +14,7 @@ Options:
 --output-grouped-umis GROUPEDUMISTAB   file to write grouped UMIs to (to be later used with --input-grouped-umis)
 --output-final-umis FINALUMISTAB       file to write grouped, strand-combined and filtered UMIs to
 --output-plot PLOT                     file to write plot of the reads/UMI distribution (in PDF format) to
+--output-genewise-fits GENEFITSTAB     file to write the results of gene-wise model fitting to
 --umitools UMITOOLS                    path to umitools [Default: umi_tools]
 --umitools-option UMITOOLSOPT          additional options to pass to "umitools group" (see umi_tools group --help)
 --umi-sep UMISEP                       separator between read name and UMI (passed to umi_tools) [Default: :]
@@ -387,6 +388,11 @@ message('*** Fitting gene-wise models on ', ARGS$cores, ' cores')
 gsm <- gwpcrpois.mom.groupwise(reads ~ sample + gene, data=umis,
                                threshold=ARGS$threshold, molecules=ARGS$molecules,
                                loss=loss.expr, ctrl=list(cores=ARGS$cores))
+if (!is.null(ARGS$`output-genewise-fits`)) {
+  f <- open_byext(ARGS$`output-genewise-fits`, open='w')
+  write.table(gms, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
+  close(f)
+}
 umicounts <- gsm[, list(sample, gene, n.raw=n, n.tot,
                         efficiency, depth=lambda0, loss)]
 

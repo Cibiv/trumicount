@@ -22,16 +22,17 @@ for input_stem in $dollarstar; do
 	grouped_umis=tests/${input_stem}.umis.tab.gz
 	counts=tests/${input_stem}.counts.tab.gz
 	plot=tests/${input_stem}.plot.pdf
+	genewise=tests/${input_stem}.genewise.tab.gz
 	log=tests/${input_stem}.log
 	opts=tests/${input_stem}.opts
 
 	if [ -e "$grouped_umis" ]; then
-		input_opts="--input-grouped-umis$grouped_umis"
+		input_opts="--input-grouped-umis $grouped_umis"
 	else
 		input_opts="--input-bam $bam --output-grouped-umis $grouped_umis "
 	fi
 
 	./trueumis.R \
 		$input_opts --output-counts $counts --output-plot $plot \
-		--cores 4 $(cat $opts)
+		--output-genewise-fits $genewise --cores 4 $(cat $opts)
 done
