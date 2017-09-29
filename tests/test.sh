@@ -18,15 +18,15 @@ source ~/Installs/miniconda2/bin/activate
 
 for input_stem in $dollarstar; do
         input_stem=${input_stem//.bam}
-	bam=${input_stem}.bam
-	grouped_umis=${input_stem}.umis.tab.gz
-	counts=${input_stem}.counts.tab.gz
-	plot=${input_stem}.plot.pdf
-	log=${input_stem}.log
-	opts=${input_stem}.opts
+	bam=tests/${input_stem}.bam
+	grouped_umis=tests/${input_stem}.umis.tab.gz
+	counts=tests/${input_stem}.counts.tab.gz
+	plot=tests/${input_stem}.plot.pdf
+	log=tests/${input_stem}.log
+	opts=tests/${input_stem}.opts
 
 	if [ -e "$grouped_umis" ]; then
-		input_opts="--input-grouped-umis $grouped_umis"
+		input_opts="--input-grouped-umis$grouped_umis"
 	else
 		input_opts="--input-bam $bam --output-grouped-umis $grouped_umis "
 	fi
