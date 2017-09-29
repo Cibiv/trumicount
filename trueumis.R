@@ -277,24 +277,34 @@ if (nrow(umis) < 2)
   stop("Too few UMIs to continue")
 
 # ******************************************************************************
+# *** Determine expression for the loss ****************************************
+# ******************************************************************************
+# Usually, this is simply "p0", i.e. the probability of an UMI having fewer than
+# T (threshold) reads. But when we're dealing with stranded UMIs, an UMI is
+# filtered out if *either* one of the two reciprocal mates have fewer than T
+# reads (in combine-strand-umis mode), or if the UMI has fewer than T reads and
+# the mate has zero reads (in filter-strand-umis mode).
+loss.expr <- if (ARGS$`combine-strand-umis`) {
+  # We filter UMIs which either have fewer than T reads, or whose reciprocal
+  # mate has fewer than T reads
+  expression(1 - (1 - p0)^2)
+} else if (ARGS$`filter-strand-umis`) {
+  # We filter UMIs whose reciprocal mate wasn't detected (0 reads), or
+  # which have fewer than T reads.
+  expression(1 - (1 - p0) * (1 - dgwpcrpois(0, threshold=0, molecules=ARGS$molecules,
+                                            efficiency=efficiency, lambda0=lambda0)))
+} else
+  # Each UMI is treated individually, the loss is simply p0
+  expression(p0)
+
+# ******************************************************************************
 # *** Fit global model *********************************************************
 # ******************************************************************************
 message('*** Fitting global PCR and sequencing model')
 library(gwpcR)
 gm <- gwpcrpois.mom(mean(umis$reads, na.rm=TRUE), var(umis$reads, na.rm=TRUE),
                     threshold=ARGS$threshold, molecules=ARGS$molecules)
-gm.loss <- if (ARGS$`combine-strand-umis`) {
-  # We filter UMIs which either have fewer than T reads, or whose reciprocal
-  # mate has fewer than T reads
-  1 - (1 - gm$p0) * (1 - gm$p0)
-} else if (ARGS$`filter-strand-umis`) {
-  # We filter UMIs whose reciprocal mate wasn't detected (0 reads), or
-  # which have fewer than T reads.
-  p.noread <- dgwpcrpois(0, threshold=0, molecules=gm$molecules,
-                         efficiency=gm$efficiency, lambda0=gm$lambda0)
-  1 - (1 - gm$p0) * (1 - p.noread)
-} else
-  gm$p0
+gm.loss <- eval(loss.expr, envir=list2env(gm, parent=parent.frame()))
 message('Overall efficiency ', round(100*gm$efficiency), '%, depth ',
         round(gm$lambda0, digits=3), ' reads/UMI, loss ', round(100*gm.loss), '%')
 
