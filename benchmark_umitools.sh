@@ -32,28 +32,28 @@ for rep in 1 2 3; do
 
 		if [ "$paired" == "1" ]; then
 			echo "==== PYTHON 2.7 $bam PATCHED PAIRED MAPQ=$mapq THRESHOLD=$th MOLECULES=$mol ==============="
-			./trueumis.R \
+			./trumicount \
 				--input-bam $bam --umi-sep='|' --umipair-sep=: --paired --combine-strand-umis \
 				--mapping-quality $mapq --threshold $th --molecules $mol \
 				--verbose
 		fi
 
 		echo "==== PYTHON 2.7 $bam PATCHED UNPAIRED MAPQ=$mapq THRESHOLD=$th MOLECULES=$mol ==============="
-		./trueumis.R \
+		./trumicount \
 			--input-bam $bam --umi-sep='|' \
 			--mapping-quality $mapq --threshold $th --molecules $mol \
 			--verbose
 
 		if [ "$paired" == "1" ]; then
 			echo "==== PYTHON 2.7 $bam UNPATCHED PAIRED MAPQ=$mapq THRESHOLD=$th MOLECULES=$mol ==============="
-			./trueumis.R \
+			./trumicount \
 				--input-bam $bam --umi-sep='|' --paired \
 				--mapping-quality $mapq --threshold $th --molecules $mol \
 				--verbose
 		fi
 
 		echo "==== PYTHON 2.7 $bam UNPATCHED UNPAIRED MAPQ=$mapq THRESHOLD=$th MOLECULES=$mol ==============="
-		./trueumis.R \
+		./trumicount \
 			--input-bam $bam --umi-sep='|' \
 			--mapping-quality $mapq --threshold $th --molecules $mol \
 			--verbose

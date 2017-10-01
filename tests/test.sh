@@ -32,7 +32,7 @@ for input_stem in $dollarstar; do
 		input_opts="--input-bam $bam --output-grouped-umis $grouped_umis "
 	fi
 
-	./trueumis.R \
+	./trumicount \
 		$input_opts --output-counts $counts --output-plot $plot \
 		--output-genewise-fits $genewise --cores 4 $(cat $opts)
 done
