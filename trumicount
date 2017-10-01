@@ -390,7 +390,7 @@ gsm <- gwpcrpois.mom.groupwise(reads ~ sample + gene, data=umis,
                                loss=loss.expr, ctrl=list(cores=ARGS$cores))
 if (!is.null(ARGS$`output-genewise-fits`)) {
   f <- open_byext(ARGS$`output-genewise-fits`, open='w')
-  write.table(gms, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
+  write.table(gsm, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
   close(f)
 }
 umicounts <- gsm[, list(sample, gene, n.raw=n, n.tot,
