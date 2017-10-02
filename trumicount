@@ -3,8 +3,11 @@
 # ******************************************************************************
 # *** Arguments Definition *****************************************************
 # ******************************************************************************
-doc <- '
-Usage: trueumi.R ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-grouped-umis GROUPEDUMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-grouped-umis GROUPEDUMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-x-bin PLOTXBIN ] [ --plot-x-max PLOTXMAX ] [ --plot-skip-phantoms ] [ --verbose ]
+VERSION <- "0.1"
+DOCSTRING <- paste0('
+Usage: trumicount ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-grouped-umis GROUPEDUMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-grouped-umis GROUPEDUMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-x-bin PLOTXBIN ] [ --plot-x-max PLOTXMAX ] [ --plot-skip-phantoms ] [ --verbose ]
+
+Version ', VERSION, '
 
 Options:
 --input-bam INBAM                      file to read input from (mapped reads)
@@ -30,7 +33,7 @@ Options:
 --plot-x-max PLOTXMAX                  limits x range of plot to show at most PLOTXMAX reads/UMI
 --plot-skip-phantoms                   do not show phantom UMIs in histogram plot [Default: FALSE]
 --verbose                              enable verbose output
-'
+')
 OPTS.INVALID <- list(
   `input-bam`=c('input-umitools-group-out', 'input-grouped-umis'),
   `input-umitools-group-out`=c('input-bam', 'input-grouped-umis'),
@@ -118,7 +121,7 @@ open_byext <- function(path, ...) {
 # ******************************************************************************
 # *** Parse arguments **********************************************************
 # ******************************************************************************
-ARGS <- docopt::docopt(doc, strip_names=TRUE)
+ARGS <- docopt::docopt(DOCSTRING, strip_names=TRUE)
 ARGS$`mapping-quality` <- as.integer(ARGS$`mapping-quality`)
 ARGS$threshold <- as.integer(ARGS$threshold)
 ARGS$molecules <- as.integer(ARGS$molecules)
