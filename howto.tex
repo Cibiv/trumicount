@@ -1,0 +1,53 @@
+\documentclass[10pt]{article}
+\usepackage{xcolor}
+\usepackage{minted}
+\newminted[shellcode]{shell}{bgcolor=lightgray}
+
+\begin{document}
+
+\section{Installing TRUmiCount}
+
+\subsection{Installation via BioConda}
+
+\subsubsection{Installing Conda}
+
+\subsubsection{Installing BioConda}
+
+Once you have installed conda (and activated your installation),
+installing BioConda comes down to adding all the BioConda channels
+to your conda installation
+
+\begin{shellcode}
+conda config --add channels r
+conda config --add channels defaults
+conda config --add channels conda-forge
+conda config --add channels bioconda
+\end{shellcode}
+
+We don't explicitly need to install any packages from BioConda
+-- when we install TRumiCount down below, conda will automatically
+install all the things requires for TRumiCount, using both conda's
+built-in channels and the BioConda channels as necessary.
+
+\subsubsection{Installing TRumiCount}
+
+We provide a channel that provides TRumiCount, and all packages
+necessary for TRumiCount to function that are not available on
+BioConda. We currently also provide a modified version of umi\_tools,
+which improves the handling of paired-end reads. Our channel is added
+to conda by running
+
+\begin{shellcode}
+conda config --add channels 
+  http://tuc:tuc@www.cibiv.at/~pflug_/conda.trumicount/
+\end{shellcode}
+
+conda should now be able to install TRumiCount and all its depdencies
+
+\begin{shellcode}
+conda install trumicount
+\end{shellcode}
+
+\section{Running TRUmiCount}
+
+\end{document}
