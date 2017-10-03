@@ -1,10 +1,11 @@
 \documentclass[10pt]{article}
-\usepackage{xcolor,fontspec}
+\usepackage{tgpagella}
+\usepackage{xcolor,graphicx}
 \usepackage{hyperref}
 \usepackage{minted}
 \newminted[shellcode]{shell}{bgcolor=lightgray}
 
-\setmainfont[Ligatures=TeX]{TeX Gyre Pagella}
+%\setmainfont[Ligatures=TeX]{TeX Gyre Pagella}
 
 \begin{document}
 
@@ -68,14 +69,63 @@ conda config --env --add channels \
   http://tuc:tuc@www.cibiv.at/~pflug_/conda.trumicount/
 \end{shellcode}
 
-TRumiCount and our versionb of umi\_tools can now be installed
+TRumiCount and our version of umi\_tools can now be installed
 
 \begin{shellcode}
 conda install trumicount umi_tools
 \end{shellcode}
 
-\section{Running TRUmiCount}
+\section{Using TRUmiCount}
 
+\subsection{Supported Input Formats \& Options}
 
+To be able to separate true UMIs from biases and to estimate the percentage of true UMIs that are lost during library preparation or data processing, TRUmiCount analyses the distribution of read counts per UMI for each gene (or any other type of genomic feature).
+
+\subsubsection*{Reading BAM Files}
+
+If an BAM File is provided as input with ``\texttt{--input-bam BAMFILE}'', TRUmiCount uses umi\_tools's \texttt{group} tool to extract a list of error-corrected UMIs and their read counts. By default, it is assumed that
+\begin{itemize}
+  \item The sequence name corresponds to the gene name. Alternatively, the gene names can be stored in BAM file tags -- this can be changed by using umi\_tool's \texttt{--gene-tag=GENE\_TAG} option. To tell TRUmiCount to invoke umi\_tools using that option, use ``\texttt{--umitools-option --gene-tag=\allowbreak GENE\_TAG}'' when invoking TRUmiCount.
+  \item The UMI was appended to the read name, and separated by ``:''. A different separator can be specified with ``\texttt{--umi-sep SEPARATOR}''
+  \item The BAM file contains single-end reads (read2 is ignored). To take the mapping position of both mates into account when grouping reads by UMI, specify \texttt{--paired}.
+  \item Reads with a mapping quality below 20 should be ignored. This threshold can be changed with ``\texttt{--mapping-quality MAPQ}''.
+  \item Each UMI initially had two copies. This is e.g. the case of molecules before amplification were double-stranded and the copies produced from both strands are identical. This number can be changed with ``\texttt{--molecules COPIES}''
+  \item UMIs must be supported by at least two reads to be assumed to be a true UMI and not a phantom. This threshold can be changed with ``\texttt{--threshold TH}''.
+  \item The BAM file must have a corresponding index. A suitable index can be created with ``\texttt{samtools index BAMFILE}''.
+\end{itemize}
+
+\subsubsection*{Reading grouped UMIs}
+
+XXX Write Me
+
+\subsection{Examples}
+
+\subsubsection*{Downloading Example Data}
+
+XXX Write Me (plus conversion from CRAM to BAM)
+
+\subsubsection*{Single-End Data}
+
+\begin{shellcode}
+samtools index kv_100g.bam
+trumicount --input-bam kv_100g.bam \
+  --molecules 2 --threshold 5 \
+  --output-plot kv_100g.pdf --plot-x-bin 10 \
+  --output-counts kv_100g.tab
+  --cores 4
+\end{shellcode}
+
+\subsection{Paired-End Data}
+
+\begin{shellcode}
+samtools index sg_100g.bam
+trumicount --input-bam sg_100g.bam --umipair-sep '-'\
+  --paired --filter-strand-umis --molecules 1 --threshold 24 \
+  --output-plot sg_100g.pdf --plot-x-bin 3 \
+  --output-counts sg_100g.tab
+  --cores 4
+\end{shellcode}
+
+{\centering \includegraphics[width=7cm]{examples/sg_100g.pdf}\\}
 
 \end{document}

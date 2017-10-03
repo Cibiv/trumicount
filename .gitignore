@@ -1,4 +1,5 @@
 *.bam
+!example/*.bam
 *.bai
 *.umis.tab.gz
 *.plot.pdf
