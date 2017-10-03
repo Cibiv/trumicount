@@ -13,7 +13,7 @@
 \vfill
 {\Huge\centering%
 TRUmiCount\\
-How-To\\}
+Manual \& How-To\\}
 \vskip5cm
 {\large\centering%
 Florian G. Pflug\\
@@ -98,13 +98,15 @@ If an BAM File is provided as input with ``\texttt{--input-bam BAMFILE}'', TRUmi
 
 XXX Write Me
 
-\subsection{Examples}
+\subsection{Output}
 
-\subsubsection*{Downloading Example Data}
+XXX Write Me
 
-XXX Write Me (plus conversion from CRAM to BAM)
+\section{Examples}
 
-\subsubsection*{Single-End Data}
+Explain where to find the example data
+
+\subsection*{Single-End Data}
 
 \begin{shellcode}
 samtools index kv_100g.bam
@@ -115,7 +117,12 @@ trumicount --input-bam kv_100g.bam \
   --cores 4
 \end{shellcode}
 
-\subsection{Paired-End Data}
+\subsection{Paired-End Data with Stranded UMIs}
+
+The file \texttt{sg\_100g.bam} contains a reduced (restricted to the first 100 genes, and subsamples to 25\%) version of data published by Shiroguchi \textit{et al.}\footnote{Shiroguchi, K., Jia, T. Z., Sims, P. A. \& Xie, X. S. Digital RNA sequencing
+minimizes sequence-dependent bias and amplification noise with optimized
+single-molecule barcodes. \textit{Proceedings of the National Academy of Sciences of
+the United States of America} \textbf{109}, 1347-1352 (2012).} This dataset is analyzed in paired-end mode, and UMIs are filtered-out if the UMI corresponding to the second strand of the original template molecule is not detected (see section on stranded UMIs)
 
 \begin{shellcode}
 samtools index sg_100g.bam
@@ -125,6 +132,8 @@ trumicount --input-bam sg_100g.bam --umipair-sep '-'\
   --output-counts sg_100g.tab
   --cores 4
 \end{shellcode}
+
+This produced the following diagnostic plot showing the observed distribution of reads per UMI and our model's predicted distribution and loss.
 
 {\centering \includegraphics[width=7cm]{examples/sg_100g.pdf}\\}
 
