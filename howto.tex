@@ -1,53 +1,81 @@
 \documentclass[10pt]{article}
-\usepackage{xcolor}
+\usepackage{xcolor,fontspec}
+\usepackage{hyperref}
 \usepackage{minted}
 \newminted[shellcode]{shell}{bgcolor=lightgray}
 
+\setmainfont[Ligatures=TeX]{TeX Gyre Pagella}
+
 \begin{document}
+
+\begin{titlepage}
+\vfill
+{\Huge\centering%
+TRUmiCount\\
+How-To\\}
+\vskip5cm
+{\large\centering%
+Florian G. Pflug\\
+\texttt{<florian.pflug@univie.ac.at>}\\}
+\vfill
+\end{titlepage}
 
 \section{Installing TRUmiCount}
 
-\subsection{Installation via BioConda}
+\subsection{Installation via Conda (Recommended)}
 
-\subsubsection{Installing Conda}
+\subsubsection*{Installing Conda}
 
-\subsubsection{Installing BioConda}
-
-Once you have installed conda (and activated your installation),
-installing BioConda comes down to adding all the BioConda channels
-to your conda installation
+Conda is a package manager that allows easy installation of a large range of software packages. See \url{https://conda.io/docs/user-guide/install/index.html} for your options of how to insteall conda. Briefly, on 64-bit linux do\footnote{Instead of \texttt{/conda}, you can choose any other directory to install conda into}
 
 \begin{shellcode}
-conda config --add channels r
-conda config --add channels defaults
-conda config --add channels conda-forge
-conda config --add channels bioconda
+INSTALLER=Miniconda2-latest-Linux-x86_64.sh
+CONDA_DIR=/conda
+curl -O https://repo.continuum.io/miniconda/$INSTALLER
+bash $INSTALLER -p $CONDA_DIR
 \end{shellcode}
 
-We don't explicitly need to install any packages from BioConda
--- when we install TRumiCount down below, conda will automatically
-install all the things requires for TRumiCount, using both conda's
-built-in channels and the BioConda channels as necessary.
+\subsubsection*{Creating an environment}
 
-\subsubsection{Installing TRumiCount}
-
-We provide a channel that provides TRumiCount, and all packages
-necessary for TRumiCount to function that are not available on
-BioConda. We currently also provide a modified version of umi\_tools,
-which improves the handling of paired-end reads. Our channel is added
-to conda by running
+Conda allows the creation of multiple \emph{environments}, each containing different collections of packages. We will now create an environment for TRumiCount
 
 \begin{shellcode}
-conda config --add channels 
+$CONDA_DIR/bin/conda create -n trc
+\end{shellcode}
+
+This environment is now \emph{activated} to make it the target of further conda commands, and the installed software visible. This must be done every time a new terminal window is opened!
+
+\begin{shellcode}
+source $CONDA_DIR/bin/activate trc
+\end{shellcode}
+%$
+\subsubsection*{Installing BioConda}
+
+Conda packages are organized into so-called \emph{channels}. We add the BioConda channel which provides many common tools for dealing with high-throughput sequencing data
+
+\begin{shellcode}
+conda config --env --add channels defaults
+conda config --env --add channels conda-forge
+conda config --env --add channels bioconda
+\end{shellcode}
+
+\subsubsection*{Installing TRumiCount}
+
+Finall we add the channel that supplies TRumiCount and a modified version of umi\_tools with improved handling of paired-end reads\footnote{Note that the backslash (``\textbackslash'') only serves to make your shell ignore the linebreak that follows it. If you enter the command as a single line, skip the backslash}
+
+\begin{shellcode}
+conda config --env --add channels \
   http://tuc:tuc@www.cibiv.at/~pflug_/conda.trumicount/
 \end{shellcode}
 
-conda should now be able to install TRumiCount and all its depdencies
+TRumiCount and our versionb of umi\_tools can now be installed
 
 \begin{shellcode}
-conda install trumicount
+conda install trumicount umi_tools
 \end{shellcode}
 
 \section{Running TRUmiCount}
+
+
 
 \end{document}
