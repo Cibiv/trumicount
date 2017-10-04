@@ -246,13 +246,24 @@ if (ARGS$`combine-strand-umis`) {
   umis <- umis[pos < end]
   umis[, reads.plus := reads ]
   umis[, reads.minus := umis.m[umis, reads, on=c("gene", "sample", "pos", "end", "umi")] ]
+  umis[, reads := NULL ]
   umis <- umis[is.finite(reads.plus) & is.finite(reads.minus)]
+  # Use reads.plus and reads.minus as separate (independent) read counts
+  reads.expr <- expression(c(reads.plus, reads.minus))
+  group.expr <- c(reads.plus,reads.minus) ~ sample + gene
 } else if (ARGS$`filter-strand-umis`) {
   # We remove UMIs that are not part of a reciprocal pair, but keep the
   # constituing UMIs of each pair as separate UMIs (unlike combine-strand-umis)
   message('*** Filtering UMIs whose reciproal UMI belong to the other strand is missing')
   umis[, reads.other := umis.m[umis, reads, on=c("gene", "sample", "pos", "end", "umi")] ]
   umis <- umis[is.finite(reads) & is.finite(reads.other)]
+  # Simply use "reads" columns as read counts
+  reads.expr <- expression(reads)
+  group.expr <- reads ~ sample + gene
+} else {
+  # Simply use "reads" columns as read counts
+  reads.expr <- expression(reads)
+  group.expr <- reads ~ sample + gene
 }
 
 # ******************************************************************************
@@ -313,7 +324,8 @@ loss.expr <- if (ARGS$`combine-strand-umis`) {
 # ******************************************************************************
 message('*** Fitting global PCR and sequencing model')
 library(gwpcR)
-gm <- gwpcrpois.mom(mean(umis$reads, na.rm=TRUE), var(umis$reads, na.rm=TRUE),
+gm <- gwpcrpois.mom(mean(umis[, eval(reads.expr)], na.rm=TRUE),
+                    var(umis[, eval(reads.expr)], na.rm=TRUE),
                     threshold=ARGS$threshold, molecules=ARGS$molecules)
 gm.loss <- eval(loss.expr, envir=list2env(gm, parent=parent.frame()))
 message('Overall efficiency ', round(100*gm$efficiency), '%, depth ',
@@ -324,13 +336,8 @@ message('Overall efficiency ', round(100*gm$efficiency), '%, depth ',
 # ******************************************************************************
 if (!is.null(ARGS$`output-plot`)) {
   message('*** Plotting reads/UMI distribution to ', ARGS$`output-plot`)
-  if (ARGS$`combine-strand-umis`) {
-    counts <- umis[, c(reads.plus, reads.minus)]
-    counts.prefilter <- umis.prefilter[, c(reads.plus, reads.minus)]
-  } else {
-    counts <- umis[, reads]
-    counts.prefilter <- umis.prefilter[, reads]
-  }
+  counts <- umis[, eval(reads.expr)]
+  counts.prefilter <- umis.prefilter[, eval(reads.expr)]
   x.bin <- ifelse(!is.null(ARGS$`plot-x-bin`),
                   ARGS$`plot-x-bin`,
                   max(1, floor(max(counts) / nclass.Sturges(counts))))
@@ -388,7 +395,7 @@ if (!is.null(ARGS$`output-plot`)) {
 # XXX: In combine-strand-umis mode, we should use reads.plus and reads.minus as
 # separate samples!
 message('*** Fitting gene-wise models on ', ARGS$cores, ' cores')
-gsm <- gwpcrpois.mom.groupwise(reads ~ sample + gene, data=umis,
+gsm <- gwpcrpois.mom.groupwise(group.expr, data=umis,
                                threshold=ARGS$threshold, molecules=ARGS$molecules,
                                loss=loss.expr, ctrl=list(cores=ARGS$cores))
 if (!is.null(ARGS$`output-genewise-fits`)) {
@@ -396,7 +403,7 @@ if (!is.null(ARGS$`output-genewise-fits`)) {
   write.table(gsm, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
   close(f)
 }
-umicounts <- gsm[, list(sample, gene, n.raw=n, n.tot,
+umicounts <- gsm[, list(sample, gene, n.obs, n.tot,
                         efficiency, depth=lambda0, loss)]
 
 # ******************************************************************************
