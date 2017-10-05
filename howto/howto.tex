@@ -14,8 +14,8 @@
 \begin{titlepage}
 \vfill
 {\Huge\centering%
-TRUmiCount\\
-Manual \& How-To\\}
+Using\\
+TRUmiCount\\}
 \vskip5cm
 {\large\centering%
 Florian G. Pflug\\
@@ -25,6 +25,11 @@ Florian G. Pflug\\
 \vfill
 \end{titlepage}
 
+\section{Introduction to TRUmiCount}
+
+XXX Write Me
+
+\newpage
 \section{Installing TRUmiCount}
 
 \subsection{Installation via Conda (Recommended)}
@@ -70,7 +75,7 @@ Finall we add the channel that supplies TRUmiCount and a modified version of umi
 
 \begin{shellcode}
 conda config --env --add channels \
-  http://tuc:tuc@www.cibiv.at/~pflug_/conda.TRUmiCount/
+  http://tuc:tuc@www.cibiv.at/~pflug_/trumicount/
 \end{shellcode}
 
 TRUmiCount and our version of umi\_tools can now be installed
@@ -78,6 +83,10 @@ TRUmiCount and our version of umi\_tools can now be installed
 \begin{shellcode}
 conda install TRUmiCount umi_tools samtools
 \end{shellcode}
+
+\subsection{Manual Installation}
+
+XXX Write Me
 
 \section{Using TRUmiCount}
 
@@ -92,7 +101,7 @@ To be able to separate true UMIs from biases and to estimate and correct for the
 
 \subsubsection*{Reading UMIs from a BAM File}
 
-If an BAM File is provided as input with ``\texttt{--input-bam BAMFILE}'', TRUmiCount uses umi\_tools's \texttt{group} tool to extract a list of UMIs and their read counts from a BAM file. Sequencing errors in the UMIs are corrected by umi\_tools by \emph{merging} similar UMIs into one. When reading BAM file, on top of the defaults mentioned above, TRUmiCount assumes that
+If a mapped BAM File is provided as input with ``\texttt{--input-bam BAMFILE}'', TRUmiCount uses umi\_tools's \texttt{group} tool to extract a list of UMIs and their read counts from a BAM file. Sequencing errors in the UMIs are corrected by umi\_tools by \emph{merging} similar UMIs into one. When reading BAM file, on top of the defaults mentioned above, TRUmiCount assumes that
 \begin{itemize}
   \item The BAM file must have a corresponding index. A suitable index can be created with ``\texttt{samtools index BAMFILE}''.
   \item The sequence name corresponds to the gene name. Alternatively, the gene names can be stored in BAM file tags -- this can be changed by using umi\_tool's \texttt{--gene-tag=GENE\_TAG} option. To tell TRUmiCount to invoke umi\_tools using that option, use ``\texttt{--umitools-option --gene-tag=\allowbreak GENE\_TAG}'' when invoking TRUmiCount.
@@ -103,7 +112,7 @@ If an BAM File is provided as input with ``\texttt{--input-bam BAMFILE}'', TRUmi
 
 \subsubsection*{Reading UMIs from a tab-separated file}
 
-Instead of using umi\_tools to extract UMI and their read counts from a BAM file, TRUmiCount can read a previously computed table of UMIs with ``\texttt{--input-umis}''. The table must be tab-separated with one row per UMI and contain at least the columns ``sample'', ``gene'', ``reads''. When dealing with stranded UMIs (see section \emph{Stranded UMIs}), TRUmiCount will also use columns ``pos'' and ``end'' containing the mapping position of read1 respectively read2. 
+Instead of using umi\_tools to extract UMI and their read counts from a BAM file, TRUmiCount can read a previously computed table of UMIs with ``\texttt{--input-umis}''. The table must be tab-separated with one row per UMI and contain at least the columns ``sample'', ``gene'', ``reads''. When dealing with strand UMIs (see section \emph{Strand UMIs}), TRUmiCount will also use columns ``pos'' and ``end'' containing the mapping position of read1 respectively read2. 
 
 The umi\_tools and BAM-related options ``\texttt{--umi-sep}'', ``\texttt{--umitools}'',\\``\texttt{--umitools-option}'', ``\texttt{--paired}'' and ``\texttt{--mapping-quality}'' are ignored if ``\texttt{--input-umis}'' is used.
 
@@ -119,6 +128,8 @@ Some UMI-based library preparation protocols produce \emph{strand UMIs} where th
 
 TRUmiCount supports stranded UMIs as produced by the protocol of Shiroguchi \textit{et al.}\footnote{Shiroguchi, K., Jia, T. Z., Sims, P. A. \& Xie, X. S. Digital RNA sequencing minimizes sequence-dependent bias and amplification noise with optimized single-molecule barcodes. \textit{Proceedings of the National Academy of Sciences of the United States of America} \textbf{109}, 1347-1352 (2012).}. With this protocol, both read1 and read2 carry a separate molecular barcode. UMI pairs belonging to the same double-stranded template molecule are found by looking for pairs of UMIs whose read1 and read2 barcodes and mapping positions are swapped (mapping position here refers to the genomic coordinate of the first mapped base in \emph{read direction}, i.e. for reverse-mapped reads this differes from the mapping position stated in the BAM file).
 
+When working with strand UMIs, the initial molecule count should usually be set to 1 (the default is 2!), i.e. ``\texttt{--molecules 1}'' should be used.
+
 \subsubsection*{Filtering out incomplete strand UMI pairs}
 
 With the option ``\texttt{--filter-strand-umis}'', UMIs are filtered out if their partner UMI cannot be detected. Note that the actual loss rate in this mode is not simply the probability $\mathbb{P}(C < T)$ of an UMI having fewer than $T$ reads. Since we filter out UMIs \emph{either} if they themselves have fewer than $T$ reads, \emph{or} if their partner UMI wasn't detected at all, the actual loss is $1 - (1 - \mathbb{P}(C < T))\cdot (1 - \mathbb{P}(C=0))$. TRUmiCount adjust the loss computation accordingly and outputs corrected losses. The model distribution shown in the plots, however, does not (and cannot) take this adjustment into account, so that the stated loss is no longer simply the sum of the model probabilities for read counts less than $T$.
@@ -127,11 +138,15 @@ With the option ``\texttt{--filter-strand-umis}'', UMIs are filtered out if thei
 
 With the option ``\texttt{--combine-strand-umis}'', partner UMIs are paired, and the read count threshold is applied to be partners. In this mode, the actual loss (i.e. fraction of true UMIs removed by the filter) is $1 - (1-\mathbb{P}(C < T))^2$, because we now filter out UMI pairs if \emph{either} of the partners have fewer than $T$ reads. Againm TRUmiCount adjust the loss computation accordingly and outputs corrected losses. And again the model distribution shown in the plots, does not (and cannot) take this adjustment into account, so that the stated loss is no longer simply the sum of the model probabilities for read counts less than $T$.
 
+\section{Parameter Reference}
+
+XXX Write Me
+
 \section{Examples}
 
-XXX Explain where to find the example data
+The example data can be downloaded from \url{http://tuc:tuc@www.cibiv.at/~pflug_/trumicount}.
 
-\subsection*{Single-End Data}
+\subsection{Single-End Data}
 
 The file \texttt{kv\_1000g.bam} contains a reduced (restricted to the first 0100 genes, and subsamples to 50\%) version of data published by Kivioja \textit{et al.}\footnote{Kivioja, T. \textit{et al.} Counting absolute numbers of molecules using unique molecular identifiers. \textit{Nature Methods} \textbf{9}, 72–74 (2011)}.
 
@@ -143,7 +158,7 @@ This produces the following diagnostic plot \texttt{kv\_1000g.pdf} showing the o
 
 \subsection{Paired-End Data with strand UMIs}
 
-The file \texttt{sg\_100g.bam} contains a reduced (restricted to the first 100 genes, and subsamples to 25\%) version of data published by Shiroguchi \textit{et al.}\footnote{Shiroguchi, K., Jia, T. Z., Sims, P. A. \& Xie, X. S. Digital RNA sequencing minimizes sequence-dependent bias and amplification noise with optimized single-molecule barcodes. \textit{Proceedings of the National Academy of Sciences of the United States of America} \textbf{109}, 1347-1352 (2012).} which uses \emph{stranded UMIs}.
+The file \texttt{sg\_100g.bam} contains a reduced (restricted to the first 100 genes, and subsamples to 25\%) version of data published by Shiroguchi \textit{et al.}\footnote{Shiroguchi, K., Jia, T. Z., Sims, P. A. \& Xie, X. S. Digital RNA sequencing minimizes sequence-dependent bias and amplification noise with optimized single-molecule barcodes. \textit{Proceedings of the National Academy of Sciences of the United States of America} \textbf{109}, 1347-1352 (2012).} which uses \emph{strand UMIs}.
 
 \subsubsection*{Filtering out incomplete strand UMI pairs}
 
