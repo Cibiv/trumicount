@@ -5,16 +5,16 @@
 # ******************************************************************************
 VERSION <- "0.1"
 DOCSTRING <- paste0('
-Usage: trumicount ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-grouped-umis GROUPEDUMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-grouped-umis GROUPEDUMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-x-bin PLOTXBIN ] [ --plot-x-max PLOTXMAX ] [ --plot-skip-phantoms ] [ --verbose ]
+Usage: trumicount ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-umis UMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-x-bin PLOTXBIN ] [ --plot-x-max PLOTXMAX ] [ --plot-skip-phantoms ] [ --verbose ]
 
 Version ', VERSION, '
 
 Options:
 --input-bam INBAM                      file to read input from (mapped reads)
 --input-umitools-group-out GROUPSINTAB file to read input from (as produced by umi_tools group)
---input-grouped-umis GROUPEDUMISINTAB  file to read input from (previously produced by --output-grouped-umis)
+--input-umis UMISINTAB                 file to read input from (previously produced by --output-umis)
 --output-counts COUNTSTAB              file to write corrected per-gene counts and model parameters to
---output-grouped-umis GROUPEDUMISTAB   file to write grouped UMIs to (to be later used with --input-grouped-umis)
+--output-umis UMISTAB                  file to write grouped UMIs to (to be later used with --input-umis)
 --output-final-umis FINALUMISTAB       file to write grouped, strand-combined and filtered UMIs to
 --output-plot PLOT                     file to write plot of the reads/UMI distribution (in PDF format) to
 --output-genewise-fits GENEFITSTAB     file to write the results of gene-wise model fitting to
@@ -35,9 +35,9 @@ Options:
 --verbose                              enable verbose output
 ')
 OPTS.INVALID <- list(
-  `input-bam`=c('input-umitools-group-out', 'input-grouped-umis'),
-  `input-umitools-group-out`=c('input-bam', 'input-grouped-umis'),
-  `input-grouped-umis`=c('input-bam', 'input-umitools-group-out')
+  `input-bam`=c('input-umitools-group-out', 'input-umis'),
+  `input-umitools-group-out`=c('input-bam', 'input-umis'),
+  `input-umis`=c('input-bam', 'input-umitools-group-out')
 )
 
 # ******************************************************************************
@@ -138,13 +138,13 @@ if (ARGS$cores > 1) {
 # ******************************************************************************
 # *** Create connection to read grouped UMI table from *************************
 # ******************************************************************************
-umis_con <- if (!is.null(ARGS$`input-grouped-umis`)) {
+umis_con <- if (!is.null(ARGS$`input-umis`)) {
   # Simple read grouped UMI table from file as-is
-  if (sum(!sapply(ARGS[OPTS.INVALID$`input-grouped-umis`], is.null)) > 0)
-    stop('--input-grouped-umis is incompatible with ', paste(OPTS.INVALID$`input-grouped-umis`, collapse=', '))
+  if (sum(!sapply(ARGS[OPTS.INVALID$`input-umis`], is.null)) > 0)
+    stop('--input-umis is incompatible with ', paste(OPTS.INVALID$`input-umis`, collapse=', '))
 
   # Table will be read from this file connection
-  open_byext(ARGS$`input-grouped-umis`, open='r')
+  open_byext(ARGS$`input-umis`, open='r')
 } else {
   # Grouped UMI table must be created
   cmds <- list()
@@ -175,20 +175,20 @@ umis_con <- if (!is.null(ARGS$`input-grouped-umis`)) {
   cmds[[length(cmds)+1]] <- paste('awk', shQuote(GROUPOUT2UMIS.AWK), sep=' ')
 
   # If requested, save the grouped UMI table. The table can later be loaded directly
-  # using --input-grouped-umis
-  if (!is.null(ARGS$`output-grouped-umis`)) {
+  # using --input-umis
+  if (!is.null(ARGS$`output-umis`)) {
     # Materialize table, then read back
-    tool <- if (grepl(GZEXT, ARGS$`output-grouped-umis`)) 'gzip --stdout'
-    else if (grepl(BZ2EXT, ARGS$`output-grouped-umis`)) 'bzip2 --stdout'
+    tool <- if (grepl(GZEXT, ARGS$`output-umis`)) 'gzip --stdout'
+    else if (grepl(BZ2EXT, ARGS$`output-umis`)) 'bzip2 --stdout'
     else 'cat'
-    cmds[[length(cmds)+1]] <- paste(tool, '>', shQuote(ARGS$`output-grouped-umis`), sep=' ')
+    cmds[[length(cmds)+1]] <- paste(tool, '>', shQuote(ARGS$`output-umis`), sep=' ')
     message('*** Materializing table of grouped UMIs to ', ARGS$`output-grouped-umis`)
     if (ARGS$verbose)
       cat(paste0('Command: ', paste(cmds, collapse=" |\n         "), "\n"))
     system(paste(cmds, collapse=' | '))
 
     # Table will be read from the created file
-    open_byext(ARGS$`output-grouped-umis`, open='r')
+    open_byext(ARGS$`output-umis`, open='r')
   } else {
     # Table will be read from this pipe
     message('*** Computing table of grouped UMIs on the fly')
