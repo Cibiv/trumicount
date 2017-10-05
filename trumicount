@@ -355,7 +355,7 @@ if (!is.null(ARGS$`output-plot`)) {
                   max(h.breaks))
   # Setup plotting
   pdf(file=ARGS$`output-plot`, onefile=TRUE, height=3.5, width=5.5)
-  par(mar=c(3.1, 2.1, 1.1, 0.1))
+  par(mar=c(3.1, 2.1, 1.1, 0.2))
   # Plot phantoms if requested
   if (!ARGS$`plot-skip-phantoms`) {
     hist(counts.prefilter, freq = TRUE, right = FALSE,
