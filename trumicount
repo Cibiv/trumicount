@@ -182,7 +182,7 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
     else if (grepl(BZ2EXT, ARGS$`output-umis`)) 'bzip2 --stdout'
     else 'cat'
     cmds[[length(cmds)+1]] <- paste(tool, '>', shQuote(ARGS$`output-umis`), sep=' ')
-    message('*** Materializing table of grouped UMIs to ', ARGS$`output-grouped-umis`)
+    message('*** Using umi_tools to extract UMI, writing table to ', ARGS$`output-umis`)
     if (ARGS$verbose)
       cat(paste0('Command: ', paste(cmds, collapse=" |\n         "), "\n"))
     system(paste(cmds, collapse=' | '))
@@ -191,7 +191,7 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
     open_byext(ARGS$`output-umis`, open='r')
   } else {
     # Table will be read from this pipe
-    message('*** Computing table of grouped UMIs on the fly')
+    message('*** Using umi_tools to extract UMIs')
     if (ARGS$verbose) {
       cat(paste0('Command: ', paste(cmds, collapse=" |\n         "), "\n"))
     }
@@ -203,7 +203,7 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
 # *** Read table using connection established above ****************************
 # ******************************************************************************
 library(data.table)
-message('*** Reading list of grouped UMIs')
+message('*** Reading UMI table')
 umis <- data.table(read.table(umis_con, header=TRUE, sep="\t",
                               colClasses=c(gene='factor', sample='factor',
                                            pos='numeric', end='numeric', umi='character',
