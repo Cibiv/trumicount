@@ -221,6 +221,12 @@ message('Found ', nrow(umis), ' UMIs for ', length(levels(umis$gene)), ' genes i
 # are recognized by their "reciprocity" -- first and second read of the mate
 # pair are swapped, INCLUDING the UMIs found on these reads.
 if (ARGS$`filter-strand-umis` || ARGS$`combine-strand-umis`) {
+  # Usually, molecules should be set to 1 since UMIs are initially represented by
+  # only a single strand
+  if (ARGS$molecules != 1)
+    warning(paste0('Number of molecules is ', ARGS$molecules, ', yet for ',
+                   '--filter-strand-umis and --combine-strand-umis setting ',
+                   '--molecules 1 is usually correct'))
   umis.m <- if (ARGS$`umipair-sep` != '') {
     # Split at specified umi pair separator
     umis[,list(gene, sample, pos=end, end=pos,
@@ -403,8 +409,8 @@ if (!is.null(ARGS$`output-genewise-fits`)) {
   write.table(gsm, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
   close(f)
 }
-umicounts <- gsm[, list(sample, gene, n.obs, n.tot,
-                        efficiency, depth=lambda0, loss)]
+umicounts <- gsm[, list(sample, gene, n.umis, n.tot,
+                        efficiency, depth=lambda0, loss, n.obs)]
 
 # ******************************************************************************
 # *** Output count table *******************************************************
