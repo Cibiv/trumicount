@@ -144,7 +144,12 @@ XXX Write Me
 
 \section{Examples}
 
-The example data can be downloaded from \url{http://tuc:tuc@www.cibiv.at/~pflug_/trumicount}.
+The example data can be downloaded from \url{http://tuc:tuc@www.cibiv.at/~pflug_/trumicount}. Before TRUmiCount can process these BAM files, they need to be indexed by running
+
+\begin{shellcode}
+samtools index sg_100g.bam
+samtools index kv_1000g.bam
+\end{shellcode}
 
 \subsection{Single-End Data}
 
