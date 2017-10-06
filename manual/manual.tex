@@ -38,13 +38,12 @@ XXX Write Me
 
 \subsubsection*{Installing Conda}
 
-Conda is a package manager that allows easy installation of a large range of software packages. See \url{https://conda.io/docs/user-guide/install/index.html} for your options of how to insteall conda. Briefly, on 64-bit linux do\footnote{Instead of \texttt{/conda}, you can choose any other directory to install conda into}
+Conda is a package manager that allows easy installation of a large range of software packages. See \url{https://conda.io/docs/user-guide/install/index.html} for your options of how to insteall conda. Briefly, on 64-bit linux do\footnote{You can replace \texttt{/conda} with a directory of your choice, but remember to do so in \emph{all} the commands}
 
 \begin{shellcode}
 INSTALLER=Miniconda2-latest-Linux-x86_64.sh
-CONDA_DIR=/conda
 curl -O https://repo.continuum.io/miniconda/$INSTALLER
-bash $INSTALLER -p $CONDA_DIR
+bash $INSTALLER -p /conda
 \end{shellcode}
 
 \subsubsection*{Creating an environment}
@@ -52,13 +51,13 @@ bash $INSTALLER -p $CONDA_DIR
 Conda allows the creation of multiple \emph{environments}, each containing different collections of packages. We will now create an environment for TRUmiCount
 
 \begin{shellcode}
-$CONDA_DIR/bin/conda create -n trc
+/conda/bin/conda create -n trc
 \end{shellcode}
 
-This environment is now \emph{activated} to make it the target of further conda commands, and the installed software visible. This must be done every time a new terminal window is opened!
+This environment is now \emph{activated} to make it the target of further conda commands, and the installed software visible. \textbf{This must be done every time a new terminal window is opened!}
 
 \begin{shellcode}
-source $CONDA_DIR/bin/activate trc
+source /conda/bin/activate trc
 \end{shellcode}
 %$
 \subsubsection*{Installing BioConda}
