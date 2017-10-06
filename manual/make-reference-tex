@@ -1,0 +1,6 @@
+#!/bin/bash
+../trumicount --help 2>&1 \
+	| sed -n 's/^\(--[^ ]*\) \([A-Z]*\) *\(.*\)$/\\item[\\textmd{\\texttt{\1} \2}:] \3/p' \
+	| sed 's/_/\\_/' \
+	| sed 's/\([A-Z]\{3,\}\)\([^a-z]\)/\\textit{\L\1}\2/g' \
+	> reference.tex

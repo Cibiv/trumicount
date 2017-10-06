@@ -3,34 +3,34 @@
 # ******************************************************************************
 # *** Arguments Definition *****************************************************
 # ******************************************************************************
-VERSION <- "0.1"
+VERSION <- "0.9"
 DOCSTRING <- paste0('
 Usage: trumicount ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-umis UMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-x-bin PLOTXBIN ] [ --plot-x-max PLOTXMAX ] [ --plot-skip-phantoms ] [ --verbose ]
 
 Version ', VERSION, '
 
 Options:
---input-bam INBAM                      file to read input from (mapped reads)
---input-umitools-group-out GROUPSINTAB file to read input from (as produced by umi_tools group)
---input-umis UMISINTAB                 file to read input from (previously produced by --output-umis)
---output-counts COUNTSTAB              file to write corrected per-gene counts and model parameters to
---output-umis UMISTAB                  file to write grouped UMIs to (to be later used with --input-umis)
---output-final-umis FINALUMISTAB       file to write grouped, strand-combined and filtered UMIs to
---output-plot PLOT                     file to write plot of the reads/UMI distribution (in PDF format) to
---output-genewise-fits GENEFITSTAB     file to write the results of gene-wise model fitting to
+--input-bam INBAM                      read UMIs from INBAM (uses `umi_tools group`)
+--input-umitools-group-out GROUPSINTAB read UMIs from GROUPSINTAB produced by `umi_tools group`
+--input-umis UMISINTAB                 read UMIs from UMISINTAB (previously produced by --output-umis)
+--output-counts COUNTSTAB              write bias-corrected per-gene counts and models to COUNTSTAB
+--output-umis UMISTAB                  write UMIS reported by `umi_tools group` to UMISTAB
+--output-final-umis FINALUMISTAB       write strand-combined and filtered UMIs to FINALUMISTAB
+--output-plot PLOT                     write diagnostic plots in PDF format to PLOT
+--output-genewise-fits GENEFITSTAB     write gene-wise model details to GENEFITSTAB
 --umitools UMITOOLS                    path to umitools [Default: umi_tools]
---umitools-option UMITOOLSOPT          additional options to pass to "umitools group" (see umi_tools group --help)
---umi-sep UMISEP                       separator between read name and UMI (passed to umi_tools) [Default: :]
---umipair-sep UMIPAIRSEP               separator between UMI on 1st and 2nd read in combined UMI of mate pair [Default: ]
+--umitools-option UMITOOLSOPT          pass UMITOOLSOPT to `umitools group` (see `umi_tools group --help`)
+--umi-sep UMISEP                       assume UMISEP separates read name and UMI (passed to umi_tools) [Default: :]
+--umipair-sep UMIPAIRSEP               assume UMIPAIRSEP separates read1 and read2 UMI (see Strand UMIs) [Default: ]
 --paired                               assume BAM file contains paired reads (passed to umi_tools) [Default: TRUE]
---mapping-quality MAPQ                 minimal required mapping quality (passed to umi_tools) [Default: 20]
+--mapping-quality MAPQ                 ignored read with mapping quality below MAPQ (passed to umi_tools) [Default: 20]
 --filter-strand-umis                   filtes UMIs where only one strands was observed [Default: FALSE]
 --combine-strand-umis                  combine UMIs strand pairs (implies --filter-strand-umis) [Default: FALSE]
 --threshold THRESHOLD                  remove UMIs with fewer than THRESHOLD reads [Default: 2]
---molecules MOLECULES                  number of copies (strands) before amplification [Default: 2]
---cores CORES                          number of CPU cores to use when fitting the gene-wise models [Default: 1]
---plot-x-bin PLOTXBIN                  the bin size for the histogram plot
---plot-x-max PLOTXMAX                  limits x range of plot to show at most PLOTXMAX reads/UMI
+--molecules MOLECULES                  assume UMIs are initially represented by MOLECULES copies (strands) [Default: 2]
+--cores CORES                          spread gene-wise model fitting over CORES cpus [Default: 1]
+--plot-x-bin PLOTXBIN                  make read count histogram bins PLOTXBIN wide
+--plot-x-max PLOTXMAX                  limit read count histogram plot to at most PLOTXMAX reads per UMI
 --plot-skip-phantoms                   do not show phantom UMIs in histogram plot [Default: FALSE]
 --verbose                              enable verbose output
 ')
