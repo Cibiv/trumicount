@@ -8,6 +8,7 @@
 \usepackage[hidelinks]{hyperref}
 
 \newminted[shellcode]{shell}{bgcolor=lightgray}
+\newminted[Rcode]{R}{bgcolor=lightgray}
 \newmintedfile[shellscript]{shell}{bgcolor=lightgray}
 %\setmainfont[Ligatures=TeX]{TeX Gyre Pagella}
 
@@ -85,9 +86,54 @@ TRUmiCount and our version of umi\_tools can now be installed
 conda install trumicount umi_tools samtools
 \end{shellcode}
 
-\subsection{Manual Installation}
+\subsection{Manual Installation on linux or mac OS}
 
-XXX Write Me
+\subsubsection*{Installing TRUmiCount}
+
+First, make sure you have R\footnote{R Core Team. R: A language and environment for statistical
+  computing. R Foundation for Statistical Computing, Vienna, Austria (2017). \url{https://www.R-project.org/}} (at least version 3.1) installed. First, we'll install a few required packages from CRAN. Start R (either on the command line, or open RStuido) and type
+
+\begin{Rcode}
+install.packages(c('statmod', 'akima', 'data.table', 'docopt'))
+\end{Rcode}
+
+Note that unless you have write privileges to your system's R installation, the packages will be installed only for your user. Having installed these packages, you can install our \texttt{gwpcR} package, which isn't available on CRAN yet. Open a terminal window (not R) and do
+  
+\begin{shellcode}
+CRED=gwpcr-access:gwpcr123
+URL=https://$CRED@bitbucket.org/florian_pflug/gwpcr.git
+git clone $URL gwpcr
+cd gwpcr/
+R CMD INSTALL .
+\end{shellcode}
+
+With all prerequisites available, TRUmiCount can now be installed. The commands below install TRUmiCount into your home directory. To install TRUmiCount system-wide (assuming you have the necessary privileges), don't specify \texttt{--prefix \textasciitilde/}.
+
+\begin{shellcode}
+CRED=gwpcr-access:gwpcr123
+URL=https://$CRED@bitbucket.org/florian_pflug/trumicount.git
+git clone $URL trumicount
+cd trumicount/
+mkdir -p ~/.local/bin
+./install.R --prefix ~/.local
+\end{shellcode}
+
+To be able to run TRUmiCount, you must add \texttt{~/.local/bin} to your \texttt{PATH}. \textbf{This must be done every time a new terminal window is opened!}
+
+\begin{shellcode}
+export PATH=~/.local/bin:$PATH
+\end{shellcode}
+%$
+
+\subsubsection*{Installing umi\_tools}
+
+TRUmiCount uses umi\_tools to extract UMIs from the reads in a BAM file and to correct for sequencing errors. We provide a modified version of umi\_tools which improves the handling of paired-end reads. You can install our version with
+
+\begin{shellcode}
+git clone git@github.com:fgp/UMI-tools.git umi_tools
+cd umi_tools
+python setup.py install --user
+\end{shellcode}
 
 \section{Using TRUmiCount}
 
