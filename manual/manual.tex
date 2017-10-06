@@ -72,7 +72,7 @@ conda config --env --add channels bioconda
 
 \subsubsection*{Installing TRUmiCount}
 
-Finall we add the channel that supplies TRUmiCount and a modified version of umi\_tools\footnote{\url{https://github.com/CGATOxford/UMI-tools}} with improved handling of paired-end reads\footnote{Note that the backslash (``\textbackslash'') only serves to make your shell ignore the linebreak that follows it. If you enter the command as a single line, skip the backslash}
+Finall we add the channel that supplies TRUmiCount and a modified version of umi\_tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017)} with improved handling of paired-end reads\footnote{Note that the backslash (``\textbackslash'') only serves to make your shell ignore the linebreak that follows it. If you enter the command as a single line, skip the backslash}
 
 \begin{shellcode}
 conda config --env --add channels \
@@ -82,7 +82,7 @@ conda config --env --add channels \
 TRUmiCount and our version of umi\_tools can now be installed
 
 \begin{shellcode}
-conda install TRUmiCount umi_tools samtools
+conda install trumicount umi_tools samtools
 \end{shellcode}
 
 \subsection{Manual Installation}
