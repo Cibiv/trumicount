@@ -56,7 +56,7 @@ BEGIN {
   print "gene" "\\t" "sample" "\\t" "pos" "\\t" "end" "\\t" "umi" "\\t" "rawumis" "\\t" "reads";
 }
 NR==1 {
-  # Read colum names
+  # Locate columns
   Iread_id=Icontig=Iposition=Iposition2=Igene=Iumi=Iumi_count=Ifinal_umi=Ifinal_umi_count=Iunique_id=-1;
   for (i=1;i<=NF;i++) {
     switch ($i) {
