@@ -152,8 +152,7 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
   if (!is.null(ARGS$`input-bam`)) {
     # Input is BAM File, we use umi_tools to group similar UMIs. It outputs a line per read,
     # but indicates which reads belong to the same UMI group.
-    cmds[[length(cmds)+1]] <- paste("/usr/bin/time", "-f", "'umi_tools resources: user: %U sec, kernel: %K sec, memory: %M kB'",
-                                    shQuote(ARGS$`umitools`), 'group', '--group-out /dev/stdout',
+    cmds[[length(cmds)+1]] <- paste(shQuote(ARGS$`umitools`), 'group', '--group-out /dev/stdout',
                                     '-I', shQuote(ARGS$`input-bam`),
                                     '-L', ifelse(ARGS$verbose, '/dev/stderr', '/dev/null'),
                                     '--umi-sep', shQuote(ARGS$`umi-sep`),
