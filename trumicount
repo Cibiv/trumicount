@@ -3,7 +3,7 @@
 # ******************************************************************************
 # *** Arguments Definition *****************************************************
 # ******************************************************************************
-VERSION <- "0.9"
+VERSION <- "0.9.1"
 DOCSTRING <- paste0('
 Usage: trumicount ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-umis UMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-x-bin PLOTXBIN ] [ --plot-x-max PLOTXMAX ] [ --plot-skip-phantoms ] [ --verbose ]
 
