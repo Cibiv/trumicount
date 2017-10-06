@@ -86,6 +86,7 @@ TRUmiCount and our version of umi\_tools can now be installed
 conda install trumicount umi_tools samtools
 \end{shellcode}
 
+\pagebreak
 \subsection{Manual Installation on linux or mac OS}
 
 \subsubsection*{Installing TRUmiCount}
@@ -107,7 +108,7 @@ cd gwpcr/
 R CMD INSTALL .
 \end{shellcode}
 
-With all prerequisites available, TRUmiCount can now be installed. The commands below install TRUmiCount into your home directory. To install TRUmiCount system-wide (assuming you have the necessary privileges), don't specify \texttt{--prefix \textasciitilde/}.
+With all prerequisites available, TRUmiCount can now be installed. The commands below install TRUmiCount into your home directory. To install TRUmiCount system-wide (assuming you have the necessary privileges), don't specify \texttt{--prefix \textasciitilde/.local}.
 
 \begin{shellcode}
 CRED=gwpcr-access:gwpcr123
@@ -135,6 +136,7 @@ cd umi_tools
 python setup.py install --user
 \end{shellcode}
 
+\pagebreak
 \section{Using TRUmiCount}
 
 \subsection{Supported input formats \& options}
@@ -167,8 +169,19 @@ The option ``\texttt{--output-umis}'' (together with ``\texttt{--input-bam}'') p
 
 \subsection{Output}
 
-XXX Write Me
+The main output of TRUmiCount is a table containing for each gene to columns
+\begin{description}
+\item[sample] The sample identifier (e.g cell barcode)
+\item[gene] The gene identifier (see discussion in \textit{Reading UMIs from a BAM File})
+\item[n.umis] The number of true UMIs (i.e. after applying filters) detected
+\item[n.tot] The estimated total number of molecules, i.e. $\textrm{n.umis} / (1 - \textrm{loss})$.
+\item[efficiency] The estimated gene-specific amplification efficiency
+\item[depth] The gene-specific sequencing depth in reads/molecule.
+\item[loss] The estimated gene-specific loss, i.e. the probability of not detecting or filtering a true UMI. 
+\item[n.obs] The number of observations used to estimate \textit{efficiency}, \textit{depth} and \textit{loss}.
+\end{description}
 
+\pagebreak
 \subsection{Strand UMIs}
 
 Some UMI-based library preparation protocols produce \emph{strand UMIs} where the two strands of an initial double-stranded template molecule produce distinct (but related) UMIs. Filtering out UMIs for which the partner UMI corresponding to the second strand is not detected offers second possibility (besides the read count threshold) for filtering our phantom UMIs.
@@ -185,12 +198,14 @@ With the option ``\texttt{--filter-strand-umis}'', UMIs are filtered out if thei
 
 With the option ``\texttt{--combine-strand-umis}'', partner UMIs are paired, and the read count threshold is applied to be partners. In this mode, the actual loss (i.e. fraction of true UMIs removed by the filter) is $1 - (1-\mathbb{P}(C < T))^2$, because we now filter out UMI pairs if \emph{either} of the partners have fewer than $T$ reads. Againm TRUmiCount adjust the loss computation accordingly and outputs corrected losses. And again the model distribution shown in the plots, does not (and cannot) take this adjustment into account, so that the stated loss is no longer simply the sum of the model probabilities for read counts less than $T$.
 
+\pagebreak
 \section{Parameter Reference}
 
 \begin{description}
 \input{reference.tex}
 \end{description}
 
+\pagebreak
 \section{Examples}
 
 The example data can be downloaded from \url{http://tuc:tuc@www.cibiv.at/~pflug_/trumicount}. Before TRUmiCount can process these BAM files, they need to be indexed by running
@@ -210,6 +225,7 @@ This produces the following diagnostic plot \texttt{kv\_1000g.pdf} showing the o
 
 {\centering \includegraphics[width=7cm]{../examples/kv_1000g.pdf}\\}
 
+\pagebreak
 \subsection{Paired-End Data with strand UMIs}
 
 The file \texttt{sg\_100g.bam} contains a reduced (restricted to the first 100 genes, and subsamples to 25\%) version of data published by Shiroguchi \textit{et al.}\footnote{Shiroguchi, K., Jia, T. Z., Sims, P. A. \& Xie, X. S. Digital RNA sequencing minimizes sequence-dependent bias and amplification noise with optimized single-molecule barcodes. \textit{Proceedings of the National Academy of Sciences of the United States of America} \textbf{109}, 1347-1352 (2012).} which uses \emph{strand UMIs}.
