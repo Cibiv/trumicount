@@ -5,7 +5,7 @@
 # ******************************************************************************
 VERSION <- "0.9.1"
 DOCSTRING <- paste0('
-Usage: trumicount ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-umis UMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plot PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-x-bin PLOTXBIN ] [ --plot-x-max PLOTXMAX ] [ --plot-skip-phantoms ] [ --verbose ]
+Usage: trumicount ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-umis UMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plots PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-hist-bin PLOTXBIN ] [ --plot-hist-xmax PLOTXMAX ] [ --plot-skip-phantoms ] [ --verbose ]
 
 Version ', VERSION, '
 
@@ -16,7 +16,7 @@ Options:
 --output-counts COUNTSTAB              write bias-corrected per-gene counts and models to COUNTSTAB
 --output-umis UMISTAB                  write UMIS reported by `umi_tools group` to UMISTAB
 --output-final-umis FINALUMISTAB       write strand-combined and filtered UMIs to FINALUMISTAB
---output-plot PLOT                     write diagnostic plots in PDF format to PLOT
+--output-plots PLOT                     write diagnostic plots in PDF format to PLOT
 --output-genewise-fits GENEFITSTAB     write gene-wise model details to GENEFITSTAB
 --umitools UMITOOLS                    path to umitools [Default: umi_tools]
 --umitools-option UMITOOLSOPT          pass UMITOOLSOPT to `umitools group` (see `umi_tools group --help`)
@@ -29,8 +29,8 @@ Options:
 --threshold THRESHOLD                  remove UMIs with fewer than THRESHOLD reads [Default: 2]
 --molecules MOLECULES                  assume UMIs are initially represented by MOLECULES copies (strands) [Default: 2]
 --cores CORES                          spread gene-wise model fitting over CORES cpus [Default: 1]
---plot-x-bin PLOTXBIN                  make read count histogram bins PLOTXBIN wide
---plot-x-max PLOTXMAX                  limit read count histogram plot to at most PLOTXMAX reads per UMI
+--plot-hist-bin PLOTXBIN               make read count histogram bins PLOTXBIN wide
+--plot-hist-xmax PLOTXMAX              limit read count histogram plot to at most PLOTXMAX reads per UMI
 --plot-skip-phantoms                   do not show phantom UMIs in histogram plot [Default: FALSE]
 --verbose                              enable verbose output
 ')
@@ -126,8 +126,8 @@ ARGS$`mapping-quality` <- as.integer(ARGS$`mapping-quality`)
 ARGS$threshold <- as.integer(ARGS$threshold)
 ARGS$molecules <- as.integer(ARGS$molecules)
 ARGS$cores <- as.integer(ARGS$cores)
-ARGS$`plot-x-bin` <- if (!is.null(ARGS$`plot-x-bin`)) as.integer(ARGS$`plot-x-bin`) else NULL
-ARGS$`plot-x-max` <- if (!is.null(ARGS$`plot-x-max`)) as.numeric(ARGS$`plot-x-max`) else NULL
+ARGS$`plot-hist-bin` <- if (!is.null(ARGS$`plot-hist-bin`)) as.integer(ARGS$`plot-hist-bin`) else NULL
+ARGS$`plot-hist-xmax` <- if (!is.null(ARGS$`plot-hist-xmax`)) as.numeric(ARGS$`plot-hist-xmax`) else NULL
 if (ARGS$verbose)
   print(list(`Command Line Arguments`=ARGS))
 if (ARGS$cores > 1) {
@@ -337,23 +337,30 @@ message('Overall efficiency ', round(100*gm$efficiency), '%, depth ',
         round(gm$lambda0, digits=3), ' reads/UMI, loss ', round(100*gm.loss), '%')
 
 # ******************************************************************************
+# *** Open Plot Output PDF File ************************************************
+# ******************************************************************************
+if (!is.null(ARGS$`output-plots`)) {
+  message('*** Opening PDF ', ARGS$`output-plots`, ' for plot output')
+  pdf(file=ARGS$`output-plots`, onefile=TRUE, height=3.5, width=5.5)
+}
+
+# ******************************************************************************
 # *** Plot global reads/UMI distribution ***************************************
 # ******************************************************************************
-if (!is.null(ARGS$`output-plot`)) {
-  message('*** Plotting reads/UMI distribution to ', ARGS$`output-plot`)
+if (!is.null(ARGS$`output-plots`)) {
+  message('*** Plotting reads/UMI distribution')
   counts <- umis[, eval(reads.expr)]
   counts.prefilter <- umis.prefilter[, eval(reads.expr)]
-  x.bin <- ifelse(!is.null(ARGS$`plot-x-bin`),
-                  ARGS$`plot-x-bin`,
+  x.bin <- ifelse(!is.null(ARGS$`plot-hist-bin`),
+                  ARGS$`plot-hist-bin`,
                   max(1, floor(max(counts) / nclass.Sturges(counts))))
   h.breaks <- seq(from=0,
                   to=x.bin*ceiling(max(counts)/x.bin),
                   by=x.bin)
-  x.max <- ifelse(!is.null(ARGS$`plot-x-max`),
-                  ARGS$`plot-x-max`,
+  x.max <- ifelse(!is.null(ARGS$`plot-hist-xmax`),
+                  ARGS$`plot-hist-xmax`,
                   max(h.breaks))
   # Setup plotting
-  pdf(file=ARGS$`output-plot`, onefile=TRUE, height=3.5, width=5.5)
   par(mar=c(3.1, 2.1, 1.1, 0.2))
   # Plot phantoms if requested
   if (!ARGS$`plot-skip-phantoms`) {
@@ -391,7 +398,6 @@ if (!is.null(ARGS$`output-plot`)) {
   # Plot Y-Axis
   axis(side=2, line=0, at=c(0, par("usr")[4]), labels=NA)
   mtext(side=2, line=1, '#UMIs with x reads')
-  d <- dev.off()
 }
 
 # ******************************************************************************
@@ -410,6 +416,13 @@ if (!is.null(ARGS$`output-genewise-fits`)) {
 }
 umicounts <- gsm[, list(sample, gene, n.umis, n.tot,
                         efficiency, depth=lambda0, loss, n.obs)]
+
+# ******************************************************************************
+# *** Close Plot Output PDF File ***********************************************
+# ******************************************************************************
+if (!is.null(ARGS$`output-plots`)) {
+  d <- dev.off()
+}
 
 # ******************************************************************************
 # *** Output count table *******************************************************
