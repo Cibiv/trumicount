@@ -233,12 +233,11 @@ The file \texttt{kv\_1000g.bam} contains a reduced (restricted to the first 0100
 
 \shellscript{../examples/kv_1000g.cmd}
 
-This writes the bias-corrected counts to \texttt{kv\_1000g.tab}, and outputs the following diagnostic plots to \texttt{kv\_1000g.pdf}.
+This writes the bias-corrected counts to \texttt{kv\_1000g.tab}, and outputs the following diagnostic plots to \texttt{kv\_1000g.pdf}. The number of bins for which the empirical variance is plotted is increased to 15 (\texttt{--plot-var-bins}), and the y-axis of the variance plot is log-scaled (\texttt{--plot-var-logy}).
 
 {\centering \includegraphics[width=6cm,page=1]{../examples/kv_1000g.pdf}
             \includegraphics[width=6cm,page=2]{../examples/kv_1000g.pdf}\\}
 
-\pagebreak
 \subsection{Paired-End Data with strand UMIs}
 
 The file \texttt{sg\_100g.bam} contains a reduced (restricted to the first 100 genes, and subsamples to 25\%) version of data published by Shiroguchi \textit{et al.}\footnote{Shiroguchi, K., Jia, T. Z., Sims, P. A. \& Xie, X. S. Digital RNA sequencing minimizes sequence-dependent bias and amplification noise with optimized single-molecule barcodes. \textit{Proceedings of the National Academy of Sciences of the United States of America} \textbf{109}, 1347-1352 (2012).} which uses \emph{strand UMIs}.
