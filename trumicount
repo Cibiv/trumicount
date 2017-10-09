@@ -441,7 +441,6 @@ if (!is.null(ARGS$`output-plots`)) {
   plot.window(xlim=xlim,
               ylim=range(c(0, gsm.bin$loss.raw.var, s+u/2)),
               log='x')
-  box()
   axis(side=1)
   axis(side=2)
   title(xlab="# UMIs / Gene",

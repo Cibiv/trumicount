@@ -180,7 +180,17 @@ The main output of TRUmiCount is a table containing for each gene to columns
 \item[efficiency] The estimated gene-specific amplification efficiency
 \item[depth] The gene-specific sequencing depth in reads/molecule.
 \item[loss] The estimated gene-specific loss, i.e. the probability of not detecting or filtering a true UMI. 
-\item[n.obs] The number of observations used to estimate \textit{efficiency}, \textit{depth} and \textit{loss}.
+\item[n.obs] The number of observations used to estimate \textit{efficiency}, \textit{depth} and \textit{loss}. If ``\texttt{--combine-strand-umis}'' is used, this number can be larger than \textbf{n.umis}.
+\end{description}
+
+\subsubsection*{Diagnostic Plots}
+
+When the ``\texttt{--output-plots}'' option is used, TRUmiCount generates diagnostic plots as part of the analysis. The plots produced are
+
+\begin{description}
+\item[Distribution of reads per UMI.] This plot shows the observed library-wide distribution of per-UMI read counts and the distribution predicted by TRUmiCount's model of amplification and sequencing.
+
+\item[Variance of the gene-specific loss estimate.] Shows the observed variance of the gene-specific loss estimates as a function of the number of UMIs per gene ($n^{\textrm{\tiny obs}}$) and compares it to the interpolated curve ($s + u / n^{\textrm{\tiny obs}}$).
 \end{description}
 
 \pagebreak
@@ -223,9 +233,10 @@ The file \texttt{kv\_1000g.bam} contains a reduced (restricted to the first 0100
 
 \shellscript{../examples/kv_1000g.cmd}
 
-This produces the following diagnostic plot \texttt{kv\_1000g.pdf} showing the observed distribution of reads per UMI and our model's predicted distribution and loss.
+This writes the bias-corrected counts to \texttt{kv\_1000g.tab}, and outputs the following diagnostic plots to \texttt{kv\_1000g.pdf}.
 
-{\centering \includegraphics[width=7cm]{../examples/kv_1000g.pdf}\\}
+{\centering \includegraphics[width=6cm,page=1]{../examples/kv_1000g.pdf}
+            \includegraphics[width=6cm,page=2]{../examples/kv_1000g.pdf}\\}
 
 \pagebreak
 \subsection{Paired-End Data with strand UMIs}
@@ -238,9 +249,10 @@ The data from from Shiroguchi \textit{et al.} is analyzed in paired-end mode, an
 
 \shellscript{../examples/sg_100g.cmd}
 
-This produces the following diagnostic plot \texttt{sg\_100g.pdf} showing the observed distribution of reads per UMI and our model's predicted distribution and loss. Note that for the reasons explained in \emph{Strand UMIs} the stated loss deviates from the sum of the model probabilities for read counts less than $T$.
+This writes the bias-corrected counts to \texttt{sg\_100g.tab}, and outputs the following diagnostic plots to \texttt{sg\_100g.pdf}.
 
-{\centering \includegraphics[width=7cm]{../examples/sg_100g.pdf}\\}
+{\centering \includegraphics[width=6cm,page=1]{../examples/sg_100g.pdf}
+            \includegraphics[width=6cm,page=2]{../examples/sg_100g.pdf}\\}
 
 \subsubsection*{Combining strand UMIs into pairs}
 
@@ -248,8 +260,9 @@ The data from from Shiroguchi \textit{et al.} is analyzed in paired-end mode, th
 
 \shellscript{../examples/sg_100g_comb.cmd}
 
-This produces the following diagnostic plot \texttt{sg\_100g\_comb.pdf} showing the observed distribution of reads per strand UMI and our model's predicted distribution and loss. Note that for the reasons explained in \emph{Strand UMIs} the stated loss deviates from the sum of the model probabilities for read counts less than $T$. Also note that larger number of phantom UMIs to the \emph{right} of the read count threshold -- those are UMI pairs with one read count above and one below the threshold.
+This writes the bias-corrected counts to \texttt{sg\_100g\_comb.tab}, and outputs the following diagnostic plots to \texttt{sg\_100g\_comb.pdf}. Note that larger number of phantom UMIs to the \emph{right} of the read count threshold -- those are UMI pairs with one read count above and one below the threshold.
 
-{\centering \includegraphics[width=7cm]{../examples/sg_100g_comb.pdf}\\}
+{\centering \includegraphics[width=6cm,page=1]{../examples/sg_100g_comb.pdf}
+            \includegraphics[width=6cm,page=2]{../examples/sg_100g_comb.pdf}\\}
 
 \end{document}
