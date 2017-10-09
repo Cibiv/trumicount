@@ -5,7 +5,7 @@
 # ******************************************************************************
 VERSION <- "0.9.1"
 DOCSTRING <- paste0('
-Usage: trumicount ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-umis UMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plots PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-hist-bin PLOTXBIN ] [ --plot-hist-xmax PLOTXMAX ] [ --plot-skip-phantoms ] [ --plot-var-bins PLOTVARBINS ] [ --verbose ]
+Usage: trumicount ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-umis UMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plots PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-hist-bin PLOTXBIN ] [ --plot-hist-xmax PLOTXMAX ] [ --plot-skip-phantoms ] [ --plot-var-bins PLOTVARBINS ] [ --plot-var-logy ] [ --verbose ]
 
 Version ', VERSION, '
 
@@ -33,6 +33,7 @@ Options:
 --plot-hist-xmax PLOTXMAX              limit read count histogram plot to at most PLOTXMAX reads per UMI
 --plot-skip-phantoms                   do not show phantom UMIs in histogram plot [Default: FALSE]
 --plot-var-bins PLOTVARBINS            plot PLOTVARBINS separate emprirical variances [Default: 10]
+--plot-var-logy                        use log scale for the variance (y) axis [Default: FALSE]
 --verbose                              enable verbose output
 ')
 OPTS.INVALID <- list(
@@ -439,8 +440,10 @@ if (!is.null(ARGS$`output-plots`)) {
   plot.new()
   xlim=range(gsm.bin$n.obs)
   plot.window(xlim=xlim,
-              ylim=range(c(0, gsm.bin$loss.raw.var, s+u/2)),
-              log='x')
+              ylim=range(c(gsm.bin$loss.raw.var, s+u/2,
+                           ifelse(ARGS$`plot-var-logy`, NA, 0)),
+                         na.rm=TRUE),
+              log=ifelse(ARGS$`plot-var-logy`, 'xy', 'x'))
   axis(side=1)
   axis(side=2)
   title(xlab="# UMIs / Gene",
