@@ -4,7 +4,7 @@
 \item[\textmd{\texttt{--output-counts} \textit{countstab}}:] write bias-corrected per-gene counts and models to \textit{countsta}b
 \item[\textmd{\texttt{--output-umis} \textit{umistab}}:] write \textit{umis} reported by `umi\_tools group` to \textit{umista}b
 \item[\textmd{\texttt{--output-final-umis} \textit{finalumistab}}:] write strand-combined and filtered UMIs to \textit{finalumista}b
-\item[\textmd{\texttt{--output-plot} \textit{plot}}:] write diagnostic plots in \textit{pdf} format to \textit{plo}t
+\item[\textmd{\texttt{--output-plots} \textit{plot}}:] write diagnostic plots in \textit{pdf} format to \textit{plo}t
 \item[\textmd{\texttt{--output-genewise-fits} \textit{genefitstab}}:] write gene-wise model details to \textit{genefitsta}b
 \item[\textmd{\texttt{--umitools} \textit{umitools}}:] path to umitools [Default: umi\_tools]
 \item[\textmd{\texttt{--umitools-option} \textit{umitoolsopt}}:] pass \textit{umitoolsopt} to `umitools group` (see `umi\_tools group --help`)
@@ -17,7 +17,8 @@
 \item[\textmd{\texttt{--threshold} \textit{threshold}}:] remove UMIs with fewer than \textit{threshold} reads [Default: 2]
 \item[\textmd{\texttt{--molecules} \textit{molecules}}:] assume UMIs are initially represented by \textit{molecules} copies (strands) [Default: 2]
 \item[\textmd{\texttt{--cores} \textit{cores}}:] spread gene-wise model fitting over \textit{cores} cpus [Default: 1]
-\item[\textmd{\texttt{--plot-x-bin} \textit{plotxbin}}:] make read count histogram bins \textit{plotxbin} wide
-\item[\textmd{\texttt{--plot-x-max} \textit{plotxmax}}:] limit read count histogram plot to at most \textit{plotxmax} reads per UMI
+\item[\textmd{\texttt{--plot-hist-bin} \textit{plotxbin}}:] make read count histogram bins \textit{plotxbin} wide
+\item[\textmd{\texttt{--plot-hist-xmax} \textit{plotxmax}}:] limit read count histogram plot to at most \textit{plotxmax} reads per UMI
 \item[\textmd{\texttt{--plot-skip-phantoms} }:] do not show phantom UMIs in histogram plot [Default: \textit{false}]
+\item[\textmd{\texttt{--plot-var-bins} \textit{plotvarbins}}:] plot \textit{plotvarbins} separate emprirical variances [Default: 10]
 \item[\textmd{\texttt{--verbose} }:] enable verbose output 
