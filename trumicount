@@ -420,7 +420,7 @@ umicounts <- gsm[, list(sample, gene, n.umis, n.tot,
                         efficiency, depth=lambda0, loss, n.obs)]
 
 # ******************************************************************************
-# *** Plot global reads/UMI distribution ***************************************
+# *** Plot loss estimate variances over number of observations  ****************
 # ******************************************************************************
 if (!is.null(ARGS$`output-plots`)) {
   # Split d into plot-var-bins bins with similar n.obs, for n.obs > 1
