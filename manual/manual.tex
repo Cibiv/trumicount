@@ -131,10 +131,12 @@ export PATH=~/.local/bin:$PATH
 TRUmiCount uses umi\_tools to extract UMIs from the reads in a BAM file and to correct for sequencing errors. We provide a modified version of umi\_tools which improves the handling of paired-end reads. You can install our version with
 
 \begin{shellcode}
-git clone git@github.com:fgp/UMI-tools.git umi_tools
+URL=https://github.com/fgp/UMI-tools.git
+git clone -b group_endpos $URL umi_tools
 cd umi_tools
 python setup.py install --user
 \end{shellcode}
+%$
 
 \pagebreak
 \section{Using TRUmiCount}
