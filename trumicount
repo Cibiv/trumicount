@@ -448,7 +448,7 @@ if (!is.null(ARGS$`output-plots`)) {
   # Setup plot
   par(mar=c(4.1,4.1,1.1,1.1))
   plot.new()
-  xlim=range(gsm.bin$n.obs)
+  xlim=range(c(1, gsm.bin$n.obs))
   plot.window(xlim=xlim,
               ylim=range(c(gsm.bin$loss.raw.var, s+u/2,
                            ifelse(ARGS$`plot-var-logy`, NA, 0)),
