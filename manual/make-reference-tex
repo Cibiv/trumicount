@@ -1,6 +1,11 @@
 #!/bin/bash
 ../trumicount --help 2>&1 \
 	| sed -n 's/^\(--[^ ]*\) \([A-Z]*\) *\(.*\)$/\\item[\\textmd{\\texttt{\1} \2}:] \3/p' \
-	| sed 's/_/\\_/' \
-	| sed 's/\([A-Z]\{3,\}\)\([^a-z]\)/\\textit{\L\1}\2/g' \
+	| sed 's/_/\\_/g' \
+	| sed 's/--/-{}-/g' \
+	| sed 's/\([A-Z]\{4,\}\)\($\|[^a-zA-Z]\)/\\textit{\L\1}\2/g' \
+	| sed 's/`\([^`]*\)`/\\guillemotleft\\texttt{\1}\\guillemotright{}/g' \
+	| sed 's/\[Default: *\([0-9-][0-9]*\)\]/(Default: \\textrm{\1})/' \
+	| sed 's/\[Default: \\textit{\(true|false\)}\]/(Default: \\textrm{\1})/' \
+	| sed 's/\[Default: *\([^]]*\)\]/(Default: \\textrm{`\1'"'"'})/' \
 	> reference.tex

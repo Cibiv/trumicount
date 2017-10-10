@@ -14,12 +14,12 @@ Options:
 --input-umitools-group-out GROUPSINTAB read UMIs from GROUPSINTAB produced by `umi_tools group`
 --input-umis UMISINTAB                 read UMIs from UMISINTAB (previously produced by --output-umis)
 --output-counts COUNTSTAB              write bias-corrected per-gene counts and models to COUNTSTAB
---output-umis UMISTAB                  write UMIS reported by `umi_tools group` to UMISTAB
+--output-umis UMISTAB                  write UMIs reported by `umi_tools group` to UMISTAB
 --output-final-umis FINALUMISTAB       write strand-combined and filtered UMIs to FINALUMISTAB
---output-plots PLOT                     write diagnostic plots in PDF format to PLOT
+--output-plots PLOT                    write diagnostic plots in PDF format to PLOT
 --output-genewise-fits GENEFITSTAB     write gene-wise model details to GENEFITSTAB
 --umitools UMITOOLS                    path to umitools [Default: umi_tools]
---umitools-option UMITOOLSOPT          pass UMITOOLSOPT to `umitools group` (see `umi_tools group --help`)
+--umitools-option UMITOOLSOPT          pass UMITOOLSOPT to `umi_tools group` (see `umi_tools group --help`)
 --umi-sep UMISEP                       assume UMISEP separates read name and UMI (passed to umi_tools) [Default: :]
 --umipair-sep UMIPAIRSEP               assume UMIPAIRSEP separates read1 and read2 UMI (see Strand UMIs) [Default: ]
 --paired                               assume BAM file contains paired reads (passed to umi_tools) [Default: TRUE]
