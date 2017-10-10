@@ -432,10 +432,12 @@ umicounts <- gsm[, list(sample, gene, n.umis, n.tot,
 if (!is.null(ARGS$`output-plots`)) {
   # Split d into plot-var-bins bins with similar n.obs, for n.obs > 1
   gsmp <-  gsm[order(n.obs), ][n.obs > 1,]
-  gsmp[,bin := floor(seq(from=1, to=(1-.Machine$double.neg.eps)*ARGS$`plot-var-bins`,
-                         length.out=.N)) ]
+  gsmp[is.finite(loss.raw)
+       , bin := floor(seq(from=1, to=(1-.Machine$double.neg.eps)*ARGS$`plot-var-bins`,
+                          length.out=.N)) ]
   # Compute loss variance within bins
-  gsm.bin <- gsmp[, list(n.obs=mean(n.obs, na.rm=TRUE),
+  gsm.bin <- gsmp[is.finite(bin)
+                  , list(n.obs=mean(n.obs, na.rm=TRUE),
                          loss.raw.var=var(loss.raw, na.rm=TRUE))
                   , by=bin]
   # Extract between-group variance s and baseline estimator error u
