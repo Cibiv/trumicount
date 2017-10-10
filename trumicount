@@ -28,6 +28,7 @@ Options:
 --combine-strand-umis                  combine UMIs strand pairs (implies --filter-strand-umis) [Default: FALSE]
 --threshold THRESHOLD                  remove UMIs with fewer than THRESHOLD reads [Default: 2]
 --molecules MOLECULES                  assume UMIs are initially represented by MOLECULES copies (strands) [Default: 2]
+--genewise-min-umis MINUMIS            use global estimates for genes with fewer than MINUMIs (strand) UMIs [Default: 5]
 --cores CORES                          spread gene-wise model fitting over CORES cpus [Default: 1]
 --variance-estimator VAREST            use VAREST to estimate variances, can be "lsq" or "mle" [Default: lsq]
 --plot-hist-bin PLOTXBIN               make read count histogram bins PLOTXBIN wide
@@ -417,7 +418,8 @@ gsm <- gwpcrpois.mom.groupwise(group.expr, data=umis,
                                threshold=ARGS$threshold, molecules=ARGS$molecules,
                                loss=loss.expr,
                                ctrl=list(cores=ARGS$cores,
-                                         var.est.distfree=ARGS$`var-est-distfree`))
+                                         var.est.distfree=ARGS$`var-est-distfree`,
+                                         obs.min.ingroup=ARGS$`genewise-min-umis`))
 if (!is.null(ARGS$`output-genewise-fits`)) {
   f <- open_byext(ARGS$`output-genewise-fits`, open='w')
   write.table(gsm, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)

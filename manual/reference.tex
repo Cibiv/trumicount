@@ -16,6 +16,7 @@
 \item[\textmd{\texttt{--combine-strand-umis} }:] combine UMIs strand pairs (implies --filter-strand-umis) [Default: \textit{false}]
 \item[\textmd{\texttt{--threshold} \textit{threshold}}:] remove UMIs with fewer than \textit{threshold} reads [Default: 2]
 \item[\textmd{\texttt{--molecules} \textit{molecules}}:] assume UMIs are initially represented by \textit{molecules} copies (strands) [Default: 2]
+\item[\textmd{\texttt{--genewise-min-umis} \textit{minumis}}:] use global estimates for genes with fewer than \textit{minum}is (strand) UMIs [Default: 5]
 \item[\textmd{\texttt{--cores} \textit{cores}}:] spread gene-wise model fitting over \textit{cores} cpus [Default: 1]
 \item[\textmd{\texttt{--variance-estimator} \textit{varest}}:] use \textit{varest} to estimate variances, can be "lsq" or "mle" [Default: lsq]
 \item[\textmd{\texttt{--plot-hist-bin} \textit{plotxbin}}:] make read count histogram bins \textit{plotxbin} wide
