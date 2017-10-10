@@ -126,6 +126,7 @@ open_byext <- function(path, ...) {
 # ******************************************************************************
 ARGS <- docopt::docopt(DOCSTRING, strip_names=TRUE)
 ARGS$`mapping-quality` <- as.integer(ARGS$`mapping-quality`)
+ARGS$`strand-umis` <- (ARGS$`filter-strand-umis` || ARGS$`combine-strand-umis`)
 ARGS$threshold <- as.integer(ARGS$threshold)
 ARGS$molecules <- as.integer(ARGS$molecules)
 ARGS$cores <- as.integer(ARGS$cores)
@@ -225,7 +226,7 @@ message('Found ', nrow(umis), ' UMIs for ', length(levels(umis$gene)), ' genes i
 # allow the PCR products of the two strands to be distinguished). Such pairs
 # are recognized by their "reciprocity" -- first and second read of the mate
 # pair are swapped, INCLUDING the UMIs found on these reads.
-if (ARGS$`filter-strand-umis` || ARGS$`combine-strand-umis`) {
+if (ARGS$`strand-umis`) {
   # Usually, molecules should be set to 1 since UMIs are initially represented by
   # only a single strand
   if (ARGS$molecules != 1)
@@ -451,7 +452,9 @@ if (!is.null(ARGS$`output-plots`)) {
               log=ifelse(ARGS$`plot-var-logy`, 'xy', 'x'))
   axis(side=1)
   axis(side=2)
-  title(xlab="# UMIs / Gene",
+  title(xlab=ifelse(ARGS$`strand-umis`,
+                    "# Strand UMIs / Gene",
+                    "# UMIs / Gene"),
         ylab=expression("Total Variance of Loss Estimates"))
   legend('topright', lty=c(NA, 2), pch=c(4, NA),
          c('Empirical', 'Prediction s + u/n'), bty='n')
