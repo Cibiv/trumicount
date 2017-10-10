@@ -5,7 +5,7 @@
 # ******************************************************************************
 VERSION <- "0.9.1"
 DOCSTRING <- paste0('
-Usage: trumicount ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-umis UMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plots PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --plot-hist-bin PLOTXBIN ] [ --plot-hist-xmax PLOTXMAX ] [ --plot-skip-phantoms ] [ --plot-var-bins PLOTVARBINS ] [ --plot-var-logy ] [ --verbose ]
+Usage: trumicount ( --input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB ) [ --output-counts COUNTSTAB ] [ --output-umis UMISTAB ] [ --output-final-umis FINALUMISTAB ] [ --output-plots PLOT ] [ --output-genewise-fits GENEFITSTAB ] [ --umitools UMITOOLS ] [ --umitools-option UMITOOLSOPT ... ] [ --umi-sep UMISEP] [ --umipair-sep UMIPAIRSEP ] [ --paired ] [ --mapping-quality MAPQ ] [ --filter-strand-umis ] [ --combine-strand-umis ] [ --threshold THRESHOLD ] [ --molecules MOLECULES ] [ --cores CORES ] [ --variance-estimator VAREST ] [ --plot-hist-bin PLOTXBIN ] [ --plot-hist-xmax PLOTXMAX ] [ --plot-skip-phantoms ] [ --plot-var-bins PLOTVARBINS ] [ --plot-var-logy ] [ --verbose ]
 
 Version ', VERSION, '
 
@@ -29,6 +29,7 @@ Options:
 --threshold THRESHOLD                  remove UMIs with fewer than THRESHOLD reads [Default: 2]
 --molecules MOLECULES                  assume UMIs are initially represented by MOLECULES copies (strands) [Default: 2]
 --cores CORES                          spread gene-wise model fitting over CORES cpus [Default: 1]
+--variance-estimator VAREST            use VAREST to estimate variances, can be "lsq" or "mle" [Default: lsq]
 --plot-hist-bin PLOTXBIN               make read count histogram bins PLOTXBIN wide
 --plot-hist-xmax PLOTXMAX              limit read count histogram plot to at most PLOTXMAX reads per UMI
 --plot-skip-phantoms                   do not show phantom UMIs in histogram plot [Default: FALSE]
@@ -131,6 +132,8 @@ ARGS$cores <- as.integer(ARGS$cores)
 ARGS$`plot-hist-bin` <- if (!is.null(ARGS$`plot-hist-bin`)) as.integer(ARGS$`plot-hist-bin`) else NULL
 ARGS$`plot-hist-xmax` <- if (!is.null(ARGS$`plot-hist-xmax`)) as.numeric(ARGS$`plot-hist-xmax`) else NULL
 ARGS$`plot-var-bins` <- if (!is.null(ARGS$`plot-var-bins`)) as.numeric(ARGS$`plot-var-bins`) else NULL
+ARGS$`variance-estimator` <- match.arg(ARGS$`variance-estimator`, c('mle', 'lsq'))
+ARGS$`var-est-distfree` <- (ARGS$`variance-estimator` == 'lsq')
 if (ARGS$verbose)
   print(list(`Command Line Arguments`=ARGS))
 if (ARGS$cores > 1) {
@@ -411,7 +414,9 @@ if (!is.null(ARGS$`output-plots`)) {
 message('*** Fitting gene-wise models on ', ARGS$cores, ' cores')
 gsm <- gwpcrpois.mom.groupwise(group.expr, data=umis,
                                threshold=ARGS$threshold, molecules=ARGS$molecules,
-                               loss=loss.expr, ctrl=list(cores=ARGS$cores))
+                               loss=loss.expr,
+                               ctrl=list(cores=ARGS$cores,
+                                         var.est.distfree=ARGS$`var-est-distfree`))
 if (!is.null(ARGS$`output-genewise-fits`)) {
   f <- open_byext(ARGS$`output-genewise-fits`, open='w')
   write.table(gsm, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
