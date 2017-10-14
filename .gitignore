@@ -12,3 +12,9 @@ tests/*.counts.tab.gz
 tests/*.genewise.tab.gz
 tests/*.plot.pdf
 tests/*.log
+web/.index.json
+web/linux-64
+web/noarch
+web/osx-64
+web/repodata.json
+web/repodata.json.bz2
