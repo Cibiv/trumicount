@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "TRUmiCount"
+AuthUserFile /home/CIBIV/pflug_/public_html/trumicount/.htpasswd
+Require valid-user
