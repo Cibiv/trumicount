@@ -1,11 +1,10 @@
 \documentclass[10pt]{article}
-%\usepackage{tgpagella}
+\usepackage{letltxmacro}
 \usepackage[T1]{fontenc}
 \usepackage{mathpazo}
-%\renewcommand*\ttdefault{txtt}
 \usepackage[scaled=0.85]{beramono}
 \usepackage{microtype}
-\usepackage{xcolor,graphicx,float,caption}
+\usepackage{xcolor,graphicx,float,caption,nameref}
 \usepackage{minted}
 \usepackage{upquote} % Makes minted package use normal single quotes
 \usepackage[hidelinks]{hyperref}
@@ -17,6 +16,17 @@
 
 \newcommand{\ddarg}[1]{\texttt{-{}-#1}}
 
+\makeatletter
+\AtBeginDocument{%
+  \@ifdefinable{\my@nameref}{%
+    \LetLtxMacro\my@nameref\nameref
+    \DeclareRobustCommand*{\nameref}[1]{%
+      \textit{\my@nameref{#1}}%
+    }%
+  }%
+}
+\makeatother
+
 \begin{document}
 
 \begin{titlepage}
@@ -26,8 +36,7 @@ Using\\
 TRUmiCount\\}
 \vskip5cm
 {\large\centering%
-Florian G. Pflug\\
-\texttt{<florian.pflug@univie.ac.at>}\\}
+Florian G. Pflug\\}
 \vfill
 \tableofcontents
 \vfill
@@ -44,7 +53,7 @@ Florian G. Pflug\\
 
 \subsubsection*{Installing Conda}
 
-Conda is a package manager that allows easy installation of a large range of software packages. See \url{https://conda.io/docs/user-guide/install/index.html} for your options of how to insteall conda. Briefly, on 64-bit linux do\footnote{You can replace \texttt{/conda} with a directory of your choice, but remember to do so in \emph{all} the commands}
+Conda\footnote{\url{http://conda.io}} allows easy installation of a large range of software packages. See the user guide for installation instructions. Briefly, (on 64-bit Linux) do\footnote{You can replace \texttt{/conda} with a directory of your choice, but remember to do so everywhere}
 
 \begin{shellcode}
 INSTALLER=Miniconda2-latest-Linux-x86_64.sh
@@ -54,13 +63,13 @@ bash $INSTALLER -p /conda
 
 \subsubsection*{Creating an environment}
 
-Conda allows the creation of multiple \emph{environments}, each containing different collections of packages. We will now create an environment for TRUmiCount
+Conda allows creating multiple \emph{environments}, each containing a different collection of packages. We create a separate environment for TRUmiCount
 
 \begin{shellcode}
 /conda/bin/conda create -n trc
 \end{shellcode}
 
-This environment is now \emph{activated} to make it the target of further conda commands, and the installed software visible. \textbf{This must be done every time a new terminal window is opened!}
+This environment is now \emph{activated} to make it the target of further conda commands, and to make the installed software visible. \textbf{This must be done every time you open a new terminal window!}
 
 \begin{shellcode}
 source /conda/bin/activate trc
@@ -68,7 +77,7 @@ source /conda/bin/activate trc
 %$
 \subsubsection*{Installing BioConda}
 
-Conda packages are organized into so-called \emph{channels}. We add the BioConda channel which provides many common tools for dealing with high-throughput sequencing data
+Conda packages are organized into so-called \emph{channels}. We add the BioConda\footnote{\url{http://bioconda.github.io/}} channel which contains many common bioinformatics tools.
 
 \begin{shellcode}
 conda config --env --add channels defaults
@@ -78,7 +87,7 @@ conda config --env --add channels bioconda
 
 \subsubsection*{Installing TRUmiCount}
 
-Finall we add the channel that supplies TRUmiCount and a modified version of umi\_tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017)} with improved handling of paired-end reads\footnote{Note that the backslash (``\textbackslash'') only serves to make your shell ignore the linebreak that follows it. If you enter the command as a single line, skip the backslash}
+Finall we add the channel that supplies TRUmiCount and a modified version of umi\_tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} with improved handling of paired-end reads\footnote{Remove the backslash (``\textbackslash'') if you enter the command as a single line.}
 
 \begin{shellcode}
 conda config --env --add channels \
@@ -97,13 +106,13 @@ conda install trumicount umi_tools samtools
 \subsubsection*{Installing TRUmiCount}
 
 First, make sure you have R\footnote{R Core Team. R: A language and environment for statistical
-  computing. R Foundation for Statistical Computing, Vienna, Austria (2017). \url{https://www.R-project.org/}} (at least version 3.1) installed. First, we'll install a few required packages from CRAN. Start R (either on the command line, or open RStuido) and type
+  computing. R Foundation for Statistical Computing, Vienna, Austria (2017). \url{http://www.R-project.org/}} (at least version 3.1) installed. First, we'll install a few required packages from CRAN. Start R (either on the command line, or open RStuido) and type
 
 \begin{Rcode}
 install.packages(c('statmod', 'akima', 'data.table', 'docopt'))
 \end{Rcode}
 
-Note that unless you have write privileges to your system's R installation, the packages will be installed only for your user. Having installed these packages, you can install our \texttt{gwpcR} package, which isn't available on CRAN yet. Open a terminal window (not R) and do
+Note that unless you have write privileges to your system's R installation, the packages will be installed only for your user. Having installed these packages, you can install our \texttt{gwpcR} package (not yet on CRAN or Bioconductor). Open a terminal window (not R) and do
   
 \begin{shellcode}
 CRED=gwpcr-access:gwpcr123
@@ -113,7 +122,7 @@ cd gwpcr/
 R CMD INSTALL .
 \end{shellcode}
 
-With all prerequisites available, TRUmiCount can now be installed. The commands below install TRUmiCount into your home directory. To install TRUmiCount system-wide (assuming you have the necessary privileges), don't specify \ddarg{prefix \textasciitilde/.local}.
+With all prerequisites now available, TRUmiCount can now be installed. The commands below install TRUmiCount into your home directory. To install TRUmiCount system-wide (assuming you have the necessary privileges), don't specify \ddarg{prefix \textasciitilde/.local}.
 
 \begin{shellcode}
 CRED=gwpcr-access:gwpcr123
@@ -124,7 +133,7 @@ mkdir -p ~/.local/bin
 ./install.R --prefix ~/.local
 \end{shellcode}
 
-To be able to run TRUmiCount, you must add \texttt{~/.local/bin} to your \texttt{PATH}. \textbf{This must be done every time a new terminal window is opened!}
+To be able to run TRUmiCount, you must add \texttt{~/.local/bin} to your \texttt{PATH}. \textbf{This must be done every time you open a new terminal window!}
 
 \begin{shellcode}
 export PATH=~/.local/bin:$PATH
@@ -133,7 +142,7 @@ export PATH=~/.local/bin:$PATH
 
 \subsubsection*{Installing umi\_tools}
 
-TRUmiCount uses umi\_tools to extract UMIs from the reads in a BAM file and to correct for sequencing errors. We provide a modified version of umi\_tools which improves the handling of paired-end reads. You can install our version with
+TRUmiCount uses umi\_tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} to extract UMIs from the reads in a BAM file and to correct for sequencing errors. We provide a modified version of umi\_tools which improves the handling of paired-end reads. You can install our version with
 
 \begin{shellcode}
 URL=https://github.com/fgp/UMI-tools.git
@@ -144,9 +153,33 @@ python setup.py install --user
 %$
 
 \pagebreak
-\section{Using TRUmiCount}
+\subsection{Running TRUmiCount}
 
-\subsection{Supported input formats \& options}
+After installing TRUmiCount, you can display a list of options with
+
+\begin{shellcode}
+trumicount --help
+\end{shellcode}
+\\
+For a detailed explanation of TRUmiCount's various modes of operation and supported file format, see \nameref{using-trumicount} and \nameref{parameter-reference}.
+
+You can download an example input file\footnote{containing a reduced version, restricted to the first 1000 genes and sub-sampled to 50\%, of RNA-Seq data published by Kivioja, T. \textit{et al.} Counting absolute numbers of molecules using unique molecular identifiers. \textit{Nature Methods} \textbf{9}, 72–74 (2011)} in BAM format and index it (necessary for reading it with TRUmiCount) with
+
+\begin{shellcode}
+curl -O http://tuc:tuc@www.cibiv.at/~pflug_/trumicount/kv_1000g.bam
+samtools index kv_1000g.bam
+\end{shellcode}
+
+From the indexed BAM file, you can let TRUmiCount compute a table containing the bias-corrected number of transcript molecules for each gene and write it to \texttt{kv\_1000g.tab} with
+
+\shellscript{../examples/kv_1000g.min.cmd}
+
+For more examples of how to use TRUmiCount and a discussion of the various options used here, see \nameref{examples}.
+
+\pagebreak
+\section{Using TRUmiCount}\label{using-trumicount}
+
+\subsection{Input formats \& options}\label{input-options}
 
 To be able to separate true UMIs from biases and to estimate and correct for the percentage of true UMIs that are lost during library preparation or data processing, TRUmiCount analyses the distribution of read counts per UMI for each gene (or any other type of genomic feature). TRUmiCount by default assumes that
 
@@ -157,26 +190,26 @@ To be able to separate true UMIs from biases and to estimate and correct for the
 
 \subsubsection*{Reading UMIs from a BAM File}
 
-If a mapped BAM File is provided as input with ``\ddarg{input-bam} \textit{bamfile}'', TRUmiCount uses umi\_tools's \texttt{group} tool to extract a list of UMIs and their read counts from a BAM file. Sequencing errors in the UMIs are corrected by umi\_tools by \emph{merging} similar UMIs into one. When reading BAM file, on top of the defaults mentioned above, TRUmiCount assumes that
+If a mapped BAM File is provided as input with ``\ddarg{input-bam} \textit{bamfile}'', TRUmiCount uses umi\_tools's ``\texttt{group}'' tool to extract a list of UMIs and their read counts from a BAM file. Sequencing errors in the UMIs are corrected by umi\_tools by \emph{merging} similar UMIs into one. When reading BAM file, on top of the defaults mentioned above, TRUmiCount assumes that
 \begin{itemize}
-  \item The BAM file must have a corresponding index. A suitable index can be created with ``\texttt{samtools index} \texttt{bamfile}''.
-  \item The sequence name corresponds to the gene name. Alternatively, the gene names can be stored in BAM file tags -- this can be changed by using umi\_tool's \ddarg{gene-tag} option. To tell TRUmiCount to invoke umi\_tools using that option, use ``\ddarg{umitools-option}\allowbreak\ddarg{gene-tag=}\allowbreak\textit{GENE\_TAG}'' when invoking TRUmiCount.
+  \item The BAM file must have a corresponding index. A suitable index can be created with ``\texttt{samtools index} \textit{bamfile}''.
+  \item Sequences names are gene names. With the ``\ddarg{gene-tag}'' option, gene names can be read from a \emph{tag} instead, whose name is specified with ``\ddarg{umitools-option} \allowbreak\ddarg{gene-tag=}\allowbreak\textit{GENE\_TAG}'.
   \item The UMI was appended to the read name, and separated by ``:''. A different separator can be specified with ``\ddarg{umi-sep}''
   \item The BAM file contains single-end reads (read2 is ignored). To take the mapping position of both mates into account when grouping reads by UMI, specify ``\ddarg{paired}''.
   \item Reads with a mapping quality below 20 should be ignored. This threshold can be changed with ``\ddarg{mapping-quality}''.
 \end{itemize}
 
-\subsubsection*{Reading UMIs from a tab-separated file}
+\subsubsection*{Reading unfiltered UMIs from a tab-separated file}
 
-Instead of using umi\_tools to extract UMI and their read counts from a BAM file, TRUmiCount can read a previously computed table of UMIs with ``\ddarg{input-umis}''. The table must be tab-separated with one row per UMI and contain at least the columns ``sample'', ``gene'', ``reads''. When dealing with strand UMIs (see section \emph{Strand UMIs}), TRUmiCount will also use columns ``pos'' and ``end'' containing the mapping position of read1 respectively read2. 
+Instead of using umi\_tools to extract UMI and their read counts from a BAM file, TRUmiCount can read a previously computed table of UMIs with ``\ddarg{input-umis}'' (see \nameref{output-options} for how to generate such a table). The table must be tab-separated with one row per UMI and contain at least the columns ``sample'', ``gene'', ``reads''. Similar UMIs are assumed to already have been merged, but filters are assumed to have been applied. When dealing with strand UMIs (see section \nameref{strand-umis}), TRUmiCount also requires the columns ``pos'' and ``end'', which contain the mapping position of read1 respectively read2.
 
 The umi\_tools and BAM-related options ``\ddarg{umi-sep}'', ``\ddarg{umitools}'',\linebreak ``\ddarg{umitools-option}'', ``\ddarg{paired}'' and ``\ddarg{mapping-quality}'' are ignored if\linebreak ``\ddarg{input-umis}'' is used.
 
-The option ``\ddarg{output-umis}'' (together with ``\ddarg{input-bam}'') produces a suitable input file for ``\ddarg{input-umis}''. This can be used to avoid the overhead of running umi\_tools multiple times if the same input BAM file is processed multiple times with TRUmiCount, e.g. to test different read count thresholds or initial molecule counts.
+\subsection{Output formats \& options}\label{output-options}
 
-\subsection{Output}
+\subsubsection*{Writing corrected per-gene molecule counts to a tab-separated file}
 
-The main output of TRUmiCount is a table containing for each gene to columns
+The main output of TRUmiCount is a table, written to a tab-separated file specified with ``\ddarg{--output-counts}'' containing for each gene the columns
 \begin{description}
 \item[sample] The sample identifier (e.g cell barcode)
 \item[gene] The gene identifier (see discussion in \textit{Reading UMIs from a BAM File})
@@ -188,6 +221,14 @@ The main output of TRUmiCount is a table containing for each gene to columns
 \item[n.obs] The number of observations used to estimate \textit{efficiency}, \textit{depth} and \textit{loss}. If ``\ddarg{combine-strand-umis}'' is used, this number can be larger than \textbf{n.umis}.
 \end{description}
 
+\subsubsection*{Writing unfiltered UMIs to a tab-separated file }
+
+The option ``\ddarg{output-umis}'' (together with ``\ddarg{input-bam}'') writes the UMIs reported by umi\_tools (after merging similar UMIs) and their read counts to a tab-separated file, suitable for being later read with ``\ddarg{input-umis}''. This can be used to avoid the overhead of running umi\_tools multiple times if the same input BAM file is processed multiple times with TRUmiCount, e.g. to test different read count thresholds or initial molecule counts.
+
+\subsubsection*{Writing final, filtered \& strand-combined UMIs to a tab-separated file }
+
+The final list of UMIs used when fitting the model and computing corrected molecule counts can be output with ``\ddarg{output-final-umis}''. The format of the generated file depends on whether one of ``\ddarg{filter-strand-umis}'' or ``\ddarg{combine-strand-umis}'' are used. In the former case, the table contains one line per \emph{strand UMI}, listing the UMI's read count in the column ``reads'' and it's partner UMI's read count in ``reads.other''. In the latter case, the table contains one line per \emph{UMI pair}, listing the read count of the plus-strand partner UMI (arbitrarily chosed to be the one where read1's mapping position is smaller than read's) in ``reads.plus'' and the read count of the minus-strand partner UMI in ``reads.minus''.
+
 \subsubsection*{Diagnostic Plots}
 
 When the ``\ddarg{output-plots}'' option is used, TRUmiCount generates diagnostic plots as part of the analysis. The plots produced are
@@ -195,11 +236,11 @@ When the ``\ddarg{output-plots}'' option is used, TRUmiCount generates diagnosti
 \begin{description}
 \item[Distribution of reads per UMI.] This plot shows the observed library-wide distribution of per-UMI read counts and the distribution predicted by TRUmiCount's model of amplification and sequencing.
 
-\item[Variance of the gene-specific loss estimate.] Shows the observed variance of the gene-specific loss estimates as a function of the number of UMIs per gene ($n_{\textrm{\tiny obs}}$) and compares it to the interpolated curve ($s + u / n_{\textrm{\tiny obs}}$).
+\item[Variance of the gene-specific loss estimate.] Shows the observed variance of the gene-specific loss estimates as a function of the number of UMIs per gene ($n_{\textrm{\tiny obs}}$) and compares it to the interpolation curve ($s + u / n_{\textrm{\tiny obs}}$).
 \end{description}
 
 \pagebreak
-\subsection{Strand UMIs}
+\subsection{Strand UMIs}\label{strand-umis}
 
 Some UMI-based library preparation protocols produce \emph{strand UMIs} where the two strands of an initial double-stranded template molecule produce distinct (but related) UMIs. Filtering out UMIs for which the partner UMI corresponding to the second strand is not detected offers second possibility (besides the read count threshold) for filtering our phantom UMIs.
 
@@ -216,14 +257,14 @@ With the option ``\ddarg{filter-strand-umis}'', UMIs are filtered out if their p
 With the option ``\ddarg{combine-strand-umis}'', pairs of partner UMIs stemming from the two strands of a single initial template molecules are combined, and the read count threshold is applied to both partners simultaneously (again, UMIs without a partner \emph{are not} not counted as ``phantom UMIs'', but we \emph{do} count UMIs as phantoms whose partner's read count lies below the threshold!). The actual loss in this mode is $1 - (1-\mathbb{P}(C < T))^2$. TRUmiCount adjust the loss computation accordingly, and states the corrected loss also in the diagnostic plots. The plotted model distribution, however, does not take this adjustment into account, so that the stated loss is no longer simply the sum of the model probabilities for read counts less than $T$.
 
 \pagebreak
-\section{Parameter Reference}
+\section{Parameter Reference}\label{parameter-reference}
 
 \begin{description}
 \input{reference.tex}
 \end{description}
 
 \pagebreak
-\section{Examples}
+\section{Examples}\label{examples}
 
 The example data can be downloaded from \url{http://tuc:tuc@www.cibiv.at/~pflug_/trumicount}. Before TRUmiCount can process these BAM files, they need to be indexed by running
 
@@ -250,7 +291,7 @@ This command uses umi\_tools to read (error-corrected) UMIs and their read count
 
 \subsection{Paired-End Data with strand UMIs}
 
-The file \texttt{sg\_100g.bam} contains a reduced (restricted to the first 100 genes, and subsamples to 25\%) version of data published by Shiroguchi \textit{et al.}\footnote{Shiroguchi, K., Jia, T. Z., Sims, P. A. \& Xie, X. S. Digital RNA sequencing minimizes sequence-dependent bias and amplification noise with optimized single-molecule barcodes. \textit{Proceedings of the National Academy of Sciences of the United States of America} \textbf{109}, 1347-1352 (2012).} which uses \emph{strand UMIs} (see section \emph{Strand UMIs} for details).
+The file \texttt{sg\_100g.bam} contains a reduced (restricted to the first 100 genes, and subsamples to 25\%) version of data published by Shiroguchi \textit{et al.}\footnote{Shiroguchi, K., Jia, T. Z., Sims, P. A. \& Xie, X. S. Digital RNA sequencing minimizes sequence-dependent bias and amplification noise with optimized single-molecule barcodes. \textit{Proceedings of the National Academy of Sciences of the United States of America} \textbf{109}, 1347-1352 (2012).} which uses \emph{strand UMIs} (see \nameref{strand-umis} for details).
 
 \subsubsection*{Filtering out incomplete strand UMI pairs}
 
