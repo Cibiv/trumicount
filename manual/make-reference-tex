@@ -6,6 +6,7 @@
 	| sed 's/\([A-Z]\{4,\}\)\($\|[^a-zA-Z]\)/\\textit{\L\1}\2/g' \
 	| sed 's/`\([^`]*\)`/\\guillemotleft\\texttt{\1}\\guillemotright{}/g' \
 	| sed 's/\[Default: *\([0-9-][0-9]*\)\]/(Default: \\textrm{\1})/' \
-	| sed 's/\[Default: \\textit{\(true|false\)}\]/(Default: \\textrm{\1})/' \
+	| sed 's/\[Default: \\textit{false}\]/(Default: No)/' \
+	| sed 's/\[Default: \\textit{true}\]/(Default: Yes)/' \
 	| sed 's/\[Default: *\([^]]*\)\]/(Default: \\textrm{`\1'"'"'})/' \
 	> reference.tex

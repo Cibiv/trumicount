@@ -10,10 +10,10 @@
 \item[\textmd{\texttt{-{}-umitools-option} \textit{umitoolsopt}}:] pass \textit{umitoolsopt} to \guillemotleft\texttt{umi\_tools group}\guillemotright{} (see \guillemotleft\texttt{umi\_tools group -{}-help}\guillemotright{})
 \item[\textmd{\texttt{-{}-umi-sep} \textit{umisep}}:] assume \textit{umisep} separates read name and UMI (passed to umi\_tools) (Default: \textrm{`:'})
 \item[\textmd{\texttt{-{}-umipair-sep} \textit{umipairsep}}:] assume \textit{umipairsep} separates read1 and read2 UMI (see Strand UMIs) (Default: \textrm{`'})
-\item[\textmd{\texttt{-{}-paired} }:] assume BAM file contains paired reads (passed to umi\_tools) (Default: \textrm{`\textit{true}'})
+\item[\textmd{\texttt{-{}-paired} }:] assume BAM file contains paired reads (passed to umi\_tools) (Default: Yes)
 \item[\textmd{\texttt{-{}-mapping-quality} \textit{mapq}}:] ignored read with mapping quality below \textit{mapq} (passed to umi\_tools) (Default: \textrm{20})
-\item[\textmd{\texttt{-{}-filter-strand-umis} }:] filtes UMIs where only one strands was observed (Default: \textrm{`\textit{false}'})
-\item[\textmd{\texttt{-{}-combine-strand-umis} }:] combine UMIs strand pairs (implies -{}-filter-strand-umis) (Default: \textrm{`\textit{false}'})
+\item[\textmd{\texttt{-{}-filter-strand-umis} }:] filtes UMIs where only one strands was observed (Default: No)
+\item[\textmd{\texttt{-{}-combine-strand-umis} }:] combine UMIs strand pairs (implies -{}-filter-strand-umis) (Default: No)
 \item[\textmd{\texttt{-{}-threshold} \textit{threshold}}:] remove UMIs with fewer than \textit{threshold} reads (Default: \textrm{2})
 \item[\textmd{\texttt{-{}-molecules} \textit{molecules}}:] assume UMIs are initially represented by \textit{molecules} copies (strands) (Default: \textrm{2})
 \item[\textmd{\texttt{-{}-genewise-min-umis} \textit{minumis}}:] use global estimates for genes with fewer than MINUMIs (strand) UMIs (Default: \textrm{5})
@@ -21,7 +21,7 @@
 \item[\textmd{\texttt{-{}-variance-estimator} \textit{varest}}:] use \textit{varest} to estimate variances, can be "lsq" or "mle" (Default: \textrm{`lsq'})
 \item[\textmd{\texttt{-{}-plot-hist-bin} \textit{plotxbin}}:] make read count histogram bins \textit{plotxbin} wide
 \item[\textmd{\texttt{-{}-plot-hist-xmax} \textit{plotxmax}}:] limit read count histogram plot to at most \textit{plotxmax} reads per UMI
-\item[\textmd{\texttt{-{}-plot-skip-phantoms} }:] do not show phantom UMIs in histogram plot (Default: \textrm{`\textit{false}'})
+\item[\textmd{\texttt{-{}-plot-skip-phantoms} }:] do not show phantom UMIs in histogram plot (Default: No)
 \item[\textmd{\texttt{-{}-plot-var-bins} \textit{plotvarbins}}:] plot \textit{plotvarbins} separate emprirical variances (Default: \textrm{10})
-\item[\textmd{\texttt{-{}-plot-var-logy} }:] use log scale for the variance (y) axis (Default: \textrm{`\textit{false}'})
+\item[\textmd{\texttt{-{}-plot-var-logy} }:] use log scale for the variance (y) axis (Default: No)
 \item[\textmd{\texttt{-{}-verbose} }:] enable verbose output 
