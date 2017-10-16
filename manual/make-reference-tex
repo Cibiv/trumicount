@@ -1,7 +1,8 @@
 #!/bin/bash
 ../trumicount --help 2>&1 \
-	| sed -n 's/^\(--[^ ]*\) \([A-Z]*\) *\(.*\)$/\\item[\\textmd{\\texttt{\1} \2}:] \3/p' \
+	| sed -n 's/^\(--[^ ]*\) \([A-Z]*\) *\(.*\)$/\\item[\\textmd{\1 \2}:] \3/p' \
 	| sed 's/_/\\_/g' \
+	| sed 's/\(--[a-z0-9-]*\)/\\texttt{\1}/g' \
 	| sed 's/--/-{}-/g' \
 	| sed 's/\([A-Z]\{4,\}\)\($\|[^a-zA-Z]\)/\\textit{\L\1}\2/g' \
 	| sed 's/`\([^`]*\)`/\\guillemotleft\\texttt{\1}\\guillemotright{}/g' \
