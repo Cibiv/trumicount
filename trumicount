@@ -18,7 +18,7 @@ Options:
 --output-final-umis FINALUMISTAB       write strand-combined and filtered UMIs to FINALUMISTAB
 --output-plots PLOT                    write diagnostic plots in PDF format to PLOT
 --output-genewise-fits GENEFITSTAB     write gene-wise model details to GENEFITSTAB
---umitools UMITOOLS                    path to umitools [Default: umi_tools]
+--umitools UMITOOLS                    use executable UMITOOLS to run `umi_tools group` [Default: umi_tools]
 --umitools-option UMITOOLSOPT          pass UMITOOLSOPT to `umi_tools group` (see `umi_tools group --help`)
 --umi-sep UMISEP                       assume UMISEP separates read name and UMI (passed to umi_tools) [Default: :]
 --umipair-sep UMIPAIRSEP               assume UMIPAIRSEP separates read1 and read2 UMI (see Strand UMIs) [Default: ]
@@ -28,7 +28,7 @@ Options:
 --combine-strand-umis                  combine UMIs strand pairs (implies --filter-strand-umis) [Default: FALSE]
 --threshold THRESHOLD                  remove UMIs with fewer than THRESHOLD reads [Default: 2]
 --molecules MOLECULES                  assume UMIs are initially represented by MOLECULES copies (strands) [Default: 2]
---genewise-min-umis MINUMIS            use global estimates for genes with fewer than MINUMIs (strand) UMIs [Default: 5]
+--genewise-min-umis MINUMIS            use global estimates for genes with fewer than MINUMIS (strand) UMIs [Default: 5]
 --cores CORES                          spread gene-wise model fitting over CORES cpus [Default: 1]
 --variance-estimator VAREST            use VAREST to estimate variances, can be "lsq" or "mle" [Default: lsq]
 --plot-hist-bin PLOTXBIN               make read count histogram bins PLOTXBIN wide
