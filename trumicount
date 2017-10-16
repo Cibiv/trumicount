@@ -22,7 +22,7 @@ Options:
 --umitools-option UMITOOLSOPT          pass UMITOOLSOPT to `umi_tools group` (see `umi_tools group --help`)
 --umi-sep UMISEP                       assume UMISEP separates read name and UMI (passed to umi_tools) [Default: :]
 --umipair-sep UMIPAIRSEP               assume UMIPAIRSEP separates read1 and read2 UMI (see Strand UMIs) [Default: ]
---paired                               assume BAM file contains paired reads (passed to umi_tools) [Default: TRUE]
+--paired                               assume BAM file contains paired reads (passed to umi_tools) [Default: FALSE]
 --mapping-quality MAPQ                 ignored read with mapping quality below MAPQ (passed to umi_tools) [Default: 20]
 --filter-strand-umis                   filtes UMIs where only one strands was observed [Default: FALSE]
 --combine-strand-umis                  combine UMIs strand pairs (implies --filter-strand-umis) [Default: FALSE]
