@@ -4,24 +4,37 @@
 \usepackage{mathpazo}
 \usepackage[scaled=0.85]{beramono}
 \usepackage{microtype}
-\usepackage{xcolor,graphicx,float,caption,nameref}
-\usepackage{minted}
+\usepackage{xcolor,graphicx,float,caption,nameref,framed,verbatim}
 \usepackage{upquote} % Makes minted package use normal single quotes
 \usepackage[hidelinks]{hyperref}
 
-\newminted[shellcode]{shell}{bgcolor=lightgray}
-\newminted[Rcode]{R}{bgcolor=lightgray}
-\newmintedfile[shellscript]{shell}{bgcolor=lightgray}
-%\setmainfont[Ligatures=TeX]{TeX Gyre Pagella}
+% Configure framed package
+\colorlet{shadecolor}{lightgray}
+\setlength{\OuterFrameSep}{-0.1\baselineskip}
+\setlength{\FrameSep}{0.1\baselineskip}
 
+% Environments for shell and R code
+\newenvironment{shellcode}%
+   {\bgroup\topsep=0pt\partopsep=0pt\shaded\verbatim}%
+   {\endverbatim\endshaded\egroup}
+\newenvironment{Rcode}%
+   {\bgroup\topsep=0pt\partopsep=0pt\shaded\verbatim}%
+   {\endverbatim\endshaded\egroup}
+\newcommand{\shellscript}[1]{\bgroup\topsep=0pt\partopsep=0pt\shaded%
+	\verbatiminput{#1}%
+	\endshaded\egroup}
+
+% Commands starting with a *d*double-*d*ash (--)
 \newcommand{\ddarg}[1]{\texttt{-{}-#1}}
 
+% \version{} and \printversion
 \makeatletter
 \newcommand{\@version}{}
 \newcommand{\version}[1]{\renewcommand{\@version}{#1}}
 \newcommand{\printversion}{\@version}
 \makeatother
 
+% Print named section references in italic
 \makeatletter
 \AtBeginDocument{%
   \@ifdefinable{\my@nameref}{%
@@ -171,7 +184,7 @@ After installing TRUmiCount, you can display a list of options with
 \begin{shellcode}
 trumicount --help
 \end{shellcode}
-\\
+
 For a detailed explanation of TRUmiCount's various modes of operation and supported file format, see \nameref{using-trumicount} and \nameref{parameter-reference}.
 
 You can download an example input file\footnote{containing a reduced version, restricted to the first 1000 genes and sub-sampled to 50\%, of RNA-Seq data published in Kivioja, T. \textit{et al.} Counting absolute numbers of molecules using unique molecular identifiers. \textit{Nature Methods} \textbf{9}, 72-74 (2011)} in BAM format and index it (necessary for reading it with TRUmiCount) with
