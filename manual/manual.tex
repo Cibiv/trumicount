@@ -3,8 +3,9 @@
 \usepackage[T1]{fontenc}
 \usepackage{mathpazo}
 \usepackage[scaled=0.85]{beramono}
+\usepackage[scaled=0.86]{berasans}
 \usepackage{microtype}
-\usepackage{xcolor,graphicx,float,caption,nameref,framed,verbatim}
+\usepackage{xcolor,graphicx,float,caption,nameref,framed,sectsty,verbatim}
 \usepackage{upquote} % Makes minted package use normal single quotes
 \usepackage[hidelinks]{hyperref}
 
@@ -12,6 +13,11 @@
 \colorlet{shadecolor}{lightgray}
 \setlength{\OuterFrameSep}{-0.1\baselineskip}
 \setlength{\FrameSep}{0.1\baselineskip}
+
+% Format section titles
+\sectionfont{\normalfont\sffamily\bfseries}
+\subsectionfont{\normalfont\sffamily\bfseries}
+\subsubsectionfont{\normalfont\sffamily\bfseries}
 
 % Environments for shell and R code
 \newenvironment{shellcode}%
@@ -52,17 +58,18 @@
 
 \begin{titlepage}
 \vfill
-{\Huge\centering%
-Using\\
+{\sffamily\bfseries\Huge\centering%
 TRUmiCount\\}
-\vskip1cm
-{\large\centering%
+\vskip0.5cm
+{\sffamily\large\centering%
 Version: \printversion\\}
+\vskip1.5cm
+{\sffamily\huge\centering%
+User \& Installation Manual\\}
 \vskip4cm
-{\large\centering%
-Florian G. Pflug\\}
 \vfill
-\tableofcontents
+{\sffamily
+\tableofcontents}
 \vfill
 \end{titlepage}
 
