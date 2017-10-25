@@ -179,7 +179,7 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
   }
 
   # Reduce 'umitools group' output to a single line per group. 
-  cmds[[length(cmds)+1]] <- paste('awk', shQuote(GROUPOUT2UMIS.AWK), sep=' ')
+  cmds[[length(cmds)+1]] <- paste('gawk', shQuote(GROUPOUT2UMIS.AWK), sep=' ')
 
   # If requested, save the grouped UMI table. The table can later be loaded directly
   # using --input-umis
