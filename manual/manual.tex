@@ -1,30 +1,59 @@
-\documentclass[10pt]{article}
+\documentclass[fontsize=10pt,DIV=11]{scrartcl}
 \usepackage{letltxmacro}
 \usepackage[T1]{fontenc}
-\usepackage{mathpazo}
-\usepackage[scaled=0.85]{beramono}
-\usepackage[scaled=0.86]{berasans}
 \usepackage{microtype}
-\usepackage{xcolor,graphicx,float,caption,nameref,framed,sectsty,verbatim}
+% Use Palatino for serif, Bera Sans for sans serif and Bera Mono for monospace
+\usepackage{mathpazo}
+\usepackage[scaled=0.86]{beramono}
+\usepackage[scaled=0.86]{berasans}
+% Other convenient packages
+\usepackage{xcolor,graphicx,float,caption,nameref,framed,verbatim}
+\usepackage[tocgraduated]{tocstyle}
 \usepackage{upquote} % Makes minted package use normal single quotes
 \usepackage[hidelinks]{hyperref}
 
-% Configure framed package
+% Configure framed package use for code blocks
 \colorlet{shadecolor}{lightgray}
-\setlength{\OuterFrameSep}{-0.1\baselineskip}
-\setlength{\FrameSep}{0.1\baselineskip}
+\setlength{\OuterFrameSep}{0.2\baselineskip}
+\setlength{\FrameSep}{0.2\baselineskip}
 
-% Format section titles
-\sectionfont{\normalfont\sffamily\bfseries}
-\subsectionfont{\normalfont\sffamily\bfseries}
-\subsubsectionfont{\normalfont\sffamily\bfseries}
+% Table of conents
+\usetocstyle{KOMAlike}
+\setcounter{tocdepth}{2} % Don't include subsubsection
+\settocstylefeature[1]{entryhook}{\sffamily\bfseries}
+\settocstylefeature[2]{entryhook}{\sffamily}
+\settocstylefeature[1]{pagenumberhook}{\sffamily}
+\settocstylefeature[2]{pagenumberhook}{\sffamily}
+\setkomafont{pagination}{\sffamily}
+
+% These are ugly...
+\widowpenalty10000
+\clubpenalty10000
+
+% Always break page at section boundaries
+\makeatletter
+\let\section@phlo\section
+\newcommand\beforesection@phlo\newpage
+\newenvironment{nosectionbreak}%
+               {\renewcommand\beforesection@phlo\relax}%
+               {\renewcommand\beforesection@phlo\newpage}
+\renewcommand\section{\beforesection@phlo\section@phlo}
+\makeatother
+
+% Prefer page breaks at subsection boundaries
+\makeatletter
+\let\subsection@phlo\subsection
+\newlength{\presubsectionskip}
+\setlength{\presubsectionskip}{7\baselineskip}
+\renewcommand\subsection{\vskip0pt plus \presubsectionskip\relax\pagebreak[0]\subsection@phlo}
+\makeatother
 
 % Environments for shell and R code
 \newenvironment{shellcode}%
-   {\bgroup\topsep=0pt\partopsep=0pt\shaded\verbatim}%
+   {\bgroup\topsep=0.2ex\partopsep=0.2ex\shaded\verbatim}%
    {\endverbatim\endshaded\egroup}
 \newenvironment{Rcode}%
-   {\bgroup\topsep=0pt\partopsep=0pt\shaded\verbatim}%
+   {\bgroup\topsep=0.2ex\partopsep=0.2ex\shaded\verbatim}%
    {\endverbatim\endshaded\egroup}
 \newcommand{\shellscript}[1]{\bgroup\topsep=0pt\partopsep=0pt\shaded%
 	\verbatiminput{#1}%
@@ -68,8 +97,9 @@ Version: \printversion\\}
 User \& Installation Manual\\}
 \vskip4cm
 \vfill
-{\sffamily
-\tableofcontents}
+\begin{nosectionbreak}
+\tableofcontents
+\end{nosectionbreak}
 \vfill
 \end{titlepage}
 
@@ -118,11 +148,10 @@ conda config --env --add channels bioconda
 
 \subsubsection*{Installing TRUmiCount}
 
-Finall we add the channel that supplies TRUmiCount and a modified version of umi\_tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} with improved handling of paired-end reads\footnote{Remove the backslash (``\textbackslash'') if you enter the command as a single line.}
+Finall we add the channel that supplies TRUmiCount and a modified version of umi\_tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} with improved handling of paired-end reads
 
 \begin{shellcode}
-conda config --env --add channels \
-  http://tuc:tuc@www.cibiv.at/~pflug_/conda/
+conda config --env --add channels http://tuc:tuc@www.cibiv.at/~pflug_/conda/
 \end{shellcode}
 
 TRUmiCount and our version of umi\_tools can now be installed
@@ -131,7 +160,6 @@ TRUmiCount and our version of umi\_tools can now be installed
 conda install trumicount umi_tools samtools
 \end{shellcode}
 
-\pagebreak
 \subsection{Manual Installation on linux or mac OS}
 
 \subsubsection*{Installing TRUmiCount}
@@ -183,7 +211,6 @@ python setup.py install --user
 \end{shellcode}
 %$
 
-\pagebreak
 \subsection{Running TRUmiCount}
 
 After installing TRUmiCount, you can display a list of options with
@@ -207,7 +234,6 @@ From the indexed BAM file, you can let TRUmiCount compute a table containing the
 
 For more examples of how to use TRUmiCount and a discussion of the various options used here, see \nameref{examples}.
 
-\pagebreak
 \section{Using TRUmiCount}\label{using-trumicount}
 
 \subsection{Input formats \& options}\label{input-options}
@@ -243,6 +269,7 @@ The umi\_tools and BAM-related options ``\ddarg{umi-sep}'', ``\ddarg{umitools}''
 \subsubsection*{Writing corrected per-gene molecule counts to a tab-separated file}
 
 The main output of TRUmiCount is a table, written to a tab-separated file specified with ``\ddarg{--output-counts}'' containing for each gene the columns
+\begin{sloppypar}
 \begin{description}
 \item[sample] The sample identifier (e.g cell barcode)
 \item[gene] The gene identifier (see discussion in \nameref{input-bam})
@@ -253,6 +280,7 @@ The main output of TRUmiCount is a table, written to a tab-separated file specif
 \item[loss] The estimated gene-specific loss, i.e. the probability of not detecting or filtering a true UMI. 
 \item[n.obs] The number of observations used to estimate ``efficiency'', ``depth'' and ``loss''. If ``\ddarg{combine-strand-umis}'' is used, this number can be larger than ``n.umis'', because in this case ``n.umis'' counts UMI \emph{pairs} while ``n.obs'' counts \emph{strand} UMIs.
 \end{description}
+\end{sloppypar}
 
 \subsubsection*{Writing unfiltered UMIs to a tab-separated file }
 
@@ -272,7 +300,6 @@ When the ``\ddarg{output-plots}'' option is used, TRUmiCount generates diagnosti
 \item[Variance of the gene-specific loss estimate.] Shows the observed variance of the gene-specific loss estimates as a function of the number of UMIs per gene ($n_{\textrm{\tiny obs}}$) and compares it to the interpolation curve ($s + u / n_{\textrm{\tiny obs}}$).
 \end{description}
 
-\pagebreak
 \subsection{Strand UMIs}\label{strand-umis}
 
 Some UMI-based library preparation protocols produce \emph{strand UMIs} where the two strands of an initial double-stranded template molecule produce distinct (but related) UMIs. Filtering out UMIs for which the partner UMI corresponding to the second strand is not detected offers a second possibility (besides the read count threshold) for filtering our phantom UMIs.
@@ -289,7 +316,6 @@ With the option ``\ddarg{filter-strand-umis}'', UMIs are filtered out if their p
 
 With the option ``\ddarg{combine-strand-umis}'', pairs of partner UMIs stemming from the two strands of a single initial template molecules are combined, and the read count threshold is applied to both partners simultaneously (UMIs without a partner are again \emph{not} shown as ``phantom UMIs'' in the diagnostic plots). The actual loss in this mode is $1 - (1-\mathbb{P}(C < T))^2$, because pairs are dropped if \emph{either} of the partner UMIs has a read count below the threshold. TRUmiCount adjust the loss computation accordingly, and states the corrected loss also in the diagnostic plots. The plotted model distribution, however, does not take this adjustment into account, so that the stated loss is no longer simply the sum of the model probabilities for read counts less than $T$.
 
-\pagebreak
 \section{Parameter Reference}\label{parameter-reference}
 
 \begin{sloppypar}
@@ -298,7 +324,6 @@ With the option ``\ddarg{combine-strand-umis}'', pairs of partner UMIs stemming 
 \end{description}
 \end{sloppypar}
 
-\pagebreak
 \section{Examples}\label{examples}
 
 The example data can be downloaded from \url{http://tuc:tuc@www.cibiv.at/~pflug_/trumicount}. Before TRUmiCount can process these BAM files, they need to be indexed by running
@@ -320,8 +345,8 @@ This command uses umi\_tools to read (error-corrected) UMIs and their read count
 
 \begin{figure}[H]
 {\centering
-\includegraphics[width=6cm,page=1]{../examples/kv_1000g.pdf}
-\includegraphics[width=6cm,page=2]{../examples/kv_1000g.pdf}
+\includegraphics[width=0.475\textwidth,page=1]{../examples/kv_1000g.pdf}\hfill
+\includegraphics[width=0.475\textwidth,page=2]{../examples/kv_1000g.pdf}
 \\}
 \caption*{\textbf{\texttt{kv\_1000g.pdf}}. \texttt{kv\_1000g.bam} processed in single-end mode.}
 \end{figure}
@@ -340,13 +365,12 @@ This command uses umi\_tools to read (error-corrected) UMIs and their read count
 
 \begin{figure}[H]
 {\centering
-\includegraphics[width=6cm,page=1]{../examples/sg_100g.pdf}
-\includegraphics[width=6cm,page=2]{../examples/sg_100g.pdf}
+\includegraphics[width=0.475\textwidth,page=1]{../examples/sg_100g.pdf}\hfill
+\includegraphics[width=0.475\textwidth,page=2]{../examples/sg_100g.pdf}
 \\}
 \caption*{\textbf{\texttt{sg\_100g.pdf}}. \texttt{sg\_100g.bam} processed in \emph{filter strand UMIs} mode.}
 \end{figure}
 
-\newpage
 \subsubsection*{Combining strand UMIs into pairs}
 
 \shellscript{../examples/sg_100g_comb.cmd}
@@ -357,8 +381,8 @@ This command uses umi\_tools to read (error-corrected) UMIs and their read count
 
 \begin{figure}[H]
 {\centering
-\includegraphics[width=6cm,page=1]{../examples/sg_100g_comb.pdf}
-\includegraphics[width=6cm,page=2]{../examples/sg_100g_comb.pdf}
+\includegraphics[width=0.475\textwidth,page=1]{../examples/sg_100g_comb.pdf}\hfill
+\includegraphics[width=0.475\textwidth,page=2]{../examples/sg_100g_comb.pdf}
 \\}
 \caption*{\textbf{\texttt{sg\_100g\_comb.pdf}}. \texttt{sg\_100g.bam} processed in \emph{combine strand UMIs} mode. Plots show individual strand UMIs, not UMI pairs. Phantoms now appear even beyond the threshold, because strand UMIs are also considered phantoms if their \emph{partner UMI} has a read count below the threshold.}
 \end{figure}
