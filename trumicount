@@ -419,7 +419,8 @@ gsm <- gwpcrpois.mom.groupwise(group.expr, data=umis,
                                loss=loss.expr,
                                ctrl=list(cores=ARGS$cores,
                                          var.est.distfree=ARGS$`var-est-distfree`,
-                                         obs.min.ingroup=ARGS$`genewise-min-umis`))
+                                         obs.min.ingroup=ARGS$`genewise-min-umis`,
+                                         verbose=ARGS$`verbose`))
 if (!is.null(ARGS$`output-genewise-fits`)) {
   f <- open_byext(ARGS$`output-genewise-fits`, open='w')
   write.table(gsm, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
