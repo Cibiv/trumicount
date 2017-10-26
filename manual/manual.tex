@@ -7,8 +7,9 @@
 \usepackage[scaled=0.86]{beramono}
 \usepackage[scaled=0.86]{berasans}
 % Other convenient packages
-\usepackage{xcolor,graphicx,float,caption,nameref,framed,verbatim}
+\usepackage{xcolor,graphicx,float,caption,nameref,framed,needspace,verbatim}
 \usepackage[tocgraduated]{tocstyle}
+\usepackage[headsepline]{scrlayer-scrpage}
 \usepackage{upquote} % Makes minted package use normal single quotes
 \usepackage[hidelinks]{hyperref}
 
@@ -17,14 +18,26 @@
 \setlength{\OuterFrameSep}{0.2\baselineskip}
 \setlength{\FrameSep}{0.2\baselineskip}
 
-% Table of conents
+% Table of Conents
 \usetocstyle{KOMAlike}
 \setcounter{tocdepth}{2} % Don't include subsubsection
-\settocstylefeature[1]{entryhook}{\sffamily\bfseries}
-\settocstylefeature[2]{entryhook}{\sffamily}
-\settocstylefeature[1]{pagenumberhook}{\sffamily}
-\settocstylefeature[2]{pagenumberhook}{\sffamily}
-\setkomafont{pagination}{\sffamily}
+\settocstylefeature[1]{entryhook}{\normalfont\sffamily\bfseries}
+\settocstylefeature[2]{entryhook}{\normalfont\sffamily}
+\settocstylefeature[1]{pagenumberhook}{\normalfont\sffamily}
+\settocstylefeature[2]{pagenumberhook}{\normalfont\sffamily}
+
+% Fonts
+\setkomafont{pagination}{\normalfont\sffamily}
+\setkomafont{section}{\normalfont\sffamily\bfseries\huge}
+\setkomafont{pagehead}{\normalfont\sffamily}
+
+% Page number
+\pagestyle{scrheadings}
+\automark{section}
+\lohead{\rightmark}
+\cohead*{}
+\rohead*{\pagemark}
+\cofoot*{}
 
 % These are ugly...
 \widowpenalty10000
@@ -33,19 +46,17 @@
 % Always break page at section boundaries
 \makeatletter
 \let\section@phlo\section
-\newcommand\beforesection@phlo\newpage
+\def\beforesection@phlo{\newpage\thispagestyle{plain.scrheadings}}
 \newenvironment{nosectionbreak}%
-               {\renewcommand\beforesection@phlo\relax}%
-               {\renewcommand\beforesection@phlo\newpage}
+               {\let\beforesection@phlo\relax}%
+               {}
 \renewcommand\section{\beforesection@phlo\section@phlo}
 \makeatother
 
 % Prefer page breaks at subsection boundaries
 \makeatletter
 \let\subsection@phlo\subsection
-\newlength{\presubsectionskip}
-\setlength{\presubsectionskip}{7\baselineskip}
-\renewcommand\subsection{\vskip0pt plus \presubsectionskip\relax\pagebreak[0]\subsection@phlo}
+\renewcommand\subsection{\needspace{10\baselineskip}\subsection@phlo}
 \makeatother
 
 % Environments for shell and R code
@@ -87,20 +98,21 @@
 
 \begin{titlepage}
 \vfill
-{\sffamily\bfseries\Huge\centering%
-TRUmiCount\\}
-\vskip0.5cm
-{\sffamily\large\centering%
-Version: \printversion\\}
-\vskip1.5cm
-{\sffamily\huge\centering%
-User \& Installation Manual\\}
+\vbox to 5cm{
+\normalfont\sffamily\bfseries\Huge\centering%
+TRUmiCount\\
+\vfill
+\normalsize\mdseries\centering%
+Version: \printversion\\
+\vfill
+\sffamily\bfseries\huge\centering%
+User \& Installation Manual\\
+}
 \vskip4cm
 \vfill
 \begin{nosectionbreak}
 \tableofcontents
 \end{nosectionbreak}
-\vfill
 \end{titlepage}
 
 %\section{Introduction to TRUmiCount}
