@@ -293,7 +293,8 @@ The umi\_tools and BAM-related options ``\ddarg{umi-sep}'', ``\ddarg{umitools}''
 
 \begin{sloppypar}
 The main output of TRUmiCount is a table, written to a tab-separated file specified with ``\ddarg{--output-counts}'' containing for each gene the columns
-\begin{labeling}[:]{xxxxxxxxx}
+\needspace{5\baselineskip}
+\begin{labeling}[:]{efficiency}
 \item[sample] The sample identifier (e.g cell barcode)
 \item[gene] The gene identifier (see discussion in \nameref{input-bam})
 \item[n.umis] The number of true UMIs (i.e. after applying filters) detected
@@ -368,8 +369,8 @@ This command uses umi\_tools to read (error-corrected) UMIs and their read count
 
 \begin{figure}[H]
 {\centering
-\includegraphics[width=0.475\textwidth,page=1]{../examples/kv_1000g.pdf}\hfill
-\includegraphics[width=0.475\textwidth,page=2]{../examples/kv_1000g.pdf}
+\includegraphics[width=0.4\textwidth,page=1]{../examples/kv_1000g.pdf}\hfill
+\includegraphics[width=0.4\textwidth,page=2]{../examples/kv_1000g.pdf}
 \\}
 \caption*{\textbf{\texttt{kv\_1000g.pdf}}. \texttt{kv\_1000g.bam} processed in single-end mode.}
 \end{figure}
@@ -388,8 +389,8 @@ This command uses umi\_tools to read (error-corrected) UMIs and their read count
 
 \begin{figure}[H]
 {\centering
-\includegraphics[width=0.475\textwidth,page=1]{../examples/sg_100g.pdf}\hfill
-\includegraphics[width=0.475\textwidth,page=2]{../examples/sg_100g.pdf}
+\includegraphics[width=0.4\textwidth,page=1]{../examples/sg_100g.pdf}\hfill
+\includegraphics[width=0.4\textwidth,page=2]{../examples/sg_100g.pdf}
 \\}
 \caption*{\textbf{\texttt{sg\_100g.pdf}}. \texttt{sg\_100g.bam} processed in \emph{filter strand UMIs} mode.}
 \end{figure}
@@ -398,14 +399,15 @@ This command uses umi\_tools to read (error-corrected) UMIs and their read count
 
 \shellscript{../examples/sg_100g_comb.cmd}
 
+\enlargethispage{5\baselineskip}
 \begin{sloppypar}
 This command uses umi\_tools to read (error-corrected) UMIs and their read counts from \texttt{sg\_100g.bam} (\ddarg{input-bam}) containing paired-end reads (\ddarg{paired}), combines strand UMIs into UMI pairs (\ddarg{combine-strand-umis}, \ddarg{umipair-sep}), filters UMI pairs with fewer than 24 reads of either strand UMI(\ddarg{threshold}), computes gene-specific loss estimates assuming a single initial copy of each strand UMI (\ddarg{molecules}), writes the bias-corrected counts to \texttt{sg\_100g.tab} (\ddarg{output-counts}), and outputs diagnostic plots to \texttt{sg\_100g.pdf} (\ddarg{output-plots}). For the plots, the bin size for the read-count distribution plot is set to 3 (\ddarg{plot-hist-bin}).
 \end{sloppypar}
 
 \begin{figure}[H]
 {\centering
-\includegraphics[width=0.475\textwidth,page=1]{../examples/sg_100g_comb.pdf}\hfill
-\includegraphics[width=0.475\textwidth,page=2]{../examples/sg_100g_comb.pdf}
+\includegraphics[width=0.4\textwidth,page=1]{../examples/sg_100g_comb.pdf}\hfill
+\includegraphics[width=0.4\textwidth,page=2]{../examples/sg_100g_comb.pdf}
 \\}
 \caption*{\textbf{\texttt{sg\_100g\_comb.pdf}}. \texttt{sg\_100g.bam} processed in \emph{combine strand UMIs} mode. Plots show individual strand UMIs, not UMI pairs. Phantoms now appear even beyond the threshold, because strand UMIs are also considered phantoms if their \emph{partner UMI} has a read count below the threshold.}
 \end{figure}
