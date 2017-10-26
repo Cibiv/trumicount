@@ -30,6 +30,7 @@
 \setkomafont{pagination}{\normalfont\sffamily}
 \setkomafont{section}{\normalfont\sffamily\bfseries\huge}
 \setkomafont{pagehead}{\normalfont\sffamily}
+\addtokomafont{labelinglabel}{\bfseries}
 
 % Page number
 \pagestyle{scrheadings}
@@ -280,9 +281,9 @@ The umi\_tools and BAM-related options ``\ddarg{umi-sep}'', ``\ddarg{umitools}''
 
 \subsubsection*{Writing corrected per-gene molecule counts to a tab-separated file}
 
-The main output of TRUmiCount is a table, written to a tab-separated file specified with ``\ddarg{--output-counts}'' containing for each gene the columns
 \begin{sloppypar}
-\begin{description}
+The main output of TRUmiCount is a table, written to a tab-separated file specified with ``\ddarg{--output-counts}'' containing for each gene the columns
+\begin{labeling}[:]{xxxxxxxxx}
 \item[sample] The sample identifier (e.g cell barcode)
 \item[gene] The gene identifier (see discussion in \nameref{input-bam})
 \item[n.umis] The number of true UMIs (i.e. after applying filters) detected
@@ -291,7 +292,7 @@ The main output of TRUmiCount is a table, written to a tab-separated file specif
 \item[depth] The gene-specific sequencing depth in reads/molecule.
 \item[loss] The estimated gene-specific loss, i.e. the probability of not detecting or filtering a true UMI. 
 \item[n.obs] The number of observations used to estimate ``efficiency'', ``depth'' and ``loss''. If ``\ddarg{combine-strand-umis}'' is used, this number can be larger than ``n.umis'', because in this case ``n.umis'' counts UMI \emph{pairs} while ``n.obs'' counts \emph{strand} UMIs.
-\end{description}
+\end{labeling}
 \end{sloppypar}
 
 \subsubsection*{Writing unfiltered UMIs to a tab-separated file }
