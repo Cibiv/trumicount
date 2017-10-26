@@ -1,4 +1,4 @@
-\documentclass[fontsize=10pt,DIV=11]{scrartcl}
+\documentclass{scrartcl}
 \usepackage{letltxmacro}
 \usepackage[T1]{fontenc}
 \usepackage{microtype}
@@ -9,7 +9,7 @@
 % Other convenient packages
 \usepackage{xcolor,graphicx,float,caption,nameref,framed,needspace,verbatim}
 \usepackage[tocgraduated]{tocstyle}
-\usepackage[headsepline]{scrlayer-scrpage}
+\usepackage{scrlayer-scrpage}
 \usepackage{upquote} % Makes minted package use normal single quotes
 \usepackage[hidelinks]{hyperref}
 
@@ -27,37 +27,47 @@
 \settocstylefeature[2]{pagenumberhook}{\normalfont\sffamily}
 
 % Fonts
+\KOMAoptions{fontsize=10pt,DIV=11}
 \setkomafont{pagination}{\normalfont\sffamily}
 \setkomafont{section}{\normalfont\sffamily\bfseries\huge}
 \setkomafont{pagehead}{\normalfont\sffamily}
 \addtokomafont{labelinglabel}{\bfseries}
 
 % Page number
-\pagestyle{scrheadings}
+\pagestyle{plain.scrheadings}
 \automark{section}
-\lohead{\rightmark}
+\lohead[\rightmark]{\usekomafont{section}\rightmark}
 \cohead*{}
 \rohead*{\pagemark}
 \cofoot*{}
 
-% These are ugly...
+% Prefer whitespace over ungly paragraph splits across pages
 \widowpenalty10000
 \clubpenalty10000
 
-% Always break page at section boundaries
+% Redefine section command always break the page when
+% starting a new section, and to put the section title
+% in the page header -- on the first page in the section
+% title font, on later pages in the pagehead font
+\KOMAoptions{plainheadsepline,headsepline}
 \makeatletter
-\let\section@phlo\section
-\def\beforesection@phlo{\newpage\thispagestyle{plain.scrheadings}}
-\newenvironment{nosectionbreak}%
-               {\let\beforesection@phlo\relax}%
+\let\section@orig@phlo\section
+\newenvironment{normalsection}%
+               {\let\section\section@orig@phlo}%
                {}
-\renewcommand\section{\beforesection@phlo\section@phlo}
+\renewcommand\section[1]{%
+  \newpage%
+  \thispagestyle{scrheadings}%
+  \addtocounter{section}{1}%
+  \addcontentsline{toc}{section}{\sectionformat#1}%
+  \markright{\sectionformat#1}%
+}
 \makeatother
 
-% Prefer page breaks at subsection boundaries
+% Prefer page breaks at subsection boundaries -
 \makeatletter
 \let\subsection@phlo\subsection
-\renewcommand\subsection{\needspace{10\baselineskip}\subsection@phlo}
+\renewcommand\subsection{\needspace{5\baselineskip}\subsection@phlo}
 \makeatother
 
 % Environments for shell and R code
@@ -111,9 +121,9 @@ User \& Installation Manual\\
 }
 \vskip4cm
 \vfill
-\begin{nosectionbreak}
+\begin{normalsection}
 \tableofcontents
-\end{nosectionbreak}
+\end{normalsection}
 \end{titlepage}
 
 %\section{Introduction to TRUmiCount}
