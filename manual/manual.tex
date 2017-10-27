@@ -57,9 +57,17 @@
                {}
 \renewcommand\section[1]{%
   \newpage%
+  % Switch page style, this changes the font size of the title in the header
   \thispagestyle{scrheadings}%
-  \addtocounter{section}{1}%
-  \addcontentsline{toc}{section}{\sectionformat#1}%
+  % Increment counter
+  \refstepcounter{section}%
+  % Get section title string, update labels (nameref and numeric)
+  \GetTitleString{#1}%
+  \let\@currentlabelname\GetTitleStringResult
+  \let\@currentlabel\thesection%
+  % Add TOC line
+  \addcontentsline{toc}{section}{\sectionformat\GetTitleStringResult}%
+  % Update rightmark, this is what will appear in the header
   \markright{\sectionformat#1}%
 }
 \makeatother
