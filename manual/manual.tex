@@ -48,7 +48,11 @@
 \rohead*{\pagemark}
 \cofoot*{}
 
-% Prefer whitespace over ungly paragraph splits across pages
+% Prefer whitespace over ugly paragraph splits across pages,
+% but otherwise be "sloppy". This is necessary because of the
+% rather long non-breakable blocks in the text -- in fussy mode,
+% we got lots of overfull hboxes
+\sloppy
 \widowpenalty10000
 \clubpenalty10000
 
@@ -303,15 +307,12 @@ If a mapped BAM File is provided as input with ``\ddarg{input-bam}'', TRUmiCount
 
 Instead of using UMI-Tools to extract UMI and their read counts from a BAM file, TRUmiCount is also able to read a previously computed table of UMIs with ``\ddarg{input-umis}'' (see \nameref{output-options} for how to generate such a table). The table must be tab-separated with one row per UMI and contain at least the columns ``sample'', ``gene'', ``reads''. Similar UMIs are assumed to already have been merged, but filters are assumed \emph{not} to have been applied yet. When dealing with strand UMIs (see section \nameref{strand-umis}), TRUmiCount also requires the columns ``pos'' and ``end'', which contain the mapping position of read1 respectively read2.
 
-\begin{sloppypar}
 The UMI-Tools and BAM-related options ``\ddarg{umi-sep}'', ``\ddarg{umitools}'', ``\ddarg{umitools-option}'', ``\ddarg{paired}'' and ``\ddarg{mapping-quality}'' are ignored if ``\ddarg{input-umis}'' is used.
-\end{sloppypar}
 
 \subsection{Output formats \& options}\label{output-options}
 
 \subsubsection*{Writing corrected per-gene molecule counts to a tab-separated file}
 
-\begin{sloppypar}
 The main output of TRUmiCount is a table, written to a tab-separated file specified with ``\ddarg{--output-counts}'' containing for each gene the columns
 \needspace{5\baselineskip}
 \begin{labeling}[:]{efficiency\ }
@@ -324,7 +325,6 @@ The main output of TRUmiCount is a table, written to a tab-separated file specif
 \item[loss] The estimated gene-specific loss, i.e. the probability of not detecting or filtering a true UMI. 
 \item[n.obs] The number of observations used to estimate ``efficiency'', ``depth'' and ``loss''. If ``\ddarg{combine-strand-umis}'' is used, this number can be larger than ``n.umis'', because in this case ``n.umis'' counts UMI \emph{pairs} while ``n.obs'' counts \emph{strand} UMIs.
 \end{labeling}
-\end{sloppypar}
 
 \subsubsection*{Writing unfiltered UMIs to a tab-separated file }
 
@@ -362,11 +362,9 @@ With the option ``\ddarg{combine-strand-umis}'', pairs of partner UMIs stemming 
 
 \section{Parameter Reference}\label{parameter-reference}
 
-\begin{sloppypar}
 \begin{description}
 \input{reference.tex}
 \end{description}
-\end{sloppypar}
 
 \section{Examples}\label{examples}
 
@@ -383,9 +381,7 @@ The file \texttt{kv\_1000g.bam} contains a reduced (restricted to the first 1000
 
 \shellscript{../examples/kv_1000g.cmd}
 
-\begin{sloppypar}
 This command uses UMI-Tools to read (error-corrected) UMIs and their read counts from \texttt{kv\_1000g.bam} (\ddarg{input-bam}), removes UMIs with fewer than 2 reads (\ddarg{threshold}), compute gene-specific loss estimates for genes with at least 3 surviving UMIs (\ddarg{genewise-min-umis}) assuming two initial copies of each UMI (\ddarg{molecules}), writes the bias-corrected counts to \texttt{kv\_1000g.tab} (\ddarg{output-counts}), and outputs diagnostic plots to \texttt{kv\_1000g.pdf} (\ddarg{output-plots}). The gene-specific parameter estimation is spread over 4 cores (\ddarg{cores}). For the plots, the bin size for the read-count distribution plot is set to 1 (\ddarg{plot-hist-bin}), the number of bins for which the empirical variance is plotted is increased to 15 (\ddarg{plot-var-bins}), and the y-axis of the variance plot is log-scaled (\ddarg{plot-var-logy}).
-\end{sloppypar}
 
 \begin{figure}[H]
 {\centering
@@ -403,9 +399,7 @@ The file \texttt{sg\_100g.bam} contains a reduced (restricted to the first 100 g
 
 \shellscript{../examples/sg_100g.cmd}
 
-\begin{sloppypar}
 This command uses UMI-Tools to read (error-corrected) UMIs and their read counts from \texttt{sg\_100g.bam} (\ddarg{input-bam}) containing paired-end reads (\ddarg{paired}), removes UMIs whose partner corresponding to the initial molecule's other strand was not detected (\ddarg{filter-strand-umis}, \ddarg{umipair-sep}) or who have fewer than 24 reads (\ddarg{threshold}), compute gene-specific loss estimates assuming a single initial copy of each UMI (\ddarg{molecules}), writes the bias-corrected counts to \texttt{sg\_100g.tab} (\ddarg{output-counts}), and outputs diagnostic plots to \texttt{sg\_100g.pdf} (\ddarg{output-plots}). For the plots, the bin size for the read-count distribution plot is set to 3 (\ddarg{plot-hist-bin}).
-\end{sloppypar}
 
 \begin{figure}[H]
 {\centering
@@ -420,9 +414,7 @@ This command uses UMI-Tools to read (error-corrected) UMIs and their read counts
 \shellscript{../examples/sg_100g_comb.cmd}
 
 \enlargethispage{5\baselineskip}
-\begin{sloppypar}
 This command uses UMI-Tools to read (error-corrected) UMIs and their read counts from \texttt{sg\_100g.bam} (\ddarg{input-bam}) containing paired-end reads (\ddarg{paired}), combines strand UMIs into UMI pairs (\ddarg{combine-strand-umis}, \ddarg{umipair-sep}), filters UMI pairs with fewer than 24 reads of either strand UMI(\ddarg{threshold}), computes gene-specific loss estimates assuming a single initial copy of each strand UMI (\ddarg{molecules}), writes the bias-corrected counts to \texttt{sg\_100g.tab} (\ddarg{output-counts}), and outputs diagnostic plots to \texttt{sg\_100g.pdf} (\ddarg{output-plots}). For the plots, the bin size for the read-count distribution plot is set to 3 (\ddarg{plot-hist-bin}).
-\end{sloppypar}
 
 \begin{figure}[H]
 {\centering
