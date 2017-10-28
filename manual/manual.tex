@@ -150,12 +150,12 @@ User \& Installation Manual\\
 
 \subsubsection*{Installing Conda}
 
-Conda\footnote{\url{http://conda.io}} allows easy installation of a large range of software packages. See the Conda user guide for installation instructions. Briefly, (on 64-bit Linux) do\footnote{You can replace \texttt{/conda} with a directory of your choice, but remember to do so everywhere}
+Conda\footnote{\url{http://conda.io}} allows easy installation of a large range of software packages. See the Conda user guide for installation instructions. Briefly, (on 64-bit Linux) do\footnote{This will install Conda into the directory \texttt{conda} in your home directory. You can replace \texttt{\textasciitilde/conda} with a directory of your choice, but remember to do so everywhere}
 
 \begin{shellcode}
 INSTALLER=Miniconda2-latest-Linux-x86_64.sh
 curl -O https://repo.continuum.io/miniconda/$INSTALLER
-bash $INSTALLER -p /conda
+bash $INSTALLER -p ~/conda
 \end{shellcode}
 
 \subsubsection*{Creating an environment}
@@ -163,13 +163,13 @@ bash $INSTALLER -p /conda
 Conda allows creating multiple \emph{environments}, each containing a different collection of packages. We create a separate environment for TRUmiCount
 
 \begin{shellcode}
-/conda/bin/conda create -n trc
+~/conda/bin/conda create -n trc
 \end{shellcode}
 
 This environment is now \emph{activated} to make it the target of further conda commands, and to make the installed software visible. \textbf{This must be done every time you open a new terminal window!}
 
 \begin{shellcode}
-source /conda/bin/activate trc
+source ~/conda/bin/activate trc
 \end{shellcode}
 %$
 \subsubsection*{Installing BioConda}
