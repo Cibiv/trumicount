@@ -1,17 +1,24 @@
 \documentclass{scrartcl}
+\usepackage{ifdraft}
 \usepackage{letltxmacro}
 \usepackage[T1]{fontenc}
-\usepackage{microtype}
 % Use Palatino for serif, Bera Sans for sans serif and Bera Mono for monospace
 \usepackage{mathpazo}
 \usepackage[scaled=0.86]{beramono}
 \usepackage[scaled=0.86]{berasans}
+\usepackage{microtype}
 % Other convenient packages
 \usepackage{xcolor,graphicx,float,caption,nameref,framed,needspace,verbatim}
 \usepackage[tocgraduated]{tocstyle}
 \usepackage{scrlayer-scrpage}
 \usepackage{upquote} % Makes minted package use normal single quotes
 \usepackage[hidelinks]{hyperref}
+
+% In draft mode, show frame and mark overfull boxes
+\ifdraft {%
+  \usepackage{showframe}%
+  \overfullrule=5mm%
+}{}
 
 % Configure framed package use for code blocks
 \colorlet{shadecolor}{lightgray}
@@ -27,7 +34,7 @@
 \settocstylefeature[2]{pagenumberhook}{\normalfont\sffamily}
 
 % Fonts
-\KOMAoptions{fontsize=10pt,DIV=11}
+\KOMAoptions{headheight=25pt,fontsize=10pt,DIV=11}
 \setkomafont{pagination}{\normalfont\sffamily}
 \setkomafont{section}{\normalfont\sffamily\bfseries\huge}
 \setkomafont{pagehead}{\normalfont\sffamily}
