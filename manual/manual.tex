@@ -184,13 +184,13 @@ conda config --env --add channels bioconda
 
 \subsubsection*{Installing TRUmiCount}
 
-Finall we add the channel that supplies TRUmiCount and a modified version of umi\_tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} with improved handling of paired-end reads
+Finall we add the channel that supplies TRUmiCount and a modified version of UMI-Tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} with improved handling of paired-end reads
 
 \begin{shellcode}
 conda config --env --add channels http://tuc:tuc@www.cibiv.at/~pflug_/conda/
 \end{shellcode}
 
-TRUmiCount and our version of umi\_tools can now be installed
+TRUmiCount and our version of UMI-Tools can now be installed
 
 \begin{shellcode}
 conda install trumicount umi_tools samtools
@@ -235,9 +235,9 @@ export PATH=~/.local/bin:$PATH
 \end{shellcode}
 %$
 
-\subsubsection*{Installing umi\_tools}
+\subsubsection*{Installing UMI-Tools}
 
-TRUmiCount uses umi\_tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} to extract UMIs from mapped reads and to correct for sequencing errors within the UMIs. We provide a modified version of umi\_tools which improves the handling of paired-end reads. You can install our version with
+TRUmiCount uses UMI-Tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} to extract UMIs from mapped reads and to correct for sequencing errors within the UMIs. We provide a modified version of UMI-Tools which improves the handling of paired-end reads. You can install our version with
 
 \begin{shellcode}
 URL=https://github.com/fgp/UMI-tools.git
@@ -283,7 +283,7 @@ To be able to separate true UMIs from phantoms and to estimate and correct for t
 
 \subsubsection*{Reading UMIs from a BAM File}\label{input-bam}
 
-If a mapped BAM File is provided as input with ``\ddarg{input-bam}'', TRUmiCount uses umi\_tools's ``\texttt{group}'' tool to extract a list of UMIs and their read counts from the specified BAM file. Sequencing errors within the UMIs are corrected by umi\_tools by \emph{merging} similar UMIs into one. When reading BAM file, on top of the defaults mentioned above, umi\_tools assumes that
+If a mapped BAM File is provided as input with ``\ddarg{input-bam}'', TRUmiCount uses UMI-Tools' ``\texttt{group}'' tool to extract a list of UMIs and their read counts from the specified BAM file. Sequencing errors within the UMIs are corrected by UMI-Tools by \emph{merging} similar UMIs into one. When reading BAM file, on top of the defaults mentioned above, UMI-Tools assumes that
 \begin{itemize}
   \item The BAM file must have a corresponding index. A suitable index can be created with ``\texttt{samtools index} \textit{bamfile}''.
   \item Sequences names are gene names. With the ``\ddarg{gene-tag}'' option, gene names can be read from a \emph{tag} instead, whose name is specified with ``\ddarg{umitools-option} \allowbreak\ddarg{gene-tag=}\allowbreak\textit{tagname}'.
@@ -294,10 +294,10 @@ If a mapped BAM File is provided as input with ``\ddarg{input-bam}'', TRUmiCount
 
 \subsubsection*{Reading unfiltered UMIs from a tab-separated file}
 
-Instead of using umi\_tools to extract UMI and their read counts from a BAM file, TRUmiCount is also able to read a previously computed table of UMIs with ``\ddarg{input-umis}'' (see \nameref{output-options} for how to generate such a table). The table must be tab-separated with one row per UMI and contain at least the columns ``sample'', ``gene'', ``reads''. Similar UMIs are assumed to already have been merged, but filters are assumed \emph{not} to have been applied yet. When dealing with strand UMIs (see section \nameref{strand-umis}), TRUmiCount also requires the columns ``pos'' and ``end'', which contain the mapping position of read1 respectively read2.
+Instead of using UMI-Tools to extract UMI and their read counts from a BAM file, TRUmiCount is also able to read a previously computed table of UMIs with ``\ddarg{input-umis}'' (see \nameref{output-options} for how to generate such a table). The table must be tab-separated with one row per UMI and contain at least the columns ``sample'', ``gene'', ``reads''. Similar UMIs are assumed to already have been merged, but filters are assumed \emph{not} to have been applied yet. When dealing with strand UMIs (see section \nameref{strand-umis}), TRUmiCount also requires the columns ``pos'' and ``end'', which contain the mapping position of read1 respectively read2.
 
 \begin{sloppypar}
-The umi\_tools and BAM-related options ``\ddarg{umi-sep}'', ``\ddarg{umitools}'', ``\ddarg{umitools-option}'', ``\ddarg{paired}'' and ``\ddarg{mapping-quality}'' are ignored if ``\ddarg{input-umis}'' is used.
+The UMI-Tools and BAM-related options ``\ddarg{umi-sep}'', ``\ddarg{umitools}'', ``\ddarg{umitools-option}'', ``\ddarg{paired}'' and ``\ddarg{mapping-quality}'' are ignored if ``\ddarg{input-umis}'' is used.
 \end{sloppypar}
 
 \subsection{Output formats \& options}\label{output-options}
@@ -321,7 +321,7 @@ The main output of TRUmiCount is a table, written to a tab-separated file specif
 
 \subsubsection*{Writing unfiltered UMIs to a tab-separated file }
 
-The option ``\ddarg{output-umis}'' (together with ``\ddarg{input-bam}'') writes the UMIs reported by umi\_tools (after merging similar UMIs) and their read counts to a tab-separated file, suitable for being later read with ``\ddarg{input-umis}''. This can be used to avoid the overhead of running umi\_tools multiple times if the same input BAM file is processed multiple times with TRUmiCount, e.g. to test different read count thresholds or initial molecule counts.
+The option ``\ddarg{output-umis}'' (together with ``\ddarg{input-bam}'') writes the UMIs reported by UMI-Tools (after merging similar UMIs) and their read counts to a tab-separated file, suitable for being later read with ``\ddarg{input-umis}''. This can be used to avoid the overhead of running UMI-Tools multiple times if the same input BAM file is processed multiple times with TRUmiCount, e.g. to test different read count thresholds or initial molecule counts.
 
 \subsubsection*{Writing final, filtered \& strand-combined UMIs to a tab-separated file }
 
@@ -377,7 +377,7 @@ The file \texttt{kv\_1000g.bam} contains a reduced (restricted to the first 1000
 \shellscript{../examples/kv_1000g.cmd}
 
 \begin{sloppypar}
-This command uses umi\_tools to read (error-corrected) UMIs and their read counts from \texttt{kv\_1000g.bam} (\ddarg{input-bam}), removes UMIs with fewer than 2 reads (\ddarg{threshold}), compute gene-specific loss estimates for genes with at least 3 surviving UMIs (\ddarg{genewise-min-umis}) assuming two initial copies of each UMI (\ddarg{molecules}), writes the bias-corrected counts to \texttt{kv\_1000g.tab} (\ddarg{output-counts}), and outputs diagnostic plots to \texttt{kv\_1000g.pdf} (\ddarg{output-plots}). The gene-specific parameter estimation is spread over 4 cores (\ddarg{cores}). For the plots, the bin size for the read-count distribution plot is set to 1 (\ddarg{plot-hist-bin}), the number of bins for which the empirical variance is plotted is increased to 15 (\ddarg{plot-var-bins}), and the y-axis of the variance plot is log-scaled (\ddarg{plot-var-logy}).
+This command uses UMI-Tools to read (error-corrected) UMIs and their read counts from \texttt{kv\_1000g.bam} (\ddarg{input-bam}), removes UMIs with fewer than 2 reads (\ddarg{threshold}), compute gene-specific loss estimates for genes with at least 3 surviving UMIs (\ddarg{genewise-min-umis}) assuming two initial copies of each UMI (\ddarg{molecules}), writes the bias-corrected counts to \texttt{kv\_1000g.tab} (\ddarg{output-counts}), and outputs diagnostic plots to \texttt{kv\_1000g.pdf} (\ddarg{output-plots}). The gene-specific parameter estimation is spread over 4 cores (\ddarg{cores}). For the plots, the bin size for the read-count distribution plot is set to 1 (\ddarg{plot-hist-bin}), the number of bins for which the empirical variance is plotted is increased to 15 (\ddarg{plot-var-bins}), and the y-axis of the variance plot is log-scaled (\ddarg{plot-var-logy}).
 \end{sloppypar}
 
 \begin{figure}[H]
@@ -397,7 +397,7 @@ The file \texttt{sg\_100g.bam} contains a reduced (restricted to the first 100 g
 \shellscript{../examples/sg_100g.cmd}
 
 \begin{sloppypar}
-This command uses umi\_tools to read (error-corrected) UMIs and their read counts from \texttt{sg\_100g.bam} (\ddarg{input-bam}) containing paired-end reads (\ddarg{paired}), removes UMIs whose partner corresponding to the initial molecule's other strand was not detected (\ddarg{filter-strand-umis}, \ddarg{umipair-sep}) or who have fewer than 24 reads (\ddarg{threshold}), compute gene-specific loss estimates assuming a single initial copy of each UMI (\ddarg{molecules}), writes the bias-corrected counts to \texttt{sg\_100g.tab} (\ddarg{output-counts}), and outputs diagnostic plots to \texttt{sg\_100g.pdf} (\ddarg{output-plots}). For the plots, the bin size for the read-count distribution plot is set to 3 (\ddarg{plot-hist-bin}).
+This command uses UMI-Tools to read (error-corrected) UMIs and their read counts from \texttt{sg\_100g.bam} (\ddarg{input-bam}) containing paired-end reads (\ddarg{paired}), removes UMIs whose partner corresponding to the initial molecule's other strand was not detected (\ddarg{filter-strand-umis}, \ddarg{umipair-sep}) or who have fewer than 24 reads (\ddarg{threshold}), compute gene-specific loss estimates assuming a single initial copy of each UMI (\ddarg{molecules}), writes the bias-corrected counts to \texttt{sg\_100g.tab} (\ddarg{output-counts}), and outputs diagnostic plots to \texttt{sg\_100g.pdf} (\ddarg{output-plots}). For the plots, the bin size for the read-count distribution plot is set to 3 (\ddarg{plot-hist-bin}).
 \end{sloppypar}
 
 \begin{figure}[H]
@@ -414,7 +414,7 @@ This command uses umi\_tools to read (error-corrected) UMIs and their read count
 
 \enlargethispage{5\baselineskip}
 \begin{sloppypar}
-This command uses umi\_tools to read (error-corrected) UMIs and their read counts from \texttt{sg\_100g.bam} (\ddarg{input-bam}) containing paired-end reads (\ddarg{paired}), combines strand UMIs into UMI pairs (\ddarg{combine-strand-umis}, \ddarg{umipair-sep}), filters UMI pairs with fewer than 24 reads of either strand UMI(\ddarg{threshold}), computes gene-specific loss estimates assuming a single initial copy of each strand UMI (\ddarg{molecules}), writes the bias-corrected counts to \texttt{sg\_100g.tab} (\ddarg{output-counts}), and outputs diagnostic plots to \texttt{sg\_100g.pdf} (\ddarg{output-plots}). For the plots, the bin size for the read-count distribution plot is set to 3 (\ddarg{plot-hist-bin}).
+This command uses UMI-Tools to read (error-corrected) UMIs and their read counts from \texttt{sg\_100g.bam} (\ddarg{input-bam}) containing paired-end reads (\ddarg{paired}), combines strand UMIs into UMI pairs (\ddarg{combine-strand-umis}, \ddarg{umipair-sep}), filters UMI pairs with fewer than 24 reads of either strand UMI(\ddarg{threshold}), computes gene-specific loss estimates assuming a single initial copy of each strand UMI (\ddarg{molecules}), writes the bias-corrected counts to \texttt{sg\_100g.tab} (\ddarg{output-counts}), and outputs diagnostic plots to \texttt{sg\_100g.pdf} (\ddarg{output-plots}). For the plots, the bin size for the read-count distribution plot is set to 3 (\ddarg{plot-hist-bin}).
 \end{sloppypar}
 
 \begin{figure}[H]
