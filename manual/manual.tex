@@ -45,11 +45,11 @@
 \addtokomafont{labelinglabel}{\bfseries}
 
 % Page number
+% \rohead is set differently for the title page, and is hence
+% setup *after* the title page
 \pagestyle{plain.scrheadings}
-\automark{section}
 \lohead[\rightmark]{\usekomafont{section}\rightmark}
 \cohead*{}
-\rohead*{\pagemark}
 \cofoot*{}
 
 % Line and page breaking. 
@@ -127,35 +127,27 @@
 
 \begin{document}
 
-\begin{titlepage}
-\vfill
-\vbox to 7cm{
-\normalfont\sffamily\bfseries\Huge\centering%
-TRUmiCount\\
-\vfill
-\normalsize\mdseries\centering%
-Version: \printversion\\
-\vfill
-\sffamily\bfseries\huge\centering%
-User \& Installation Manual\\
-\vfill
-\normalsize\mdseries\centering%
-\makeatletter
-\@date
-\makeatother
-\\
-}
-\vfill
+% Title. (Last font size in \markright determines distance to headerseprule!)
+\thispagestyle{scrheadings}
+\markright{\Huge TRUmiCount\hskip0.5em\normalsize\mdseries v \printversion\usekomafont{section}}
+\rohead[\today]{\today\usekomafont{section}}
+
+% Table of Contents
+\mbox{}\vfill
 \begin{normalsection}
+\renewcommand*{\contentsname}{User \& Installation Manual}
 \tableofcontents
 \end{normalsection}
-\end{titlepage}
+\clearpage
+
+% Put page numbers into top-right corner (where \today went on the first page)
+% We switch font at the end to make the baselines of lohead and rohead align
+\rohead[\pagemark]{\pagemark\usekomafont{section}}
 
 %\section{Introduction to TRUmiCount}
 
 %XXX Write Me
 
-\newpage
 \section{Installing TRUmiCount}
 
 \subsection{Installation via Conda (Recommended)}
