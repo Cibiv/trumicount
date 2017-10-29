@@ -1,5 +1,4 @@
 \documentclass{scrartcl}
-\usepackage{ifdraft}
 \usepackage{letltxmacro}
 \usepackage[T1]{fontenc}
 % Use Palatino for serif, Bera Sans for sans serif and Bera Mono for monospace
@@ -8,10 +7,15 @@
 \usepackage[scaled=0.86]{berasans}
 \usepackage{microtype}
 % Other convenient packages
-\usepackage{xcolor,graphicx,float,caption,nameref,framed,needspace,verbatim}
+\usepackage{xcolor,graphicx,float,caption,nameref,framed,needspace,verbatim,ifdraft}
+% tocstyle allows easy styling of the toc, see "Table of Contents" below
 \usepackage[tocgraduated]{tocstyle}
+% Used to set the section title as part of the page header
 \usepackage{scrlayer-scrpage}
-\usepackage{upquote} % Makes minted package use normal single quotes
+% Use normal single quotes in verbatim environment.
+% This allows commands to be copies directly into a shell
+\usepackage{upquote}
+% Make cross-references clickable
 \usepackage[hidelinks]{hyperref}
 
 % In draft mode, show frame and mark overfull boxes
