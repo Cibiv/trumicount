@@ -64,8 +64,8 @@
                {\let\section\section@orig@phlo}%
                {}
 \renewcommand\section[1]{%
+  % Break page, switch style to use section title font in the header
   \newpage%
-  % Switch page style, this changes the font size of the title in the header
   \thispagestyle{scrheadings}%
   % Increment counter
   \refstepcounter{section}%
@@ -74,7 +74,7 @@
   \let\@currentlabelname\GetTitleStringResult
   \let\@currentlabel\thesection%
   % Add TOC line
-  \addcontentsline{toc}{section}{\sectionformat\GetTitleStringResult}%
+  \addxcontentsline{toc}{section}{\texorpdfstring{\sectionformat#1}{\thesection{} #1}}%
   % Update rightmark, this is what will appear in the header
   \markright{\sectionformat#1}%
 }
