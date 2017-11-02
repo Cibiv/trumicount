@@ -1,4 +1,4 @@
-\documentclass{scrartcl}
+\documentclass[a4paper]{scrartcl}
 \usepackage{letltxmacro}
 \usepackage[T1]{fontenc}
 % Use Palatino for serif, Bera Sans for sans serif and Bera Mono for monospace
@@ -37,12 +37,18 @@
 \settocstylefeature[1]{pagenumberhook}{\normalfont\sffamily}
 \settocstylefeature[2]{pagenumberhook}{\normalfont\sffamily}
 
-% Fonts
-\KOMAoptions{headheight=25pt,fontsize=10pt,DIV=11}
+% Page & Fonts
+\KOMAoptions{headheight=25pt,footheight=0pt,fontsize=10pt,DIV=11}
 \setkomafont{pagination}{\normalfont\sffamily}
 \setkomafont{section}{\normalfont\sffamily\bfseries\huge}
 \setkomafont{pagehead}{\normalfont\sffamily}
 \addtokomafont{labelinglabel}{\bfseries}
+\newlength{\headstart}
+\setlength{\headstart}{\dimexpr\voffset+1in+\topmargin}
+\newlength{\textstart}
+\setlength{\textstart}{\dimexpr\headstart+\headheight+\headsep}
+\setlength{\textheight}{\dimexpr\paperheight-\textstart-\headstart}
+\flushbottom
 
 % Page number
 % \rohead is set differently for the title page, and is hence
