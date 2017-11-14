@@ -211,21 +211,14 @@ conda install trumicount umi_tools samtools
 \subsubsection*{Installing TRUmiCount}
 
 First, make sure you have R\footnote{R Core Team. R: A language and environment for statistical
-  computing. R Foundation for Statistical Computing, Vienna, Austria (2017). \url{http://www.R-project.org/}} (at least version 3.1) installed. First, we'll install a few required packages from CRAN. Start R (either on the command line, or open RStudio) and type
+  computing. R Foundation for Statistical Computing, Vienna, Austria (2017). \url{http://www.R-project.org/}} (at least version 3.1) installed. First, we'll install a few required packages from CRAN. Amogst those is gwpcR\footnote{Pflug, F.P. \& von Haeseler, Arndt. TRUmiCount: Correctly counting absolute numbers of molecules using unique molecular identifiers. Preprint at \url{http://www.biorxiv.org/content/early/2017/11/13/217778} (2017).} which contains the implementation of the model that TRUmiCount relies on. Start R (either on the command line, or open RStudio) and type
 
 \begin{Rcode}
-install.packages(c('statmod', 'akima', 'data.table', 'docopt'))
+install.packages(c('statmod', 'akima', 'data.table', 'docopt', 'devtools'))
+devtools::install_github("Cibiv/gwpcR.git", ref="latest-release")
 \end{Rcode}
 
-Note that unless you have write privileges to your system's R installation, the packages will be installed only for your user. Having installed these packages, you can install our \texttt{gwpcR} package (not yet on CRAN or Bioconductor). Open a terminal window (not R) and do
-  
-\begin{shellcode}
-CRED=gwpcr-access:gwpcr123
-URL=https://$CRED@bitbucket.org/florian_pflug/gwpcr.git
-git clone $URL gwpcr
-cd gwpcr/
-R CMD INSTALL .
-\end{shellcode}
+Note that unless you have write privileges to your system's R installation, the packages will be installed only for your user.
 
 With all prerequisites now available, TRUmiCount can now be installed. The commands below install TRUmiCount into your home directory. To install TRUmiCount system-wide (assuming you have the necessary privileges), don't specify \ddarg{prefix \textasciitilde/.local}.
 

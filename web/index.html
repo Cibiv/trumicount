@@ -41,13 +41,13 @@ single-molecule barcodes. <i>PNAS</i> <b>109</b>, 1347-1352, 2012)
 The conda repository for TRUmiCount (see above) also contains a package for
 gwpcR called <tt>r-gwpcr</tt>, see <a href="#conda">above</a>.
 <h3>Soure Code</h3>
-<b>Git Repository Url:</b> <tt>http://gwpcr-access:gwpcr123@bitbucket.org/florian_pflug/gwpcr.git</tt><br>
+<b>Git Repository Url:</b> <tt>https://github.com/Cibiv/gwpcR.git</tt><br>
 With the <tt>devtools</tt> package, the R package <tt>gwpcR</tt> can be installed
 directly from this source code repository with the following commands (to be
 executed within R on the command-line or within RStudio)
 <pre>
 install.packages("devtools")
 library(devtools)
-install_git('https://gwpcr-access:gwpcr123@bitbucket.org/florian_pflug/gwpcr.git', branch='latest-release')
+devtools::install_github('Cibiv/gwpcR.git', ref='latest-release')
 </pre>
 </body>
