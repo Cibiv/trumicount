@@ -197,7 +197,7 @@ conda config --env --add channels bioconda
 Finall we add the channel that supplies TRUmiCount and a modified version of UMI-Tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} with improved handling of paired-end reads
 
 \begin{shellcode}
-conda config --env --add channels http://tuc:tuc@www.cibiv.at/~pflug_/conda/
+conda config --env --add channels http://www.cibiv.at/~pflug_/conda/
 \end{shellcode}
 
 TRUmiCount and our version of UMI-Tools can now be installed
@@ -223,13 +223,12 @@ Note that unless you have write privileges to your system's R installation, the 
 With all prerequisites now available, TRUmiCount can now be installed. The commands below install TRUmiCount into your home directory. To install TRUmiCount system-wide (assuming you have the necessary privileges), don't specify \ddarg{prefix \textasciitilde/.local}.
 
 \begin{shellcode}
-CRED=gwpcr-access:gwpcr123
-URL=https://$CRED@bitbucket.org/florian_pflug/trumicount.git
-git clone $URL trumicount
+git clone https://bitbucket.org/florian_pflug/trumicount.git trumicount
 cd trumicount/
 mkdir -p ~/.local/bin
 ./install.R --prefix ~/.local
 \end{shellcode}
+%$
 
 To be able to run TRUmiCount, you must add \texttt{\textasciitilde/.local/bin} to your \texttt{PATH}. \textbf{This must be done every time you open a new terminal window!}
 
@@ -263,7 +262,7 @@ For a detailed explanation of TRUmiCount's various modes of operation and suppor
 You can download an example input file\footnote{containing a reduced version, restricted to the first 1000 genes and sub-sampled to 50\%, of RNA-Seq data published in Kivioja, T. \textit{et al.} Counting absolute numbers of molecules using unique molecular identifiers. \textit{Nature Methods} \textbf{9}, 72-74 (2011)} in BAM format and index it (necessary for reading it with TRUmiCount) with
 
 \begin{shellcode}
-curl -O http://tuc:tuc@www.cibiv.at/~pflug_/trumicount/kv_1000g.bam
+curl -O http://www.cibiv.at/~pflug_/trumicount/kv_1000g.bam
 samtools index kv_1000g.bam
 \end{shellcode}
 
@@ -360,7 +359,7 @@ With the option ``\ddarg{combine-strand-umis}'', pairs of partner UMIs stemming 
 
 \section{Examples}\label{examples}
 
-The example data can be downloaded from \url{http://tuc:tuc@www.cibiv.at/~pflug_/trumicount}. Before TRUmiCount can process these BAM files, they need to be indexed by running
+The example data can be downloaded from \url{http://www.cibiv.at/~pflug_/trumicount}. Before TRUmiCount can process these BAM files, they need to be indexed by running
 
 \begin{shellcode}
 samtools index sg_100g.bam
