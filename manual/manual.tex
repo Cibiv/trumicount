@@ -215,7 +215,7 @@ First, make sure you have R\footnote{R Core Team. R: A language and environment 
 
 \begin{Rcode}
 install.packages(c('statmod', 'akima', 'data.table', 'docopt', 'devtools'))
-devtools::install_github("Cibiv/gwpcR.git", ref="latest-release")
+devtools::install_github("Cibiv/gwpcR", ref="latest-release")
 \end{Rcode}
 
 Note that unless you have write privileges to your system's R installation, the packages will be installed only for your user.
@@ -223,7 +223,7 @@ Note that unless you have write privileges to your system's R installation, the 
 With all prerequisites now available, TRUmiCount can now be installed. The commands below install TRUmiCount into your home directory. To install TRUmiCount system-wide (assuming you have the necessary privileges), don't specify \ddarg{prefix \textasciitilde/.local}.
 
 \begin{shellcode}
-git clone https://bitbucket.org/florian_pflug/trumicount.git trumicount
+git clone https://github.com/Cibiv/trumicount.git trumicount
 cd trumicount/
 mkdir -p ~/.local/bin
 ./install.R --prefix ~/.local
