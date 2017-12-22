@@ -337,12 +337,10 @@ loss.expr <- if (ARGS$`combine-strand-umis`) {
 # ******************************************************************************
 message('*** Fitting global PCR and sequencing model')
 library(gwpcR)
-gm <- gwpcrpois.mom(mean(umis[, eval(reads.expr)], na.rm=TRUE),
-                    var(umis[, eval(reads.expr)], na.rm=TRUE),
+gm <- gwpcrpois.est(umis[, eval(reads.expr)], method="mom", loss=loss.expr,
                     threshold=ARGS$threshold, molecules=ARGS$molecules)
-gm.loss <- eval(loss.expr, envir=list2env(gm, parent=parent.frame()))
 message('Overall efficiency ', round(100*gm$efficiency), '%, depth ',
-        round(gm$lambda0, digits=3), ' reads/UMI, loss ', round(100*gm.loss), '%')
+        round(gm$lambda0, digits=3), ' reads/UMI, loss ', round(100*gm$loss), '%')
 
 # ******************************************************************************
 # *** Open Plot Output PDF File ************************************************
@@ -392,7 +390,7 @@ if (!is.null(ARGS$`output-plots`)) {
          col=ifelse(h$breaks >= ARGS$threshold, 'black', 'red'))
   # Plot Loss
   text(ARGS$threshold/2, par('usr')[4], adj=c(1.0,0.5),
-       paste0("Loss=", format(100*gm.loss, digits=2), '%'),
+       paste0("Loss=", format(100*gm$loss, digits=2), '%'),
        col='red', srt=90, xpd=TRUE)
   # Plot Threshold
   lines(c(ARGS$threshold, ARGS$threshold), c(0, par("usr")[4]*2), lwd=2, xpd=TRUE)
@@ -414,13 +412,11 @@ if (!is.null(ARGS$`output-plots`)) {
 # XXX: In combine-strand-umis mode, we should use reads.plus and reads.minus as
 # separate samples!
 message('*** Fitting gene-wise models on ', ARGS$cores, ' cores')
-gsm <- gwpcrpois.mom.groupwise(group.expr, data=umis,
-                               threshold=ARGS$threshold, molecules=ARGS$molecules,
-                               loss=loss.expr,
-                               ctrl=list(cores=ARGS$cores,
-                                         var.est.distfree=ARGS$`var-est-distfree`,
-                                         obs.min.ingroup=ARGS$`genewise-min-umis`,
-                                         verbose=ARGS$`verbose`))
+gsm <- gwpcrpois.groupest(group.expr, data=umis, loss=loss.expr,
+                          threshold=ARGS$threshold, molecules=ARGS$molecules,
+                          ctrl=list(cores=ARGS$cores, verbose=ARGS$`verbose`,
+                                    var.est.distfree=ARGS$`var-est-distfree`,
+                                    obs.min.ingroup=ARGS$`genewise-min-umis`))
 if (!is.null(ARGS$`output-genewise-fits`)) {
   f <- open_byext(ARGS$`output-genewise-fits`, open='w')
   write.table(gsm, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
