@@ -35,11 +35,12 @@ rm manual/manual.tex.bak
 echo "Updating manual/reference.tex" >&2
 (cd manual; ./make-reference-tex)
 
-echo "Updating manual/manual.pdf" >&2
+echo "Updating docs/manual.pdf" >&2
 (cd manual; for i in 1 2 3; do pdflatex -interaction batchmode -shell-escape manual.tex >/dev/null 2>&1; done)
+cp manual/manual.pdf docs/manual.pdf
 
 echo "Comitting change" >&2
-git add trumicount manual/manual.tex manual/reference.tex manual/manual.pdf
+git add trumicount manual/manual.tex manual/reference.tex docs/manual.pdf
 git commit -m "Incremented version to $ver"
 
 echo "Tagging as v$ver and latest" >&2
