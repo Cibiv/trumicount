@@ -10,8 +10,9 @@
 <!-- HEADER -->
 <div id="header_wrap" class="outer">
     <header class="inner">
-      <a id="forkme_banner" href="https://github.com/Cibiv/trumicount">View on GitHub</a>
       <a id="manual_banner" href="manual.pdf">Manual</a>
+      <a id="publication_banner" href="https://www.biorxiv.org/content/early/2017/11/13/217778">Publication</a>
+      <a id="forkme_banner" href="https://github.com/Cibiv/trumicount">View on GitHub</a>
 
       <h1 id="project_title">TRUmiCount</h1>
       <h2 id="project_tagline">Correctly counting molecules using unique molecular identifiers</h2>
@@ -34,19 +35,23 @@ under-estimation of the molecule count, and amplification artifacts like PCR
 chimeras create phantom UMIs and thus cause over-estimation.<br>
 
 <strong>Results:</strong>
-TRUmiCount algorithm corrects for both types of errors. It is based on a
-mechanistic model of PCR amplification and sequencing, whose two parameters
-have an immediate physical interpretation as PCR efficiency and sequencing
-depth and can be estimated from experimental data without requiring calibration
-experiments or spike-ins. We show that our model captures the main stochastic
-properties of amplification and sequencing, and that it allows us to filter out
-phantom UMIs and to estimate the number of molecules lost during the sequencing
-process. Finally, we demonstrate that the phantom-filtered and loss-corrected
-molecule counts computed by TRUmiCount measure the true number of molecules with
-considerably higher accuracy than the raw number of distinct UMIs.
+TRUmiCount used mechanistic model of PCR amplification to correct for both
+types of errors. In our <a
+href="https://www.biorxiv.org/content/early/2017/11/13/217778">paper</a> we
+demonstrate that the phantom-filtered and loss-corrected molecule counts
+computed by TRUmiCount measure the true number of molecules with considerably
+higher accuracy than the raw number of distinct UMIs.<br>
+
+<h2>Publication</h2>
+TRUmiCount is described in detail in our paper
+<em>TRUmiCount: Correctly counting absolute numbers of molecules using unique
+molecular identifiers</em>, Florian G. Pflug & Arndt von Haeseler, Preprint at
+<a href="https://www.biorxiv.org/content/early/2017/11/13/217778">
+https://www.biorxiv.org/content/early/2017/11/13/217778</a>. (2017). If you use
+TRUmiCount, please cite this publication!
 
 <h2>Availability</h2>
-<h3 a=conda>Conda Repository (also includes gwpcR)</h3>
+<h3 a=conda>Conda Repository</h3>
 <b>Repository Url:</b> <var>http://www.cibiv.at/~pflug_/conda/</var><br>
 <b>Available Packages:</b> <var>trumicount</var>, <var>umi_tools</var> (patched
 version, see <a href="https://github.com/CGATOxford/UMI-tools">here</a> for
@@ -67,18 +72,50 @@ For more detailed instruction and other installation options see the <a
 href="manual.pdf">manual</a>.
 <h3>Soure Code</h3>
 <a class="github_link" href="https://github.com/Cibiv/trumicount.git">View on GitHub</a>
+
+<h2>License</h2>
+TRUmiCount is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+TRUmiCount is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+details.
+
 <h2>Example Data</h2>
-<a href="kv_1000g.bam"><b>kv_1000g.bam</b></a>:
+<a href="kv_1000g.bam"><b><var>kv_1000g.bam</var></b></a>:
 Mapped single-end reads for first 1000 genes from replicate 1 of the D.
 melanogaster data by Kivioja <i>et al.</i> (Counting absolute numbers of
 molecules using unique molecular identifiers. <i>Nature Methods</i> <b>9</b>,
 72-74, 2011)
 <br>
-<a href="sg_100g.bam"><b>sh_100g.bam</b></a>:
+<a href="sg_100g.bam"><b><var>sh_100g.bam</var></b></a>:
 Mapped reads for first 100 genes from replicate 1 of the E. coli data by
 Shiroguchi <i>et al.</i> (Shiroguchi <i>et al.</i> Digital RNA sequencing
 minimizes sequence-dependent bias and amplification noise with optimized
 single-molecule barcodes. <i>PNAS</i> <b>109</b>, 1347-1352, 2012)
+
+<h3>Running TRUmiCount</h3>
+To run TRUmiCount on the example data file <var>kv_1000g.bam</var>, the
+firs must first be downloaded, and index with <var>samtools</var> by doing:
+<pre>
+curl -O https://cibiv.github.io/trumicount/kv_1000g.bam
+samtools index kv_1000g.bam
+</pre>
+
+This indexed BAM-File can then be processed with trumicount to produce a
+table containing bias-corrected numbers of transcript molecules for each
+gene (<var>kv_1000g.tab</var>)
+<pre>
+trumicount --input-bam kv_1000g.bam --molecules 2 --threshold 2 --genewise-min-umis 3 --output-counts kv_1000g.tab
+</pre>
+
+For a brief list of command-line options of TRUmiCount see <code>trumicount
+--help</code>, for an in-depth description of the possible operating modes,
+input and output formats and command-line options see the <a
+href="manual.pdf">manual</a>
 
 <!-- END MAIN CONTENT -->
 </section>

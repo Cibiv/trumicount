@@ -1,3 +1,23 @@
+# Description
+
+*Motivation:*
+Counting molecules using <i>next-generation sequencing</i> (NGS) suffers from
+PCR amplification bias, which reduces the accuracy of many quantitative
+NGS-based experimental methods such as RNA-Seq. This is true even if molecules
+are made distinguishable using <i>unique molecular identifiers</i> (UMIs) before
+PCR amplification, and distinct UMIs are counted instead of reads: Molecules
+that are lost entirely during the sequencing process will still cause
+under-estimation of the molecule count, and amplification artifacts like PCR
+chimeras create phantom UMIs and thus cause over-estimation.<br>
+
+*Results:* TRUmiCount uses a mechanistic model of PCR amplification to correct
+for both types of errors. In our paper (see below) we demonstrate that the
+phantom-filtered and loss-corrected molecule counts computed by TRUmiCount
+measure the true number of molecules with considerably higher accuracy than the
+raw number of distinct UMIs.<br>
+
+See https://cibiv.github.io/trumicount for details
+
 # Installation
 
 The most convenient way of installing `TRUmiCount` is via the [https://conda.io]
@@ -18,7 +38,7 @@ See the manual for details on the installation & usage of `TRUmiCount`
 # Manual
 
 The manual for the latest version of TRUmiCount is available here
-https://github.com/Cibiv/TRUmiCount/blob/latest-release/manual/manual.pdf
+https://cibiv.github.io/trumicount/manual.pdf
 
 # Publications
 
