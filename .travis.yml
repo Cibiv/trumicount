@@ -3,7 +3,7 @@ language: generic
 before_install:
   - INSTALLER=Miniconda2-latest-Linux-x86_64.sh
   - curl -O -L https://repo.continuum.io/miniconda/$INSTALLER
-  - bash $INSTALLER -p ~/conda
+  - bash $INSTALLER -b -p ~/conda
   - export PATH=~/conda/bin:$PATH
 # Run test
 script:
