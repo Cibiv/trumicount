@@ -2,37 +2,48 @@
 
 set -o pipefail
 set -e
-export PYTHONNOUSERSITE=1
 
-# Conda's activate doesn't like it if $* is non-empty
-dollarstar="$*"
-n=$#
-while [[ $n > 0 ]]; do
-	shift
-	n=$[$n-1]
-done
+ENVDIR=$(mktemp -d)
+trap "rm -rf \"$ENVDIR\"" EXIT
+if ! test -d "$ENVDIR"; then
+	echo "Failed to create temporary directory ($ENVDIR is not a directory):" >&2
+	exit 1
+fi
 
-# Setup python & logging
-exec > >(tee $log) 2>&1
-source ~/Installs/miniconda2/bin/activate
+echo "=== Creating and activating test environment in $ENVDIR"
+conda create --no-default-packages --use-index-cache --yes -p "$ENVDIR" --file testenv.pkgs
+source activate "$ENVDIR" 
 
-for input_stem in $dollarstar; do
-        input_stem=${input_stem//.bam}
-	bam=tests/${input_stem}.bam
-	umis=tests/${input_stem}.umis.tab.gz
-	counts=tests/${input_stem}.counts.tab.gz
-	plot=tests/${input_stem}.plot.pdf
-	genewise=tests/${input_stem}.genewise.tab.gz
-	log=tests/${input_stem}.log
-	opts=tests/${input_stem}.opts
+result=0
 
-	if [ -e "$umis" ]; then
-		input_opts="--input-umis $umis"
-	else
-		input_opts="--input-bam $bam --output-umis $umis "
-	fi
+echo "=== Running TRUmiCount on kv_1000g.q20.gout.bz2"
+if 	../trumicount --input-umitools-group-out kv_1000g.q20.gout.bz2 \
+		--molecules 2 --threshold 2  --genewise-min-umis 3 \
+		--output-counts kv_1000g.tab && \
+	diff kv_1000g.tab kv_1000g.tab.expected >/dev/null
+then
+	echo "=== SUCCESS"
+else
+	echo "=== FAILURE"
+	result=1
+fi
 
-	./trumicount \
-		$input_opts --output-counts $counts --output-plot $plot \
-		--output-genewise-fits $genewise --cores 4 $(cat $opts)
-done
+if	../trumicount --input-umitools-group-out sg_100g.q20.gout.bz2 \
+		--paired --filter-strand-umis --umipair-sep '-' \
+		--molecules 1 --threshold 24 \
+		--output-counts sg_100g.tab &&
+	diff sg_100g.tab sg_100g.tab.expected >/dev/null
+then
+	echo "=== SUCCESS"
+else
+	echo "=== FAILURE"
+	result=1
+fi
+
+if test "$result" == "0"; then
+	echo "=== ALL PASSED"
+else
+	echo "=== SOME TESTS FAILED"
+fi
+
+exit $result

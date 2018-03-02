@@ -5,13 +5,8 @@ manual/manual.out
 manual/manual.toc
 manual/manual.synctex.gz
 examples/*.bai
-tests/*.bam
-tests/*.bai
-tests/*.umis.tab.gz
-tests/*.counts.tab.gz
-tests/*.genewise.tab.gz
-tests/*.plot.pdf
-tests/*.log
+tests/kv_1000g.tab
+tests/sg_100g.tab
 web/.index.json
 web/linux-64
 web/noarch

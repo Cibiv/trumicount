@@ -1,1 +1,0 @@
---umi-sep '|' --paired --umipair-sep ':' --filter-strand-umis --threshold 100 --molecules 1 --plot-x-max 600 --plot-x-bin 10
