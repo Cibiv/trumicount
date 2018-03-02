@@ -1,5 +1,7 @@
 #!/bin/bash
 
+GWPCR_RELEASE=latest-release
+
 set -o pipefail
 set -e
 
@@ -13,6 +15,11 @@ fi
 echo "=== Creating and activating test environment in $ENVDIR"
 conda create --no-default-packages --use-index-cache --yes -p "$ENVDIR" --file testenv.pkgs
 source activate "$ENVDIR" 
+
+echo "=== Installing gwpcR"
+curl -O -L https://github.com/Cibiv/gwpcR/archive/$GWPCR_RELEASE.zip
+unzip -n $GWPCR_RELEASE.zip
+R CMD INSTALL gwpcR-$GWPCR_RELEASE
 
 result=0
 
