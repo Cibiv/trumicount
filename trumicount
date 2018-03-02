@@ -172,8 +172,8 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
     # Input is the raw 'umitools group' output. 
     if (sum(!sapply(ARGS[OPTS.INVALID$`input-umitools-group-out`], is.null)) > 0)
       stop('--input-umitools-group-out is incompatible with ', paste(OPTS.INVALID$`input-umitools-group-out`, collapse=', '))
-    tool <- if (grepl(GZEXT, path)) 'zcat'
-    else if (grepl(BZ2EXT, path)) 'bzcat'
+    tool <- if (grepl(GZEXT, ARGS$`input-umitools-group-out`)) 'zcat'
+    else if (grepl(BZ2EXT, ARGS$`input-umitools-group-out`)) 'bzcat'
     else 'cat'
     cmds[[length(cmds)+1]] <- paste(tool, shQuote(ARGS$`input-umitools-group-out`), sep=' ')
   }
