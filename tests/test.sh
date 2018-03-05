@@ -1,56 +1,91 @@
 #!/bin/bash
 
-GWPCR_RELEASE=latest-release
+# Version of gwpcR to use
+GWPCR_VERSION=0.9.9
+GWPCR_ARCHIVE="v$GWPCR_VERSION.zip"
+GWPCR_URL="https://github.com/Cibiv/gwpcR/archive/$GWPCR_ARCHIVE"
 
+# Stop on error
 set -o pipefail
 set -e
 
-ENVDIR=$(mktemp -d)
-trap "rm -rf \"$ENVDIR\"" EXIT
-if ! test -d "$ENVDIR"; then
-	echo "Failed to create temporary directory ($ENVDIR is not a directory):" >&2
+# Find absolute path to "test" (i.e. script) directory
+export TESTS="$( cd "$(dirname "$0")" ; pwd -P )"
+export TESTCASES="$TESTS/testcases"
+export TRUMICOUNT="$TESTS/../trumicount"
+
+# Create temporary working directory, make it the cwd
+WORKDIR="$(mktemp -d)"
+if ! test -d "$WORKDIR"; then
+	WORKDIR=""
+	echo "Failed to create temporary working directory ($WORKDIR is not a directory):" >&2
 	exit 1
 fi
+pushd "$WORKDIR" >/dev/null
+echo "=== Created working directory $WORKDIR"
 
+# Cleanup on exit
+function on_exit() {
+  popd >/dev/null
+  if test "$ENVDIR" != ""; then
+  	echo "=== Removing test environment $ENVDIR"
+  	rm -rf "$ENVDIR"
+  fi
+  if test "$WORKDIR" != ""; then
+  	echo "=== Removing working directory $WORKDIR"
+  	rm -rf "$WORKDIR"
+  fi
+}
+trap on_exit EXIT
+
+# Create temporary directory to hold a temporary conda environment used to run the tests
+ENVDIR="$(mktemp -d)"
+if ! test -d "$ENVDIR"; then
+	ENVDIR=""
+	echo "Failed to create temporary directory to hold the test environment ($ENVDIR is not a directory):" >&2
+	exit 1
+fi
 echo "=== Creating and activating test environment in $ENVDIR"
-conda create --no-default-packages --use-index-cache --yes -p "$ENVDIR" --file testenv.pkgs
+conda create --no-default-packages --use-index-cache --yes -p "$ENVDIR" --file "$TESTS/testenv.pkgs"
 source activate "$ENVDIR" 
 
+# Ensure that R uses only packages from the test environment
+export R_LIBS="$(Rscript -e 'cat(.Library)')"
+export R_LIBS_USER="-"
+echo "=== Using R libraries in $(Rscript -e "cat(paste(.libPaths(), collapse=', '))")"
+
+# Install gwpcR. We don't use conda here to make it possible to use a new
+# version of gwpcR before the bioconda infrastructure has built the packages
 echo "=== Installing gwpcR"
-curl -O -L https://github.com/Cibiv/gwpcR/archive/$GWPCR_RELEASE.zip
-unzip -n $GWPCR_RELEASE.zip
-R CMD INSTALL gwpcR-$GWPCR_RELEASE
+curl --progress-bar -O -L "$GWPCR_URL"
+unzip -q -n "$GWPCR_ARCHIVE"
+R CMD INSTALL "gwpcR-$GWPCR_VERSION"
 
-result=0
+# Run tests in $TESTCASES
+total="$(ls "$TESTCASES"/*.cmd | wc -l)"
+ran=0
+ok=0
+echo "=== Will run $total tests in $TESTCASES"
+for tc in "$TESTCASES"/*.cmd; do
+	# Extract test case name
+	tcn="$(basename "$tc")"
+	tcn="${tcn//.cmd}"
+	# Run test case & report outcome
+	ran=$(($ran+1))
+	echo "=== [$tcn] RUNNING ($ran/$total)"
+	if $BASH -e -o pipefail "$tc" 2>&1 | awk -v tcn="$tcn" '{print "[" tcn "] " $0}'; then
+		ok=$(($ok+1))
+		echo "=== [$tcn] SUCCESS ($ran/$total)"
+	else
+		echo "=== [$tcn] FAILURE ($ran/$total)"
+	fi
+done
 
-echo "=== Running TRUmiCount on kv_1000g.q20.gout.bz2"
-if 	../trumicount --input-umitools-group-out kv_1000g.q20.gout.bz2 \
-		--molecules 2 --threshold 2  --genewise-min-umis 3 \
-		--output-counts kv_1000g.tab && \
-	diff kv_1000g.tab kv_1000g.tab.expected >/dev/null
-then
-	echo "=== SUCCESS"
+# Report results
+if test "$ok" == "$total"; then
+	echo "=== ALL TESTS PASSED ($total tests)"
+	exit 0
 else
-	echo "=== FAILURE"
-	result=1
+	echo "=== SOME TESTS FAILED ($ok tests out of $total tests succeeded)"
+	exit 1
 fi
-
-if	../trumicount --input-umitools-group-out sg_100g.q20.gout.bz2 \
-		--paired --filter-strand-umis --umipair-sep '-' \
-		--molecules 1 --threshold 24 \
-		--output-counts sg_100g.tab &&
-	diff sg_100g.tab sg_100g.tab.expected >/dev/null
-then
-	echo "=== SUCCESS"
-else
-	echo "=== FAILURE"
-	result=1
-fi
-
-if test "$result" == "0"; then
-	echo "=== ALL PASSED"
-else
-	echo "=== SOME TESTS FAILED"
-fi
-
-exit $result
