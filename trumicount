@@ -31,6 +31,7 @@ Options:
 --genewise-min-umis MINUMIS            use global estimates for genes with fewer than MINUMIS (strand) UMIs [Default: 5]
 --cores CORES                          spread gene-wise model fitting over CORES cpus [Default: 1]
 --variance-estimator VAREST            use VAREST to estimate variances, can be "lsq" or "mle" [Default: lsq]
+--digits DIGITS                        number of digits to output [Default: 3]
 --plot-hist-bin PLOTXBIN               make read count histogram bins PLOTXBIN wide
 --plot-hist-xmax PLOTXMAX              limit read count histogram plot to at most PLOTXMAX reads per UMI
 --plot-skip-phantoms                   do not show phantom UMIs in histogram plot [Default: FALSE]
@@ -131,6 +132,7 @@ ARGS$`strand-umis` <- (ARGS$`filter-strand-umis` || ARGS$`combine-strand-umis`)
 ARGS$threshold <- as.integer(ARGS$threshold)
 ARGS$molecules <- as.integer(ARGS$molecules)
 ARGS$cores <- as.integer(ARGS$cores)
+ARGS$digits <- as.integer(ARGS$digits)
 ARGS$`plot-hist-bin` <- if (!is.null(ARGS$`plot-hist-bin`)) as.integer(ARGS$`plot-hist-bin`) else NULL
 ARGS$`plot-hist-xmax` <- if (!is.null(ARGS$`plot-hist-xmax`)) as.numeric(ARGS$`plot-hist-xmax`) else NULL
 ARGS$`plot-var-bins` <- if (!is.null(ARGS$`plot-var-bins`)) as.numeric(ARGS$`plot-var-bins`) else NULL
@@ -142,6 +144,9 @@ if (ARGS$cores > 1) {
   message('*** Loading library `parallel` to allow computations on ', ARGS$cores, ' cores')
   library(parallel)
 }
+
+# Set options according to arguments
+options(digits=ARGS$digits)
 
 # ******************************************************************************
 # *** Create connection to read grouped UMI table from *************************
@@ -340,7 +345,7 @@ library(gwpcR)
 gm <- gwpcrpois.est(umis[, eval(reads.expr)], method="mom", loss=loss.expr,
                     threshold=ARGS$threshold, molecules=ARGS$molecules)
 message('Overall efficiency ', round(100*gm$efficiency), '%, depth ',
-        round(gm$lambda0, digits=3), ' reads/UMI, loss ', round(100*gm$loss), '%')
+        round(gm$lambda0, digits=2), ' reads/UMI, loss ', round(100*gm$loss), '%')
 
 # ******************************************************************************
 # *** Open Plot Output PDF File ************************************************
@@ -478,7 +483,7 @@ if (!is.null(ARGS$`output-plots`)) {
 # ******************************************************************************
 if (!is.null(ARGS$`output-counts`)) {
   f <- open_byext(ARGS$`output-counts`, open='w')
-  write.table(umicounts, file=f,
+  write.table(format(umicounts, digits=ARGS$digits), file=f,
               col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
   close(f)
 }
