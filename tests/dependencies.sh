@@ -33,13 +33,9 @@ GWPCR_URL="https://github.com/Cibiv/gwpcR/archive/v$GWPCR_VERSION.tar.gz"
 # Test environment package list
 TESTENV_PKGS="testenv-$CONDAOS-$MACHINE.pkgs"
 
-# Cache
+# Dependency archive cache
 export CACHE=~/.cache
 test -d "$CACHE" || mkdir "$CACHE"
-
-# Directories
-export TESTCASES="$TESTS/testcases"
-export TRUMICOUNT="$TESTS/../trumicount"
 
 function get_archive() {
 	local v_archive="${1}_ARCHIVE"

@@ -10,6 +10,6 @@ cache:
 before_install:
   - tests/install_conda.sh
   - export PATH=$HOME/conda/bin:$PATH
-# Run test
+# Run test in conda test environment
 script:
-  - tests/test.sh
+  - tests/run_tests_in_testenv.sh
