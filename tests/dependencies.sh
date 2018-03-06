@@ -30,7 +30,7 @@ function get_archive() {
 			rm "$CACHE/${!v_archive}"
 		fi
 		echo "Downloading ${!v_archive} from ${!v_url} into cache $CACHE"
-		$CURL --silent --show-error --fail --location -o "${!v_archive}" -L "${!v_url}"
+		curl --silent --show-error --fail --location -o "${!v_archive}" -L "${!v_url}"
 		if ! shasum -a 256 -c "$TESTS/${!v_digest}"; then
 			echo "Failed to validate ${!v_archive}, checksum missmatch" >&2
 			exit 1
