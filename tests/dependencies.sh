@@ -6,9 +6,15 @@ OS="$(uname -s)"
 case "$OS" in
 	Darwin)
 		CONDAOS="MacOSX"
+		PKGSPECOS="osx"
+	;;
+	Linux)
+		CONDAOS="Linux"
+		PKGSPECOS="linux"
 	;;
 	*)
 		CONDAOS="$OS"
+		PKGSPECOS="$OS"
 	;;
 esac
 
@@ -23,6 +29,9 @@ GWPCR_VERSION=0.9.9
 GWPCR_ARCHIVE="gwpcr-v$GWPCR_VERSION.tar.gz"
 GWPCR_DIGEST="gwpcr-v$GWPCR_VERSION.sha256"
 GWPCR_URL="https://github.com/Cibiv/gwpcR/archive/v$GWPCR_VERSION.tar.gz"
+
+# Test environment package list
+TESTENV_PKGS="testenv-$CONDAOS-$MACHINE.pkgs"
 
 # Cache
 export CACHE=~/.cache

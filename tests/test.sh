@@ -40,7 +40,7 @@ if ! test -d "$ENVDIR"; then
 	exit 1
 fi
 echo "=== Creating and activating test environment in $ENVDIR"
-conda create --no-default-packages --use-index-cache --yes -p "$ENVDIR" --file "$TESTS/testenv.pkgs"
+conda create --no-default-packages --use-index-cache --yes -p "$ENVDIR" --file "$TESTS/$TESTENV_PKGS"
 source activate "$ENVDIR" 
 
 # Ensure that R uses only packages from the test environment
