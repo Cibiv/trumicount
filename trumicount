@@ -1,4 +1,19 @@
 #!/usr/bin/env Rscript
+#
+# This file is part of TRUmiCount
+#
+# TRUmiCount is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# TRUmiCount is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with TRUmiCount.  If not, see <http://www.gnu.org/licenses/>.
 
 # ******************************************************************************
 # *** Arguments Definition *****************************************************
@@ -7,7 +22,11 @@ VERSION <- "0.9.9.2"
 DOCSTRING <- paste0('
 Usage: trumicount (--input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB) [options]
 
-Version ', VERSION, '
+Version ', VERSION, ' Copyright 20017-2018 Florian G. Pflug
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details.
 
 Options:
 --input-bam INBAM                      read UMIs from INBAM (uses `umi_tools group`)
