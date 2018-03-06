@@ -1,8 +1,11 @@
 language: generic
+os:
+  - linux
+  - osx
 cache:
   directories:
-    - /home/travis/.cache
-    - /home/travis/conda
+    - $HOME/.cache
+    - $HOME/conda
 # Install conda
 before_install:
   - tests/install_conda.sh

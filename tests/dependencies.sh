@@ -1,7 +1,9 @@
+# Operating System
+
 # Version of gwpcR to use
 CONDA_VERSION=4.4.10
-CONDA_ARCHIVE="Miniconda2-$CONDA_VERSION-Linux-x86_64.sh"
-CONDA_DIGEST="Miniconda2-$CONDA_VERSION-Linux-x86_64.sha256"
+CONDA_ARCHIVE="Miniconda2-$CONDA_VERSION-$(uname -s)-$(uname -m).sh"
+CONDA_DIGEST="Miniconda2-$CONDA_VERSION-$(uname -s)-$(uname -m).sha256"
 CONDA_URL="https://repo.continuum.io/miniconda/$CONDA_ARCHIVE"
 
 # Version of gwpcR to use
