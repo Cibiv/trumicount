@@ -35,28 +35,18 @@ echo "=== Created working directory $WORKDIR"
 
 # Cleanup on exit
 function on_exit() {
-  popd >/dev/null
-  if test "$ENVDIR" != "" && test "$KEEP_ENVDIR" == ""; then
-  	echo "=== Removing test environment $ENVDIR"
-  	rm -rf "$ENVDIR"
-  fi
-  if test "$WORKDIR" != "" && test "$KEEP_WORKDIR" == ""; then
-  	echo "=== Removing working directory $WORKDIR"
-  	rm -rf "$WORKDIR"
-  fi
+	popd >/dev/null
+	if test "$WORKDIR" != "" && test "$KEEP_WORKDIR" == ""; then
+		echo "=== Removing working directory $WORKDIR"
+		rm -rf "$WORKDIR"
+	fi
 }
 trap on_exit EXIT
 
-# Create temporary directory to hold a temporary conda environment used to run the tests
-ENVDIR="$(mktemp -d)"
-if ! test -d "$ENVDIR"; then
-	ENVDIR=""
-	echo "Failed to create temporary directory to hold the test environment ($ENVDIR is not a directory):" >&2
-	exit 1
-fi
-echo "=== Creating and activating test environment in $ENVDIR"
-conda create --no-default-packages --use-index-cache --yes -p "$ENVDIR" --file "$TESTS/$TESTENV_PKGS"
-source activate "$ENVDIR" 
+# Setup conda test environment
+echo "=== Creating and activating test environment in $WORKDIR/testenv"
+conda create --no-default-packages --use-index-cache --yes -p "$WORKDIR/testenv" --file "$TESTS/$TESTENV_PKGS"
+source activate "$WORKDIR/testenv"
 
 # Ensure that R uses only packages from the test environment
 export R_LIBS="$(Rscript -e 'cat(.Library)')"
