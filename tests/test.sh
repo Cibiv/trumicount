@@ -1,18 +1,12 @@
 #!/bin/bash
 
-# Version of gwpcR to use
-GWPCR_VERSION=0.9.9
-GWPCR_ARCHIVE="v$GWPCR_VERSION.zip"
-GWPCR_URL="https://github.com/Cibiv/gwpcR/archive/$GWPCR_ARCHIVE"
-
 # Stop on error
 set -o pipefail
 set -e
 
-# Find absolute path to "test" (i.e. script) directory
+# Locate "test" directory, include depdenencies.sh
 export TESTS="$( cd "$(dirname "$0")" ; pwd -P )"
-export TESTCASES="$TESTS/testcases"
-export TRUMICOUNT="$TESTS/../trumicount"
+source "$TESTS/dependencies.sh"
 
 # Create temporary working directory, make it the cwd
 WORKDIR="$(mktemp -d)"
@@ -57,9 +51,24 @@ echo "=== Using R libraries in $(Rscript -e "cat(paste(.libPaths(), collapse=', 
 # Install gwpcR. We don't use conda here to make it possible to use a new
 # version of gwpcR before the bioconda infrastructure has built the packages
 echo "=== Installing gwpcR"
-curl --progress-bar -O -L "$GWPCR_URL"
-unzip -q -n "$GWPCR_ARCHIVE"
-R CMD INSTALL "gwpcR-$GWPCR_VERSION"
+if test -f "$CACHE/$GWPCR_ARCHIVE" && (cd "$CACHE"; shasum -a 256 -c "$TESTS/$GWPCR_DIGEST"); then
+	echo "Found valid $GWPCR_ARCHIVE in cache $CACHE"
+else
+	if test -e "$CACHE/$GWPCR_ARCHIVE"; then
+		echo "Found invalid $GWPCR_ARCHIVE in cache $CACHE, removing it"
+		rm "$CACHE/$GWPCR_ARCHIVE"
+	fi
+	echo "Downloading $GWPCR_ARCHIVE from $GWPCR_URL into cache $CACHE"
+	curl --silent --show-error --fail --location -o "$GWPCR_ARCHIVE" -L "$GWPCR_URL"
+	if ! shasum -a 256 -c "$TESTS/$GWPCR_DIGEST"; then
+		echo "Failed to validate $GWPCR_ARCHIVE, checksum missmatch" >&2
+		exit 1
+	fi
+	echo "Moving $GWPCR_ARCHIVE into cache $CACHE"
+	mv "$GWPCR_ARCHIVE" "$CACHE/$GWPCR_ARCHIVE"
+fi
+echo "Installing $CACHE/$GWPCR_ARCHIVE"
+R CMD INSTALL "$CACHE/$GWPCR_ARCHIVE"
 
 # Run tests in $TESTCASES
 total="$(ls "$TESTCASES"/*.cmd | wc -l)"

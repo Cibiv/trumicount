@@ -1,11 +1,12 @@
 language: generic
+cache:
+  directories:
+    - /home/travis/.cache
+    - /home/travis/conda
 # Install conda
 before_install:
-  - INSTALLER=Miniconda2-latest-Linux-x86_64.sh
-  - curl -O -L https://repo.continuum.io/miniconda/$INSTALLER
-  - bash $INSTALLER -b -p ~/conda
-  - export PATH=~/conda/bin:$PATH
+  - tests/install_conda.sh
+  - export PATH=$HOME/conda/bin:$PATH
 # Run test
 script:
-  - cd tests
-  - ./test.sh
+  - tests/test.sh
