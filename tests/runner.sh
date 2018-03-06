@@ -31,13 +31,13 @@ for tc in "$TESTCASES"/*.cmd; do
 	if $BASH -e -o pipefail "$tc" 2>&1 | eval $logger; then
 		# Test completed, compare output to expected output
 		ran=$((ran+1))
-		if diff "$tcn.out" "$TESTCASES/$tcn.expected" >/dev/null; then
+		if diff "$tcn.output" "$TESTCASES/$tcn.expected" >/dev/null; then
 			# Output agrees
 			ok=$((ok+1))
 			echo "=== [$tcn] SUCCESS ($started/$total)"
 		else
 			# Output differs
-			(diff -Nau "$tcn.out" "$TESTCASES/$tcn.expected" || true) | eval $logger
+			(diff -Nau "$tcn.output" "$TESTCASES/$tcn.expected" || true) | eval $logger
 			echo "=== [$tcn] FAILED ($started/$total)"
 		fi
 	else
