@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# ******************************************************************************
+# *** Test Runner **************************************************************
+# ******************************************************************************
+#
+# Test cases are represented by a .cmd and a .expected file in testcases/
+# The .cmd-file is run with bash (supplying options -o pipefail and -e), and
+# should produce a .output file in the current directory. If the .cmd completed
+# without error (i.e. has exit status 0), the .output file is compared with the
+# .expected file, and the test passes if both are sufficiently similar.
+#
+# Before running the tests, a conda environment is prepared containing the
+# packages listed in the testenv-OS-MACHINE.pkgs file for the current machine
+# and operating system. Additionally, gwpcR is installed by downloading the
+# version set in dependencies.sh from github, and running R CMD INSTALL.
+
 # Stop on error
 set -o pipefail
 set -e
@@ -21,11 +36,11 @@ echo "=== Created working directory $WORKDIR"
 # Cleanup on exit
 function on_exit() {
   popd >/dev/null
-  if test "$ENVDIR" != ""; then
+  if test "$ENVDIR" != "" && test "$KEEP_ENVDIR" == ""; then
   	echo "=== Removing test environment $ENVDIR"
   	rm -rf "$ENVDIR"
   fi
-  if test "$WORKDIR" != ""; then
+  if test "$WORKDIR" != "" && test "$KEEP_WORKDIR" == ""; then
   	echo "=== Removing working directory $WORKDIR"
   	rm -rf "$WORKDIR"
   fi
@@ -56,7 +71,8 @@ echo "Installing $CACHE/$GWPCR_ARCHIVE"
 R CMD INSTALL "$CACHE/$GWPCR_ARCHIVE"
 
 # Run tests in $TESTCASES
-total="$(ls "$TESTCASES"/*.cmd | wc -l)"
+total="$(ls "$TESTCASES"/*.cmd | wc -l | sed 's/[[:space:]]*//')"
+started=0
 ran=0
 ok=0
 echo "=== Will run $total tests in $TESTCASES"
@@ -64,22 +80,34 @@ for tc in "$TESTCASES"/*.cmd; do
 	# Extract test case name
 	tcn="$(basename "$tc")"
 	tcn="${tcn//.cmd}"
-	# Run test case & report outcome
-	ran=$(($ran+1))
-	echo "=== [$tcn] RUNNING ($ran/$total)"
-	if $BASH -e -o pipefail "$tc" 2>&1 | awk -v tcn="$tcn" '{print "[" tcn "] " $0}'; then
-		ok=$(($ok+1))
-		echo "=== [$tcn] SUCCESS ($ran/$total)"
+	# Run test case
+	started=$(($started+1))
+	# gawk might not be strictly necessary here, but trumicount requires it anyway, so...
+	logger="gawk -v tcn=\"$tcn\" '{print \"[\" tcn \"] \" \$0; fflush()}'"
+	echo "=== [$tcn] RUNNING ($started/$total)"
+	if $BASH -e -o pipefail "$tc" 2>&1 | eval $logger; then
+		# Test completed, compare output to expected output
+		ran=$((ran+1))
+		if diff "$tcn.out" "$TESTCASES/$tcn.expected" >/dev/null; then
+			# Output agrees
+			ok=$((ok+1))
+			echo "=== [$tcn] SUCCESS ($started/$total)"
+		else
+			# Output differs
+			(diff -Nau "$tcn.out" "$TESTCASES/$tcn.expected" || true) | eval $logger
+			echo "=== [$tcn] FAILED ($started/$total)"
+		fi
 	else
-		echo "=== [$tcn] FAILURE ($ran/$total)"
+		# Test aborted
+		echo "=== [$tcn] ABORTED ($started/$total)"
 	fi
 done
 
 # Report results
 if test "$ok" == "$total"; then
-	echo "=== ALL TESTS PASSED ($total tests)"
+	echo "=== ALL TESTS SUCCEEDED ($total tests)"
 	exit 0
 else
-	echo "=== SOME TESTS FAILED ($ok tests out of $total tests succeeded)"
+	echo "=== SOME TESTS FAILED or ABORTED ($total tests, $ok succeeded, $ran finished, $((total-ran)) aborted)"
 	exit 1
 fi
