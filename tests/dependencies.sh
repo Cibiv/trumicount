@@ -1,9 +1,21 @@
 # Operating System
 
+# Operating system
+MACHINE="$(uname -m)"
+OS="$(uname -s)"
+case "$OS" in
+	Darwin)
+		CONDAOS="MacOSX"
+	;;
+	*)
+		CONDAOS="$OS"
+	;;
+esac
+
 # Version of gwpcR to use
 CONDA_VERSION=4.4.10
-CONDA_ARCHIVE="Miniconda2-$CONDA_VERSION-$(uname -s)-$(uname -m).sh"
-CONDA_DIGEST="Miniconda2-$CONDA_VERSION-$(uname -s)-$(uname -m).sha256"
+CONDA_ARCHIVE="Miniconda2-$CONDA_VERSION-$CONDAOS-$MACHINE.sh"
+CONDA_DIGEST="Miniconda2-$CONDA_VERSION-$CONDAOS-$MACHINE.sha256"
 CONDA_URL="https://repo.continuum.io/miniconda/$CONDA_ARCHIVE"
 
 # Version of gwpcR to use
