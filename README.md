@@ -18,6 +18,15 @@ phantom-filtered and loss-corrected molecule counts computed by TRUmiCount
 measure the true number of molecules with considerably higher accuracy than the
 raw number of distinct UMIs.<br>
 
+# Availability
+
+TRUmiCount is available on the [Bioconda](https://bioconda.github.io)
+channel of the [Conda](https://conda.io) package manager.
+
+```
+conda install -c bioconda trumicount
+```
+
 # More Information
 
 See https://cibiv.github.io/trumicount for detailes on the installation &

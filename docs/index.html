@@ -34,6 +34,7 @@ that are lost entirely during the sequencing process will still cause
 under-estimation of the molecule count, and amplification artifacts like PCR
 chimeras create phantom UMIs and thus cause over-estimation.<br>
 
+<p>
 <strong>Results:</strong>
 TRUmiCount used mechanistic model of PCR amplification to correct for both
 types of errors. In our <a
@@ -51,25 +52,19 @@ https://www.biorxiv.org/content/early/2017/11/13/217778</a>. (2017). If you use
 TRUmiCount, please cite this publication!
 
 <h2>Availability</h2>
-<h3 a=conda>Conda Repository</h3>
-<b>Repository Url:</b> <var>http://www.cibiv.at/~pflug_/conda/</var><br>
-<b>Available Packages:</b> <var>trumicount</var>, <var>umi_tools</var> (patched
-version, see <a href="https://github.com/CGATOxford/UMI-tools">here</a> for
-the original)<br>
-If you already have <a href="https://bioconda.github.io">bioconda</a> or plain
-<a href="https://conda.io">conda</a> installed, TRUmiCount is installed into a
-separate conda environment <it>trc</it> with
+<h3 a=conda>On <a href='https://bioconda.github.io/'><img src='bioconda.png'
+class="inlineimg" style='height: 20px; margin-bottom: -1px;'></a></h3>
+If you're already using <a href="https://bioconda.github.io">Conda</a>, you can
+install TRUmiCount from the <a href="https://conda.io">Bioconda</a>
+channel by doing
 <pre>
-conda create -n trc
-source activate trc
-conda config --env --add channels defaults
-conda config --env --add channels conda-forge
-conda config --env --add channels bioconda
-conda config --env --add channels http://www.cibiv.at/~pflug_/conda/
-conda install trumicount umi_tools samtools
+conda install -c bioconda trumicount
 </pre>
-For more detailed instruction and other installation options see the <a
-href="manual.pdf">manual</a>.
+
+<p>
+For more detailed instruction and other installation options see the
+<a href="manual.pdf">manual</a>.
+
 <h3>Soure Code</h3>
 <a class="github_link" href="https://github.com/Cibiv/trumicount.git">View on GitHub</a>
 
@@ -79,18 +74,21 @@ the terms of the GNU Affero General Public License as published by the Free
 Software Foundation, either version 3 of the License, or (at your option) any
 later version.
 
+<p>
 TRUmiCount is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
 details.
 
-<h2>Example Data</h2>
+<h2>Usage Examples</h2>
+<h3>Datasets</h3>
 <a href="kv_1000g.bam"><b><var>kv_1000g.bam</var></b></a>:
 Mapped single-end reads for first 1000 genes from replicate 1 of the D.
 melanogaster data by Kivioja <i>et al.</i> (Counting absolute numbers of
 molecules using unique molecular identifiers. <i>Nature Methods</i> <b>9</b>,
 72-74, 2011)
-<br>
+
+<p>
 <a href="sg_100g.bam"><b><var>sh_100g.bam</var></b></a>:
 Mapped reads for first 100 genes from replicate 1 of the E. coli data by
 Shiroguchi <i>et al.</i> (Shiroguchi <i>et al.</i> Digital RNA sequencing
@@ -105,6 +103,7 @@ curl -O https://cibiv.github.io/trumicount/kv_1000g.bam
 samtools index kv_1000g.bam
 </pre>
 
+<p>
 This indexed BAM-File can then be processed with trumicount to produce a
 table containing bias-corrected numbers of transcript molecules for each
 gene (<var>kv_1000g.tab</var>)
@@ -112,6 +111,7 @@ gene (<var>kv_1000g.tab</var>)
 trumicount --input-bam kv_1000g.bam --molecules 2 --threshold 2 --genewise-min-umis 3 --output-counts kv_1000g.tab
 </pre>
 
+<p>
 For a brief list of command-line options of TRUmiCount see <code>trumicount
 --help</code>, for an in-depth description of the possible operating modes,
 input and output formats and command-line options see the <a
