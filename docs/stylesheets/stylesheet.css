@@ -265,8 +265,9 @@ img {
 }
 
 img.inlineimg {
+  vertical-align: baseline;
+  height: 1.4ex;
   width: auto;
-  height: auto;
   padding: 0px;
   margin: 0px;
 }
