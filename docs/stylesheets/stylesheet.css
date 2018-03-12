@@ -270,6 +270,8 @@ img.inlineimg {
   width: auto;
   padding: 0px;
   margin: 0px;
+  border: 0px;
+  box-shadow: none;
 }
 
 /*******************************************************************************
@@ -287,59 +289,60 @@ Full-Width Styles
   margin: 0 auto;
 }
 
-#forkme_banner {
-  position: relative;
-  float: right;
-  top:-50;
-  left:10px;
-  line-height: 30px;
-  z-index: 10;
-  padding: 10px 50px 10px 10px;
-  color: #fff;
-  background: url('../images/blacktocat.png') #0090ff no-repeat 95% 50%;
-  font-weight: 700;
-  border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
+.top {
+	position: absolute;
+	top: 0px;
+	width: 100%;
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
 }
 
-.github_link {
+.bottom {
+	position: absolute;
+	bottom: -1px;
+	width: 100%;
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+}
+
+.top_banner {
+  position: relative;
+  float: left;
+  top: -50px;
+  left: 0px;
   z-index: 10;
+  margin: 0 20px 0 0;
   padding: 10px 50px 10px 10px;
+  line-height: 30px;
+  z-index: 10;
   color: #fff;
-  background: url('../images/blacktocat.png') #0090ff no-repeat 95% 50%;
+  background: url('../images/icon_download.png') #0090ff no-repeat 95% 50%;
   font-weight: 700;
   border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
+  border-bottom-right-radius: 2px;  
+}
+
+.bottom_banner {
+  position: relative;
+  float: left;
+  bottom: 0px;
+  left: 0px;
+  z-index: 10;
+  margin: 0 20px 0 0;
+}
+
+
+#forkme_banner {
+  float: right;
+  background: url('../images/blacktocat.png') #0090ff no-repeat 95% 50%;
 }
 
 #manual_banner {
-  position: relative;
-  float: left;
-  top:-50;
-  left: 10px;
-  line-height: 30px;
-  z-index: 10;
-  padding: 10px 50px 10px 10px;
-  color: #fff;
   background: url('../images/icon_download.png') #0090ff no-repeat 95% 50%;
-  font-weight: 700;
-  border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
 }
 
 #publication_banner {
-  position: relative;
-  float: left;
-  top:-50;
-  left: 20px;
-  line-height: 30px;
-  z-index: 10;
-  padding: 10px 50px 10px 10px;
-  color: #fff;
-  background: url('../images/icon_download.png') #0090ff no-repeat 95% 50%;
-  font-weight: 700;
-  border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
+  background: url('../images/icon_paper.png') #0090ff no-repeat 95% 50%;
 }
 
 #header_wrap {

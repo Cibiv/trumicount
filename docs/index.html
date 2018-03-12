@@ -10,9 +10,25 @@
 <!-- HEADER -->
 <div id="header_wrap" class="outer">
     <header class="inner">
-      <a id="manual_banner" href="manual.pdf">Manual</a>
-      <a id="publication_banner" href="https://www.biorxiv.org/content/early/2017/11/13/217778">Publication</a>
-      <a id="forkme_banner" href="https://github.com/Cibiv/trumicount">View on GitHub</a>
+      <div id="top">
+        <a id="manual_banner" class="top_banner" href="manual.pdf">Manual</a>
+        <a id="publication_banner" class="top_banner"  href="https://www.biorxiv.org/content/early/2017/11/13/217778">Publication</a>
+        <a id="forkme_banner" class="top_banner"  href="https://github.com/Cibiv/trumicount">View on GitHub</a>
+      </div>
+      <div id="bottom" class="bottom">
+        <a class="bottom_banner" href="https://anaconda.org/bioconda/trumicount">
+          <img src='https://anaconda.org/bioconda/trumicount/badges/installer/conda.svg' class=inlineimg style='height: auto'>
+        </a>
+        <a class="bottom_banner" href="https://anaconda.org/bioconda/trumicount">
+          <img src='https://anaconda.org/bioconda/trumicount/badges/platforms.svg' class=inlineimg style='height: auto'>
+        </a>
+        <a class="bottom_banner" href="https://anaconda.org/bioconda/trumicount">
+          <img src='https://anaconda.org/bioconda/trumicount/badges/version.svg' class=inlineimg style='height: auto'>
+        </a>
+        <a class="bottom_banner" href='#license'>
+          <img src='https://anaconda.org/bioconda/trumicount/badges/license.svg' class=inlineimg style='height: auto'>
+        </a>
+      </div>
 
       <h1 id="project_title">TRUmiCount</h1>
       <h2 id="project_tagline">Correctly counting molecules using unique molecular identifiers</h2>
@@ -52,8 +68,9 @@ https://www.biorxiv.org/content/early/2017/11/13/217778</a>. (2017). If you use
 TRUmiCount, please cite this publication!
 
 <h2>Availability</h2>
-<h3 a=conda>On <a href='https://bioconda.github.io/'><img src='bioconda.png'
-class="inlineimg" style='margin-bottom: -1px'></a></h3>
+
+<h3 a=conda>Install from <a href='https://bioconda.github.io/'><img src='bioconda.png'
+class="inlineimg"></a></h3>
 If you're already using <a href="https://bioconda.github.io">Conda</a>, you can
 install TRUmiCount from the <a href="https://conda.io">Bioconda</a>
 channel by doing
@@ -65,20 +82,9 @@ conda install -c bioconda trumicount
 For more detailed instruction and other installation options see the
 <a href="manual.pdf">manual</a>.
 
-<h3>Soure Code</h3>
-<a class="github_link" href="https://github.com/Cibiv/trumicount.git">View on GitHub</a>
-
-<h3>License</h3>
-TRUmiCount is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License as published by the Free
-Software Foundation, either version 3 of the License, or (at your option) any
-later version.
-
-<p>
-TRUmiCount is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
-details.
+<h3>Sourecode on <img src='images/github.png' class='inlineimg' style='height: 2.2ex; bottom: -0.4ex'></h3>
+The code is avaiable on <a href="https://github.com/Cibiv/trumicount.git">
+https://github.com/Cibiv/trumicount.git</a>
 
 <h2>Usage Examples</h2>
 <h3>Datasets</h3>
@@ -116,6 +122,18 @@ For a brief list of command-line options of TRUmiCount see <code>trumicount
 --help</code>, for an in-depth description of the possible operating modes,
 input and output formats and command-line options see the <a
 href="manual.pdf">manual</a>
+
+<h2><a name='license'></a>License</h2>
+TRUmiCount is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+<p>
+TRUmiCount is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+details.
 
 <!-- END MAIN CONTENT -->
 </section>
