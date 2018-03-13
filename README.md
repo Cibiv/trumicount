@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/Cibiv/trumicount.svg?branch=master)](https://travis-ci.org/Cibiv/trumicount)
+[![Install with Conda](https://anaconda.org/bioconda/trumicount/badges/installer/conda.svg)](https://anaconda.org/bioconda/trumicount)
 
 # Description
 
@@ -35,8 +36,7 @@ usage of TRUmiCount.
 The TRUmiCount algorithmus and our model of PCR amplification and sequencing
 is described in details in our paper *TRUmiCount: Correctly counting absolute
 numbers of molecules using unique molecular identifiers*, Florian G. Pflug &
-Arndt von Haeseler, Preprint at https://www.biorxiv.org/content/early/2017/11/13/217778.
-(2017).
+Arndt von Haeseler (2017), Preprint on [bioRxiv](https://www.biorxiv.org/content/early/2017/11/13/217778).
 
 # License
 
