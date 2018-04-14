@@ -58,7 +58,7 @@
 \cohead*{}
 \cofoot*{}
 
-% Line and page breaking. 
+% Line and page breaking.
 \emergencystretch3em
 \widowpenalty10000
 \clubpenalty10000
@@ -184,7 +184,7 @@ source ~/conda/bin/activate trc
 %$
 \subsubsection*{Installing BioConda}
 
-Conda packages are organized into so-called \emph{channels}. We add the BioConda\footnote{See \url{http://bioconda.github.io/} for details} channel which contains many common bioinformatics tools.
+Conda packages are organized into so-called \emph{channels}. We add the BioConda\footnote{See \url{http://bioconda.github.io/} for details} channel which contains many common bioinformatics tools, amongst which is also TRUmiCount.
 
 \begin{shellcode}
 conda config --env --add channels defaults
@@ -194,17 +194,28 @@ conda config --env --add channels bioconda
 
 \subsubsection*{Installing TRUmiCount}
 
-Finall we add the channel that supplies TRUmiCount and a modified version of UMI-Tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} with improved handling of paired-end reads
+With Conda installed and the Bioconda channels added, TRUmiCount is installed with
 
 \begin{shellcode}
-conda config --env --add channels http://www.cibiv.at/~pflug_/conda/
+conda install trumicount
 \end{shellcode}
 
-TRUmiCount and our version of UMI-Tools can now be installed
+\subsubsection*{Installing SAMtools and UMI-Tools (Optional)}
 
+TRUmiCount relies on UMI-Tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} to extract the UMIs associated with a gene (or other genomic feature) from the mapped reads in a BAM file. You can install UMI-tools with
 \begin{shellcode}
-conda install trumicount umi_tools samtools
+conda install umi_tools
 \end{shellcode}
+We alternatively offer a modified version of UMI-Tools that improve the handling of paired-end reads, and which can be installed with
+\begin{shellcode}
+conda install -c http://www.cibiv.at/~pflug_/conda/ umi_tools
+\end{shellcode}
+
+While TRUmiCount does not directly require SAMtools, some of the examples in this manual rely on SAMtools being installed, so we suggest installing them with
+\begin{shellcode}
+conda install samtools
+\end{shellcode}
+
 
 \subsection{Manual Installation on linux or mac OS}
 
@@ -228,7 +239,6 @@ cd trumicount/
 mkdir -p ~/.local/bin
 ./install.R --prefix ~/.local
 \end{shellcode}
-%$
 
 To be able to run TRUmiCount, you must add \texttt{\textasciitilde/.local/bin} to your \texttt{PATH}. \textbf{This must be done every time you open a new terminal window!}
 
@@ -313,7 +323,7 @@ The main output of TRUmiCount is a table, written to a tab-separated file specif
 \item[n.tot] The estimated total number of molecules, i.e. ``n.umis'' / (1 - ``loss'').
 \item[efficiency] The estimated gene-specific amplification efficiency
 \item[depth] The gene-specific sequencing depth in reads/molecule.
-\item[loss] The estimated gene-specific loss, i.e. the probability of not detecting or filtering a true UMI. 
+\item[loss] The estimated gene-specific loss, i.e. the probability of not detecting or filtering a true UMI.
 \item[n.obs] The number of observations used to estimate ``efficiency'', ``depth'' and ``loss''. If ``\ddarg{combine-strand-umis}'' is used, this number can be larger than ``n.umis'', because in this case ``n.umis'' counts UMI \emph{pairs} while ``n.obs'' counts \emph{strand} UMIs.
 \end{labeling}
 
