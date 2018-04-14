@@ -1,28 +1,28 @@
-\item[\textmd{\texttt{-{}-input-bam} \textit{inbam}}:] read UMIs from \textit{inbam} (uses \guillemotleft\texttt{umi\_tools group}\guillemotright{})
-\item[\textmd{\texttt{-{}-input-umitools-group-out} \textit{groupsintab}}:] read UMIs from \textit{groupsintab} produced by \guillemotleft\texttt{umi\_tools group}\guillemotright{}
-\item[\textmd{\texttt{-{}-input-umis} \textit{umisintab}}:] read UMIs from \textit{umisintab} (previously produced by \texttt{-{}-output-umis})
-\item[\textmd{\texttt{-{}-output-counts} \textit{countstab}}:] write bias-corrected per-gene counts and models to \textit{countstab}
-\item[\textmd{\texttt{-{}-output-umis} \textit{umistab}}:] write UMIs reported by \guillemotleft\texttt{umi\_tools group}\guillemotright{} to \textit{umistab}
-\item[\textmd{\texttt{-{}-output-final-umis} \textit{finalumistab}}:] write strand-combined and filtered UMIs to \textit{finalumistab}
-\item[\textmd{\texttt{-{}-output-plots} \textit{plot}}:] write diagnostic plots in PDF format to \textit{plot}
-\item[\textmd{\texttt{-{}-output-genewise-fits} \textit{genefitstab}}:] write gene-wise model details to \textit{genefitstab}
-\item[\textmd{\texttt{-{}-umitools} \textit{umitools}}:] use executable \textit{umitools} to run \guillemotleft\texttt{umi\_tools group}\guillemotright{} (Default: \textrm{`umi\_tools'})
-\item[\textmd{\texttt{-{}-umitools-option} \textit{umitoolsopt}}:] pass \textit{umitoolsopt} to \guillemotleft\texttt{umi\_tools group}\guillemotright{} (see \guillemotleft\texttt{umi\_tools group \texttt{-{}-help}}\guillemotright{})
-\item[\textmd{\texttt{-{}-umi-sep} \textit{umisep}}:] assume \textit{umisep} separates read name and UMI (passed to umi\_tools) (Default: \textrm{`:'})
-\item[\textmd{\texttt{-{}-umipair-sep} \textit{umipairsep}}:] assume \textit{umipairsep} separates read1 and read2 UMI (see Strand UMIs) (Default: \textrm{`'})
-\item[\textmd{\texttt{-{}-paired} }:] assume BAM file contains paired reads (passed to umi\_tools) (Default: No)
-\item[\textmd{\texttt{-{}-mapping-quality} \textit{mapq}}:] ignored read with mapping quality below \textit{mapq} (passed to umi\_tools) (Default: \textrm{20})
-\item[\textmd{\texttt{-{}-filter-strand-umis} }:] filtes UMIs where only one strands was observed (Default: No)
-\item[\textmd{\texttt{-{}-combine-strand-umis} }:] combine UMIs strand pairs (implies \texttt{-{}-filter-strand-umis}) (Default: No)
-\item[\textmd{\texttt{-{}-threshold} \textit{threshold}}:] remove UMIs with fewer than \textit{threshold} reads (Default: \textrm{2})
-\item[\textmd{\texttt{-{}-molecules} \textit{molecules}}:] assume UMIs are initially represented by \textit{molecules} copies (strands) (Default: \textrm{2})
-\item[\textmd{\texttt{-{}-genewise-min-umis} \textit{minumis}}:] use global estimates for genes with fewer than \textit{minumis} (strand) UMIs (Default: \textrm{5})
-\item[\textmd{\texttt{-{}-cores} \textit{cores}}:] spread gene-wise model fitting over \textit{cores} cpus (Default: \textrm{1})
-\item[\textmd{\texttt{-{}-variance-estimator} \textit{varest}}:] use \textit{varest} to estimate variances, can be "lsq" or "mle" (Default: \textrm{`lsq'})
-\item[\textmd{\texttt{-{}-digits} \textit{digits}}:] number of digits to output (Default: \textrm{3})
-\item[\textmd{\texttt{-{}-plot-hist-bin} \textit{plotxbin}}:] make read count histogram bins \textit{plotxbin} wide
-\item[\textmd{\texttt{-{}-plot-hist-xmax} \textit{plotxmax}}:] limit read count histogram plot to at most \textit{plotxmax} reads per UMI
-\item[\textmd{\texttt{-{}-plot-skip-phantoms} }:] do not show phantom UMIs in histogram plot (Default: No)
-\item[\textmd{\texttt{-{}-plot-var-bins} \textit{plotvarbins}}:] plot \textit{plotvarbins} separate emprirical variances (Default: \textrm{10})
-\item[\textmd{\texttt{-{}-plot-var-logy} }:] use log scale for the variance (y) axis (Default: No)
+\item[\textmd{\texttt{-{}-input-bam} INBAM}:] read UMIs from INBAM (uses \guillemotleft\texttt{umi\_tools group}\guillemotright{})
+\item[\textmd{\texttt{-{}-input-umitools-group-out} GROUPSINTAB}:] read UMIs from GROUPSINTAB produced by \guillemotleft\texttt{umi\_tools group}\guillemotright{}
+\item[\textmd{\texttt{-{}-input-umis} UMISINTAB}:] read UMIs from UMISINTAB (previously produced by \texttt{-{}-output-umis})
+\item[\textmd{\texttt{-{}-output-counts} COUNTSTAB}:] write bias-corrected per-gene counts and models to COUNTSTAB
+\item[\textmd{\texttt{-{}-output-umis} UMISTAB}:] write UMIs reported by \guillemotleft\texttt{umi\_tools group}\guillemotright{} to UMISTAB
+\item[\textmd{\texttt{-{}-output-final-umis} FINALUMISTAB}:] write strand-combined and filtered UMIs to FINALUMISTAB
+\item[\textmd{\texttt{-{}-output-plots} PLOT}:] write diagnostic plots in PDF format to PLOT
+\item[\textmd{\texttt{-{}-output-genewise-fits} GENEFITSTAB}:] write gene-wise model details to GENEFITSTAB
+\item[\textmd{\texttt{-{}-umitools} UMITOOLS}:] use executable UMITOOLS to run \guillemotleft\texttt{umi\_tools group}\guillemotright{} (Default: \textrm{`umi\_tools'})
+\item[\textmd{\texttt{-{}-umitools-option} UMITOOLSOPT}:] pass UMITOOLSOPT to \guillemotleft\texttt{umi\_tools group}\guillemotright{} (see \guillemotleft\texttt{umi\_tools group \texttt{-{}-help}}\guillemotright{})
+\item[\textmd{\texttt{-{}-umi-sep} UMISEP}:] assume UMISEP separates read name and UMI (passed to umi\_tools) (Default: \textrm{`:'})
+\item[\textmd{\texttt{-{}-umipair-sep} UMIPAIRSEP}:] assume UMIPAIRSEP separates read1 and read2 UMI (see Strand UMIs) (Default: \textrm{`'})
+\item[\textmd{\texttt{-{}-paired} }:] assume BAM file contains paired reads (passed to umi\_tools) (Default: \textrm{`FALSE'})
+\item[\textmd{\texttt{-{}-mapping-quality} MAPQ}:] ignored read with mapping quality below MAPQ (passed to umi\_tools) (Default: \textrm{20})
+\item[\textmd{\texttt{-{}-filter-strand-umis} }:] filtes UMIs where only one strands was observed (Default: \textrm{`FALSE'})
+\item[\textmd{\texttt{-{}-combine-strand-umis} }:] combine UMIs strand pairs (implies \texttt{-{}-filter-strand-umis}) (Default: \textrm{`FALSE'})
+\item[\textmd{\texttt{-{}-threshold} THRESHOLD}:] remove UMIs with fewer than THRESHOLD reads (Default: \textrm{2})
+\item[\textmd{\texttt{-{}-molecules} MOLECULES}:] assume UMIs are initially represented by MOLECULES copies (strands) (Default: \textrm{2})
+\item[\textmd{\texttt{-{}-genewise-min-umis} MINUMIS}:] use global estimates for genes with fewer than MINUMIS (strand) UMIs (Default: \textrm{5})
+\item[\textmd{\texttt{-{}-cores} CORES}:] spread gene-wise model fitting over CORES cpus (Default: \textrm{1})
+\item[\textmd{\texttt{-{}-variance-estimator} VAREST}:] use VAREST to estimate variances, can be "lsq" or "mle" (Default: \textrm{`lsq'})
+\item[\textmd{\texttt{-{}-digits} DIGITS}:] number of digits to output (Default: \textrm{3})
+\item[\textmd{\texttt{-{}-plot-hist-bin} PLOTXBIN}:] make read count histogram bins PLOTXBIN wide
+\item[\textmd{\texttt{-{}-plot-hist-xmax} PLOTXMAX}:] limit read count histogram plot to at most PLOTXMAX reads per UMI
+\item[\textmd{\texttt{-{}-plot-skip-phantoms} }:] do not show phantom UMIs in histogram plot (Default: \textrm{`FALSE'})
+\item[\textmd{\texttt{-{}-plot-var-bins} PLOTVARBINS}:] plot PLOTVARBINS separate emprirical variances (Default: \textrm{10})
+\item[\textmd{\texttt{-{}-plot-var-logy} }:] use log scale for the variance (y) axis (Default: \textrm{`FALSE'})
 \item[\textmd{\texttt{-{}-verbose} }:] enable verbose output 
