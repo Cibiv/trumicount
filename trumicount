@@ -371,7 +371,7 @@ message('Overall efficiency ', round(100*gm$efficiency), '%, depth ',
 # ******************************************************************************
 if (!is.null(ARGS$`output-plots`)) {
   message('*** Opening PDF ', ARGS$`output-plots`, ' for plot output')
-  pdf(file=ARGS$`output-plots`, onefile=TRUE, height=3.5, width=5.5)
+  pdf(file=ARGS$`output-plots`, onefile=TRUE, height=3.5, width=8)
 }
 
 # ******************************************************************************
@@ -390,18 +390,25 @@ if (!is.null(ARGS$`output-plots`)) {
   x.max <- ifelse(!is.null(ARGS$`plot-hist-xmax`),
                   ARGS$`plot-hist-xmax`,
                   max(h.breaks))
+  # Histograms
+  h <- hist(counts, breaks=h.breaks, right = FALSE, plot=FALSE)
+  h.pf <- hist(counts.prefilter, breaks=h.breaks, right = FALSE, plot=FALSE)
+  # Determine y range, ensure max. is nicely printable
+  y.max <- max((if (!ARGS$`plot-skip-phantoms`) h.pf else h)$counts)
+  y.max <- if ((y.max.nice <- signif(y.max, digits=2)) >= y.max)
+    y.max.nice
+  else
+    signif(y.max*1.1, digits=2)
   # Setup plotting
-  par(mar=c(3.1, 2.1, 1.1, 0.2))
+  par(mar=c(5.1, 3.1, 1.1, 2.5/par("csi")), cex.axis=0.8)
+  plot.new()
+  plot.window(xlim=c(0, x.max), ylim=c(0, y.max), yaxt="n", xlab="", ylab="", main="")
+  # Compute y range
   # Plot phantoms if requested
-  if (!ARGS$`plot-skip-phantoms`) {
-    hist(counts.prefilter, freq = TRUE, right = FALSE,
-         xlim=c(0, x.max), breaks=h.breaks,
-         border="grey", xlab="", ylab="", yaxt="n", main="")
-  }
+  if (!ARGS$`plot-skip-phantoms`)
+    plot(h.pf, border="grey", freq = TRUE, add=TRUE)
   # Plot main histogram
-  h <- hist(counts, freq = TRUE, right = FALSE,
-            xlim=c(0, x.max), breaks=h.breaks,
-            add=TRUE)
+  plot(h, freq = TRUE, add=TRUE)
   # Plot model
   p <- diff(ifelse(h$breaks > 0,
                    pgwpcrpois(pmax(h$breaks - 1, 0), threshold=0,
@@ -410,7 +417,7 @@ if (!is.null(ARGS$`output-plots`)) {
                               lambda0=gm$lambda0) /
                      (1 - gm$p0),
                    0))
-  points(h$mids, p * length(counts), pch=16, cex=0.7, xpd=TRUE,
+  points(h$mids, p * length(counts), pch=16, cex=0.7,
          col=ifelse(h$breaks >= ARGS$threshold, 'black', 'red'))
   # Plot Loss
   text(ARGS$threshold/2, par('usr')[4], adj=c(1.0,0.5),
@@ -421,13 +428,28 @@ if (!is.null(ARGS$`output-plots`)) {
   text(ARGS$threshold, par('usr')[4], adj=c(-0.1, 0), xpd=TRUE,
        paste0("Th.=", ARGS$threshold))
   # Plot Model Parameters
-  text(par("usr")[2], par("usr")[4], adj=c(1.0, 0), xpd=NA,
-       paste0('Eff.=', round(100*gm$efficiency), '%'))
+  p.txt <- paste0('Efficiency = ', round(100*gm$efficiency), '%\n',
+                  'Depth = ', signif(gm$lambda0, digits=2), ' reads/UMI')
+  text(par("usr")[2], par("usr")[4], p.txt, adj=c(0.0, 1.0), xpd=NA)
+  # Plot Legend
+  lf <- if (!ARGS$`plot-skip-phantoms`)
+    c(TRUE, TRUE, TRUE, TRUE)
+  else
+    c(TRUE, FALSE, TRUE, TRUE)
+  legend(par("usr")[2], par("usr")[4] - strheight(p.txt), xjust=0.0, yjust=1.0, seg.len=0,
+         pch=c(NA,NA,16,16)[lf], col=c(NA,'darkgrey','black','red')[lf],
+         border=c("black","darkgrey",NA,NA)[lf], fill=c(NA,NA,NA,NA)[lf],
+         legend=c("Putative true UMIs", "Putative phantom UMIs", "Predicted True UMIs", "Predicted Loss")[lf],
+         bty='n', xpd=NA)
   # Plot X-Axis
-  mtext(side=1, line=2, 'x (Reads)')
+  bin.l <- head(h.breaks, n=-1)
+  bin.r <- tail(h.breaks, n=-1)
+  axis(side=1, line=0, pos=0, at=(bin.l+bin.r)/2, labels=paste0(bin.l, '-', bin.r-1), las=3)
+  mtext(side=1, line=4, 'x (Reads)')
   # Plot Y-Axis
-  axis(side=2, line=0, at=c(0, par("usr")[4]), labels=NA)
-  mtext(side=2, line=1, '#UMIs with x reads')
+  axis(side=2, line=0, at=c(0, y.max), labels=c("0", format(y.max, scientific=TRUE)))
+  mtext(side=2, line=2, '#UMIs with')
+  mtext(side=2, line=1, 'x reads')
 }
 
 # ******************************************************************************
@@ -467,7 +489,7 @@ if (!is.null(ARGS$`output-plots`)) {
   u <- gsm[1, loss.raw.var * n.obs]
   s <- gsm[1, loss.grp.var]
   # Setup plot
-  par(mar=c(4.1,4.1,1.1,1.1))
+  par(mar=c(4.1,4.1,1.1,2.5/par("csi")))
   plot.new()
   xlim=range(c(1, gsm.bin$n.obs))
   plot.window(xlim=xlim,
@@ -481,8 +503,9 @@ if (!is.null(ARGS$`output-plots`)) {
                     "# Strand UMIs / Gene",
                     "# UMIs / Gene"),
         ylab=expression("Total Variance of Loss Estimates"))
-  legend('topright', lty=c(NA, 2), pch=c(4, NA),
-         c('Empirical', 'Prediction s + u/n'), bty='n')
+  legend(10^par("usr")[2], ifelse(ARGS$`plot-var-logy`, 10^par("usr")[4], par("usr")[4]),
+         xjust=0.0, yjust=1.0, xpd=NA,
+         lty=c(NA, 2), pch=c(4, NA), c('Empirical', 'Prediction s + u/n'), bty='n')
   # Plot bin-wise empirical loss variance
   gsm.bin[, points(n.obs, loss.raw.var, pch=4) ]
   # Plot prediction
