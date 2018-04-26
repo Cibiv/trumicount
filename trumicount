@@ -176,6 +176,7 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
     stop('--input-umis is incompatible with ', paste(OPTS.INVALID$`input-umis`, collapse=', '))
 
   # Table will be read from this file connection
+  message('*** Reading UMI table from ', ARGS$`input-umis`)
   open_byext(ARGS$`input-umis`, open='r')
 } else {
   # Grouped UMI table must be created
@@ -184,6 +185,7 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
   if (!is.null(ARGS$`input-bam`)) {
     # Input is BAM File, we use umi_tools to group similar UMIs. It outputs a line per read,
     # but indicates which reads belong to the same UMI group.
+    message('*** Will use ', ARGS$`umitools`,' to extract UMIs from ', ARGS$`input-bam`)
     cmds[[length(cmds)+1]] <- paste(shQuote(ARGS$`umitools`), 'group', '--group-out /dev/stdout',
                                     '-I', shQuote(ARGS$`input-bam`),
                                     '-L', ifelse(ARGS$verbose, '/dev/stderr', '/dev/null'),
@@ -199,6 +201,7 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
     tool <- if (grepl(GZEXT, ARGS$`input-umitools-group-out`)) 'zcat'
     else if (grepl(BZ2EXT, ARGS$`input-umitools-group-out`)) 'bzcat'
     else 'cat'
+    message('*** Will read `umi_tools --group` output from ', ARGS$`input-umitools-group-out`)
     cmds[[length(cmds)+1]] <- paste(tool, shQuote(ARGS$`input-umitools-group-out`), sep=' ')
   }
 
@@ -213,7 +216,7 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
     else if (grepl(BZ2EXT, ARGS$`output-umis`)) 'bzip2 --stdout'
     else 'cat'
     cmds[[length(cmds)+1]] <- paste(tool, '>', shQuote(ARGS$`output-umis`), sep=' ')
-    message('*** Using umi_tools to extract UMI, writing table to ', ARGS$`output-umis`)
+    message('*** Reading UMIs, writing UMI table to ', ARGS$`output-umis`)
     if (ARGS$verbose)
       cat(paste0('Command: ', paste(cmds, collapse=" |\n         "), "\n"))
     system(paste(cmds, collapse=' | '))
@@ -222,7 +225,7 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
     open_byext(ARGS$`output-umis`, open='r')
   } else {
     # Table will be read from this pipe
-    message('*** Using umi_tools to extract UMIs')
+    message('*** Reading UMIs')
     if (ARGS$verbose) {
       cat(paste0('Command: ', paste(cmds, collapse=" |\n         "), "\n"))
     }
@@ -234,7 +237,6 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
 # *** Read table using connection established above ****************************
 # ******************************************************************************
 library(data.table)
-message('*** Reading UMI table')
 umis <- data.table(read.table(umis_con, header=TRUE, sep="\t",
                               colClasses=c(gene='factor', sample='factor',
                                            pos='numeric', end='numeric', umi='character',
