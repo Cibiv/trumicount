@@ -81,10 +81,11 @@ BEGIN {
 }
 NR==1 {
   # Locate columns
-  Iread_id=Icontig=Iposition=Iposition2=Igene=Iumi=Iumi_count=Ifinal_umi=Ifinal_umi_count=Iunique_id=-1;
+  Iread_id=Icell=Icontig=Iposition=Iposition2=Igene=Iumi=Iumi_count=Ifinal_umi=Ifinal_umi_count=Iunique_id=-1;
   for (i=1;i<=NF;i++) {
     switch ($i) {
       case "read_id": Iread_id=i; break;
+      case "cell": Icell=i; break;
       case "contig": Icontig=i; break;
       case "position": Iposition=i; break;
       case "position2": Iposition2=i; break;
@@ -108,7 +109,7 @@ NR>1 {
   else if (gid!=gidp) {
     # Group changed, output previous group
     $0=lp; # Switch back to (last line of) previous group
-    print ($Igene=="NA"?$Icontig:$Igene) "\\t" "" "\\t" $Iposition "\\t" (Iposition2>0?$Iposition2:"NA") "\\t" $Ifinal_umi "\\t" numis "\\t" $Ifinal_umi_count;
+    print ($Igene=="NA"?$Icontig:$Igene) "\\t" (Icell>0?$Icell:"") "\\t" $Iposition "\\t" (Iposition2>0?$Iposition2:"NA") "\\t" $Ifinal_umi "\\t" numis "\\t" $Ifinal_umi_count;
     numis=1;
   }
   else if (umi!=umip) {
@@ -123,7 +124,7 @@ NR>1 {
 END {
   # Output last group
   $0=lp;
-  print ($Igene=="NA"?$Icontig:$Igene) "\\t" "" "\\t" $Iposition "\\t" (Iposition2>0?$Iposition2:"NA") "\\t" $Ifinal_umi "\\t" numis "\\t" $Ifinal_umi_count;
+  print ($Igene=="NA"?$Icontig:$Igene) "\\t" (Icell>0?$Icell:"") "\\t" $Iposition "\\t" (Iposition2>0?$Iposition2:"NA") "\\t" $Ifinal_umi "\\t" numis "\\t" $Ifinal_umi_count;
 }
 ')
 
