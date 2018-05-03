@@ -25,7 +25,7 @@ CONDA_DIGEST="Miniconda2-$CONDA_VERSION-$CONDAOS-$MACHINE.sha256"
 CONDA_URL="https://repo.continuum.io/miniconda/$CONDA_ARCHIVE"
 
 # Version of gwpcR to use
-GWPCR_VERSION=0.9.9
+GWPCR_VERSION=0.9.10
 GWPCR_ARCHIVE="gwpcr-v$GWPCR_VERSION.tar.gz"
 GWPCR_DIGEST="gwpcr-v$GWPCR_VERSION.sha256"
 GWPCR_URL="https://github.com/Cibiv/gwpcR/archive/v$GWPCR_VERSION.tar.gz"
