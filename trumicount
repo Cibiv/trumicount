@@ -447,8 +447,15 @@ if (!is.null(ARGS$`output-plots`)) {
   # Plot X-Axis
   bin.l <- head(h.breaks, n=-1)
   bin.r <- tail(h.breaks, n=-1)
-  if (x.bin > 1)
-    axis(side=1, line=0, pos=0, at=(bin.l+bin.r)/2, labels=paste0(bin.l, '-', bin.r-1), las=3)
+  if (x.bin > 1) {
+    at=(bin.l+bin.r)/2
+    labels=paste0(bin.l, '-', bin.r-1)
+    # If we'd need more than 30 labels, leave some out
+    indices=seq(from=1, to=length(at), by=ceiling(length(at)/30))
+    labels.filtered=rep("", length(at))
+    labels.filtered[indices] = labels[indices]
+    axis(side=1, line=0, pos=0, at=at, labels=labels.filtered, las=3)
+  }
   else
     axis(side=1, line=0, pos=0, at=bin.l+0.5, labels=as.character(bin.l))
   mtext(side=1, line=4, 'x (Reads)')
