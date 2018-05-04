@@ -272,7 +272,7 @@ For a detailed explanation of TRUmiCount's various modes of operation and suppor
 You can download an example input file\footnote{containing a reduced version, restricted to the first 1000 genes and sub-sampled to 50\%, of RNA-Seq data published in Kivioja, T. \textit{et al.} Counting absolute numbers of molecules using unique molecular identifiers. \textit{Nature Methods} \textbf{9}, 72-74 (2011)} in BAM format and index it (necessary for reading it with TRUmiCount) with
 
 \begin{shellcode}
-curl -O http://www.cibiv.at/~pflug_/trumicount/kv_1000g.bam
+curl -O https://cibiv.github.io/trumicount/kv_1000g.bam
 samtools index kv_1000g.bam
 \end{shellcode}
 
@@ -369,7 +369,7 @@ With the option ``\ddarg{combine-strand-umis}'', pairs of partner UMIs stemming 
 
 \section{Examples}\label{examples}
 
-The example data can be downloaded from \url{http://www.cibiv.at/~pflug_/trumicount}. Before TRUmiCount can process these BAM files, they need to be indexed by running
+The example data can be downloaded from \url{https://cibiv.github.io/trumicount/}. Before TRUmiCount can process these BAM files, they need to be indexed by running
 
 \begin{shellcode}
 samtools index sg_100g.bam
