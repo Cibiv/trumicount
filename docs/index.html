@@ -76,16 +76,27 @@ If you're already using <a href="https://bioconda.github.io">Conda</a>, you can
 install TRUmiCount from the <a href="https://conda.io">Bioconda</a>
 channel by doing
 <pre>
-conda install -c bioconda trumicount
+conda install -c bioconda trumicount samtools
 </pre>
 
 <p>
-For more detailed instruction and other installation options see the
+TRUmiCount relies on <a href="http://github.com/CGATOxford/UMI-tools">UMI-Tools</a>
+to extract the UMIs associated with a gene. We provide a modified version that is
+more seamlessly integrated with TRUmiCount which you can install with
+<pre>
+conda install -c cibiv umi_tools_tuc
+</pre>
+(You can also use the umodified UMI-Tools with TRUmiCount, but for single-cell
+data in particular you might encounter some issues)
+
+<p>
+For more detailed instructions and other installation options see the
 <a href="manual.pdf">manual</a>.
 
 <h3>Sourecode on <img src='images/github.png' class='inlineimg' style='height: 2.2ex; bottom: -0.4ex'></h3>
-The code is avaiable on <a href="https://github.com/Cibiv/trumicount.git">
-https://github.com/Cibiv/trumicount.git</a>
+The sourcecode of TRUmiCount is avaiable on <a href="https://github.com/Cibiv/trumicount.git">
+https://github.com/Cibiv/trumicount.git</a>. Our modified version of UMI-Tools is available at
+<a href="https://github.com/Cibiv/UMI-Tools/tree/tuc-patches">https://github.com/Cibiv/UMI-Tools/tree/tuc-patches</a>
 
 <h2>Usage Examples</h2>
 <h3>Datasets</h3>
