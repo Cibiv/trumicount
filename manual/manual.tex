@@ -202,13 +202,13 @@ conda install trumicount
 
 \subsubsection*{Installing SAMtools and UMI-Tools (Optional)}
 
-TRUmiCount relies on UMI-Tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} to extract the UMIs associated with a gene (or other genomic feature) from the mapped reads in a BAM file. You can install UMI-tools with
+TRUmiCount relies on UMI-Tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). Software available at \url{http://github.com/CGATOxford/UMI-tools}} to extract the UMIs associated with a gene (or other genomic feature) from the mapped reads in a BAM file. We provide a modified version of UMI-Tools that improves the handling of paired-end reads and single-cell data in conjunction with TRUmiCount. You can install our modified version of UMI-Tools with
+\begin{shellcode}
+conda install -c cibiv umi_tools_tuc
+\end{shellcode}
+You can also use the unmodified version of UMI-Tools together with TRUmiCount, but will have to manually post-process the output of \texttt{umi\_tools group} before feeding it to TRUmiCount when working with single-cell data. To install the unmodified version, do
 \begin{shellcode}
 conda install umi_tools
-\end{shellcode}
-We alternatively offer a modified version of UMI-Tools that improve the handling of paired-end reads, and which can be installed with
-\begin{shellcode}
-conda install -c http://www.cibiv.at/~pflug_/conda/ umi_tools
 \end{shellcode}
 
 While TRUmiCount does not directly require SAMtools, some of the examples in this manual rely on SAMtools being installed, so we suggest installing them with
@@ -222,7 +222,7 @@ conda install samtools
 \subsubsection*{Installing TRUmiCount}
 
 First, make sure you have R\footnote{R Core Team. R: A language and environment for statistical
-  computing. R Foundation for Statistical Computing, Vienna, Austria (2017). \url{http://www.R-project.org/}} (at least version 3.1) installed. First, we'll install a few required packages from CRAN. Amogst those is gwpcR\footnote{Pflug, F.P. \& von Haeseler, Arndt. TRUmiCount: Correctly counting absolute numbers of molecules using unique molecular identifiers. Preprint at \url{http://www.biorxiv.org/content/early/2017/11/13/217778} (2017).} which contains the implementation of the model that TRUmiCount relies on. Start R (either on the command line, or open RStudio) and type
+  computing. R Foundation for Statistical Computing, Vienna, Austria (2017). \url{http://www.R-project.org/}} (at least version 3.1) installed. First, we'll install a few required packages from CRAN. Amogst those is gwpcR\footnote{Pflug, F.P. \& von Haeseler, Arndt. TRUmiCount: Correctly counting absolute numbers of molecules using unique molecular identifiers. \textit{Bioinformatics} (2017). Online version available at \url{http://doi.org/10.1093/bioinformatics/bty283}} which contains the implementation of the model that TRUmiCount relies on. Start R (either on the command line, or open RStudio) and type
 
 \begin{Rcode}
 install.packages(c('statmod', 'akima', 'data.table', 'docopt', 'devtools'))
@@ -249,15 +249,25 @@ export PATH=~/.local/bin:$PATH
 
 \subsubsection*{Installing UMI-Tools}
 
-TRUmiCount uses UMI-Tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). \url{http://github.com/CGATOxford/UMI-tools}} to extract UMIs from mapped reads and to correct for sequencing errors within the UMIs. We provide a modified version of UMI-Tools which improves the handling of paired-end reads. You can install our version with
+TRUmiCount uses UMI-Tools\footnote{Smith, T.S. \textit{et al.} UMI-tools: Modelling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. \textit{Genome Research} \textbf{27}, 491-499 (2017). Software available at \url{http://github.com/CGATOxford/UMI-tools}} to extract UMIs from mapped reads and to correct for sequencing errors within the UMIs. We provide a modified version of UMI-Tools that improves the handling of paired-end reads and single-cell data in conjunction with TRUmiCount. You can install our modified version of UMI-Tools with
 
 \begin{shellcode}
-URL=https://github.com/fgp/UMI-tools.git
-git clone -b group_endpos $URL umi_tools
+URL=https://github.com/Cibiv/UMI-tools.git
+git clone -b tuc_patches $URL umi_tools
 cd umi_tools
 python setup.py install --user
 \end{shellcode}
 %$
+
+To install the original version, instead do
+\begin{shellcode}
+URL=https://github.com/CGATOxford/UMI-tools
+git clone $URL umi_tools
+cd umi_tools
+python setup.py install --user
+\end{shellcode}
+
+Note that you will then have to manually post-process the output of \texttt{umi\_tools group} before feeding it to TRUmiCount when working with single-cell data.
 
 \clearpage
 \subsection{Running TRUmiCount}
