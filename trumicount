@@ -163,9 +163,9 @@ if (length(ARGS$`group-per`) == 0)
 ARGS$group.rhs.expr <- eval(parse(text=paste0("quote(", paste(ARGS$`group-per`, collapse=" + "), ")")))
 ARGS$cores <- as.integer(ARGS$cores)
 ARGS$digits <- as.integer(ARGS$digits)
-if (is.null(ARGS$`output-groupwise-fits`) && !is.null(ARGS$`output-genewise-fits`))
+if (!is.null(ARGS$`output-genewise-fits`))
   ARGS$`output-groupwise-fits` <- ARGS$`output-genewise-fits`
-if (is.null(ARGS$`groupwise-min-umis`) && !is.null(ARGS$`genewise-min-umis`))
+if (!is.null(ARGS$`genewise-min-umis`))
   ARGS$`groupwise-min-umis` <- ARGS$`genewise-min-umis`
 ARGS$`plot-hist-bin` <- if (!is.null(ARGS$`plot-hist-bin`)) as.integer(ARGS$`plot-hist-bin`) else NULL
 ARGS$`plot-hist-xmax` <- if (!is.null(ARGS$`plot-hist-xmax`)) as.numeric(ARGS$`plot-hist-xmax`) else NULL
