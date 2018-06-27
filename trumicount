@@ -158,6 +158,8 @@ ARGS$molecules <- as.integer(ARGS$molecules)
 ARGS$`group-per` <- strsplit(ARGS$`group-per`, split=",", fixed=TRUE)[[1]]
 if (length(setdiff(ARGS$`group-per`, c("gene", "cell"))) > 0)
   stop("Group key must be a combination of 'gene' and 'cell'")
+if (length(ARGS$`group-per`) == 0)
+  stop("Group key cannot be empty")
 ARGS$group.rhs.expr <- eval(parse(text=paste0("quote(", paste(ARGS$`group-per`, collapse=" + "), ")")))
 ARGS$cores <- as.integer(ARGS$cores)
 ARGS$digits <- as.integer(ARGS$digits)
@@ -503,8 +505,9 @@ if (!is.null(ARGS$`output-groupwise-fits`)) {
   write.table(gsm, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
   close(f)
 }
-umicounts <- gsm[, list(cell, gene, n.umis, n.tot,
-                        efficiency, depth=lambda0, loss, n.obs)]
+cols <- eval(parse(text=paste0("quote(list(", paste(ARGS$`group-per`, collapse=", "), ", ",
+                               "n.umis, n.tot, efficiency, depth=lambda0, loss, n.obs))")))
+umicounts <- gsm[, eval(cols)]
 
 # ******************************************************************************
 # *** Plot loss estimate variances over number of observations  ****************
