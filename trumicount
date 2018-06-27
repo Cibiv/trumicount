@@ -79,7 +79,7 @@ BEGIN {
   lp="";    # Prev. line
   umip="";  # Prev. raw UMI
   FS="\\t";
-  print "gene" "\\t" "sample" "\\t" "pos" "\\t" "end" "\\t" "umi" "\\t" "rawumis" "\\t" "reads";
+  print "gene" "\\t" "cell" "\\t" "pos" "\\t" "end" "\\t" "umi" "\\t" "rawumis" "\\t" "reads";
 }
 NR==1 {
   # Locate columns
@@ -245,12 +245,12 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
 # ******************************************************************************
 library(data.table)
 umis <- data.table(read.table(umis_con, header=TRUE, sep="\t",
-                              colClasses=c(gene='factor', sample='factor',
+                              colClasses=c(gene='factor', cell='factor',
                                            pos='numeric', end='numeric', umi='character',
                                            rawumis='numeric', 'reads'='numeric')))
 close(umis_con)
 message('Found ', nrow(umis), ' UMIs for ', length(levels(umis$gene)), ' genes in ',
-        length(unique(umis$sample)), ' samples after grouping of similar UMIs')
+        length(unique(umis$cell)), ' cells after grouping of similar UMIs')
 
 # ******************************************************************************
 # *** Combine and/or filter UMI strand pairs stemming a single fragment ********
@@ -269,7 +269,7 @@ if (ARGS$`strand-umis`) {
                    '--molecules 1 is usually correct'))
   umis.m <- if (ARGS$`umipair-sep` != '') {
     # Split at specified umi pair separator
-    umis[,list(gene, sample, pos=end, end=pos,
+    umis[,list(gene, cell, pos=end, end=pos,
                umi=as.character(unlist(lapply(FUN=function(e) {paste(rev(e), collapse=ARGS$`umipair-sep`)},
                                               strsplit(umi, ARGS$`umipair-sep`, fixed=TRUE)))),
                reads=reads) ]
@@ -277,7 +277,7 @@ if (ARGS$`strand-umis`) {
     # Split in the middle
     if (any(nchar(umis$umi) %% 2 != 0))
       stop('If no umi pair separator is specified, umis are split in the middle and must have even length')
-    umis[,list(gene, sample, pos=end, end=pos,
+    umis[,list(gene, cell, pos=end, end=pos,
                umi=paste0(substr(umi, nchar(umi)/2+1, nchar(umi)), substr(umi, 1, nchar(umi)/2)),
                reads=reads) ]
   }
@@ -291,25 +291,25 @@ if (ARGS$`combine-strand-umis`) {
   message('*** Merging UMIs belonging to the two strands of a single template molecule')
   umis <- umis[pos < end]
   umis[, reads.plus := reads ]
-  umis[, reads.minus := umis.m[umis, reads, on=c("gene", "sample", "pos", "end", "umi")] ]
+  umis[, reads.minus := umis.m[umis, reads, on=c("gene", "cell", "pos", "end", "umi")] ]
   umis[, reads := NULL ]
   umis <- umis[is.finite(reads.plus) & is.finite(reads.minus)]
   # Use reads.plus and reads.minus as separate (independent) read counts
   reads.expr <- expression(c(reads.plus, reads.minus))
-  group.expr <- c(reads.plus,reads.minus) ~ sample + gene
+  group.expr <- c(reads.plus,reads.minus) ~ cell + gene
 } else if (ARGS$`filter-strand-umis`) {
   # We remove UMIs that are not part of a reciprocal pair, but keep the
   # constituing UMIs of each pair as separate UMIs (unlike combine-strand-umis)
   message('*** Filtering UMIs whose reciproal UMI belong to the other strand is missing')
-  umis[, reads.other := umis.m[umis, reads, on=c("gene", "sample", "pos", "end", "umi")] ]
+  umis[, reads.other := umis.m[umis, reads, on=c("gene", "cell", "pos", "end", "umi")] ]
   umis <- umis[is.finite(reads) & is.finite(reads.other)]
   # Simply use "reads" columns as read counts
   reads.expr <- expression(reads)
-  group.expr <- reads ~ sample + gene
+  group.expr <- reads ~ cell + gene
 } else {
   # Simply use "reads" columns as read counts
   reads.expr <- expression(reads)
-  group.expr <- reads ~ sample + gene
+  group.expr <- reads ~ cell + gene
 }
 
 # ******************************************************************************
@@ -339,8 +339,8 @@ if (!is.null(ARGS$`output-final-umis`)) {
 # ******************************************************************************
 # *** Report final UMI count ***************************************************
 # ******************************************************************************
-message(nrow(umis), ' UMIs remained for ', length(levels(umis$gene)), ' genes in ',
-        length(unique(umis$sample)), ' samples after applying filters')
+message(nrow(umis), ' UMIs remained for ', length(levels(umis$gene)), ' genes for ',
+        length(unique(umis$cell)), ' cells after applying filters')
 if (nrow(umis) < 2)
   stop("Too few UMIs to continue")
 
@@ -485,7 +485,7 @@ if (!is.null(ARGS$`output-groupwise-fits`)) {
   write.table(gsm, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
   close(f)
 }
-umicounts <- gsm[, list(sample, gene, n.umis, n.tot,
+umicounts <- gsm[, list(cell, gene, n.umis, n.tot,
                         efficiency, depth=lambda0, loss, n.obs)]
 
 # ******************************************************************************
