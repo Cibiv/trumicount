@@ -32,11 +32,12 @@ Options:
 --input-bam INBAM                      read UMIs from INBAM (uses `umi_tools group`)
 --input-umitools-group-out GROUPSINTAB read UMIs from GROUPSINTAB produced by `umi_tools group`
 --input-umis UMISINTAB                 read UMIs from UMISINTAB (previously produced by --output-umis)
---output-counts COUNTSTAB              write bias-corrected per-gene counts and models to COUNTSTAB
+--output-counts COUNTSTAB              write bias-corrected per-group counts and models to COUNTSTAB
 --output-umis UMISTAB                  write UMIs reported by `umi_tools group` to UMISTAB
 --output-final-umis FINALUMISTAB       write strand-combined and filtered UMIs to FINALUMISTAB
 --output-plots PLOT                    write diagnostic plots in PDF format to PLOT
---output-genewise-fits GENEFITSTAB     write gene-wise model details to GENEFITSTAB
+--output-groupwise-fits GROUPFITSTAB   write group-wise model details to GROUPFITSTAB
+--output-genewise-fits GENEFITSTAB     obsolete name for --output-groupwise-fits
 --umitools UMITOOLS                    use executable UMITOOLS to run `umi_tools group` [Default: umi_tools]
 --umitools-option UMITOOLSOPT          pass UMITOOLSOPT to `umi_tools group` (see `umi_tools group --help`)
 --umi-sep UMISEP                       assume UMISEP separates read name and UMI (passed to umi_tools) [Default: :]
@@ -47,8 +48,9 @@ Options:
 --combine-strand-umis                  combine UMIs strand pairs (implies --filter-strand-umis) [Default: FALSE]
 --threshold THRESHOLD                  remove UMIs with fewer than THRESHOLD reads [Default: 2]
 --molecules MOLECULES                  assume UMIs are initially represented by MOLECULES copies (strands) [Default: 2]
---genewise-min-umis MINUMIS            use global estimates for genes with fewer than MINUMIS (strand) UMIs [Default: 5]
---cores CORES                          spread gene-wise model fitting over CORES cpus [Default: 1]
+--groupwise-min-umis MINUMIS           use global estimates for groups with fewer than MINUMIS (strand) UMIs [Default: 5]
+--genewise-min-umis MINUMIS            obsolete name for --groupwise-min-umis
+--cores CORES                          spread group-wise model fitting over CORES cpus [Default: 1]
 --variance-estimator VAREST            use VAREST to estimate variances, can be "lsq" or "mle" [Default: lsq]
 --digits DIGITS                        number of digits to output [Default: 3]
 --plot-hist-bin PLOTXBIN               make read count histogram bins PLOTXBIN wide
@@ -153,6 +155,10 @@ ARGS$threshold <- as.integer(ARGS$threshold)
 ARGS$molecules <- as.integer(ARGS$molecules)
 ARGS$cores <- as.integer(ARGS$cores)
 ARGS$digits <- as.integer(ARGS$digits)
+if (is.null(ARGS$`output-groupwise-fits`) && !is.null(ARGS$`output-genewise-fits`))
+  ARGS$`output-groupwise-fits` <- ARGS$`output-genewise-fits`
+if (is.null(ARGS$`groupwise-min-umis`) && !is.null(ARGS$`genewise-min-umis`))
+  ARGS$`groupwise-min-umis` <- ARGS$`genewise-min-umis`
 ARGS$`plot-hist-bin` <- if (!is.null(ARGS$`plot-hist-bin`)) as.integer(ARGS$`plot-hist-bin`) else NULL
 ARGS$`plot-hist-xmax` <- if (!is.null(ARGS$`plot-hist-xmax`)) as.numeric(ARGS$`plot-hist-xmax`) else NULL
 ARGS$`plot-var-bins` <- if (!is.null(ARGS$`plot-var-bins`)) as.numeric(ARGS$`plot-var-bins`) else NULL
@@ -468,16 +474,14 @@ if (!is.null(ARGS$`output-plots`)) {
 # ******************************************************************************
 # *** Fit gene-wise models *****************************************************
 # ******************************************************************************
-# XXX: In combine-strand-umis mode, we should use reads.plus and reads.minus as
-# separate samples!
-message('*** Fitting gene-wise models on ', ARGS$cores, ' cores')
+message('*** Fitting group-wise models on ', ARGS$cores, ' cores')
 gsm <- gwpcrpois.groupest(group.expr, data=umis, loss=loss.expr,
                           threshold=ARGS$threshold, molecules=ARGS$molecules,
                           ctrl=list(cores=ARGS$cores, verbose=ARGS$`verbose`,
                                     var.est.distfree=ARGS$`var-est-distfree`,
-                                    obs.min.ingroup=ARGS$`genewise-min-umis`))
-if (!is.null(ARGS$`output-genewise-fits`)) {
-  f <- open_byext(ARGS$`output-genewise-fits`, open='w')
+                                    obs.min.ingroup=ARGS$`groupwise-min-umis`))
+if (!is.null(ARGS$`output-groupwise-fits`)) {
+  f <- open_byext(ARGS$`output-groupwise-fits`, open='w')
   write.table(gsm, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
   close(f)
 }
