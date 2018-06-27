@@ -488,7 +488,7 @@ if (ARGS$`skip-groupwise-fits`) {
   if (!is.null(ARGS$`output-plots`)) {
     d <- dev.off()
   }
-  quit(save=FALSE, status=0, runLast=TRUE)
+  quit(save="no", status=0, runLast=TRUE)
 }
 
 # ******************************************************************************
