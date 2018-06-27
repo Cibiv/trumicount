@@ -48,6 +48,7 @@ Options:
 --combine-strand-umis                  combine UMIs strand pairs (implies --filter-strand-umis) [Default: FALSE]
 --threshold THRESHOLD                  remove UMIs with fewer than THRESHOLD reads [Default: 2]
 --molecules MOLECULES                  assume UMIs are initially represented by MOLECULES copies (strands) [Default: 2]
+--group-per KEY1,KEY2,...              counts UMIs per distinct key(s), can be "cell" and/or "gene", "cell" implies --umitools-option --per-cell [Default: gene]
 --groupwise-min-umis MINUMIS           use global estimates for groups with fewer than MINUMIS (strand) UMIs [Default: 5]
 --genewise-min-umis MINUMIS            obsolete name for --groupwise-min-umis
 --cores CORES                          spread group-wise model fitting over CORES cpus [Default: 1]
@@ -153,6 +154,10 @@ ARGS$`mapping-quality` <- as.integer(ARGS$`mapping-quality`)
 ARGS$`strand-umis` <- (ARGS$`filter-strand-umis` || ARGS$`combine-strand-umis`)
 ARGS$threshold <- as.integer(ARGS$threshold)
 ARGS$molecules <- as.integer(ARGS$molecules)
+ARGS$`group-per` <- strsplit(ARGS$`group-per`, split=",", fixed=TRUE)[[1]]
+if (length(setdiff(ARGS$`group-per`, c("gene", "cell"))) > 0)
+  stop("Group key must be a combination of 'gene' and 'cell'")
+ARGS$group.rhs.expr <- eval(parse(text=paste0("quote(", paste(ARGS$`group-per`, collapse=" + "), ")")))
 ARGS$cores <- as.integer(ARGS$cores)
 ARGS$digits <- as.integer(ARGS$digits)
 if (is.null(ARGS$`output-groupwise-fits`) && !is.null(ARGS$`output-genewise-fits`))
@@ -197,6 +202,7 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
                                     '-I', shQuote(ARGS$`input-bam`),
                                     '-L', ifelse(ARGS$verbose, '/dev/stderr', '/dev/null'),
                                     '--umi-sep', shQuote(ARGS$`umi-sep`),
+                                    ifelse("cell" %in% ARGS$`group-per`, '--per-cell', ''),
                                     ifelse(ARGS$paired, '--paired', ''),
                                     '--mapping-quality', ARGS$`mapping-quality`,
                                     paste(shQuote(ARGS$`umitools-option`), collapse=' '), sep=' ')
@@ -296,7 +302,7 @@ if (ARGS$`combine-strand-umis`) {
   umis <- umis[is.finite(reads.plus) & is.finite(reads.minus)]
   # Use reads.plus and reads.minus as separate (independent) read counts
   reads.expr <- expression(c(reads.plus, reads.minus))
-  group.expr <- c(reads.plus,reads.minus) ~ cell + gene
+  group.expr <- eval(substitute(c(reads.plus,reads.minus) ~ rhs, list(rhs=ARGS$group.rhs.expr)))
 } else if (ARGS$`filter-strand-umis`) {
   # We remove UMIs that are not part of a reciprocal pair, but keep the
   # constituing UMIs of each pair as separate UMIs (unlike combine-strand-umis)
@@ -305,12 +311,13 @@ if (ARGS$`combine-strand-umis`) {
   umis <- umis[is.finite(reads) & is.finite(reads.other)]
   # Simply use "reads" columns as read counts
   reads.expr <- expression(reads)
-  group.expr <- reads ~ cell + gene
+  group.expr <- eval(substitute(reads ~ rhs, list(rhs=ARGS$group.rhs.expr)))
 } else {
   # Simply use "reads" columns as read counts
   reads.expr <- expression(reads)
-  group.expr <- reads ~ cell + gene
+  group.expr <- eval(substitute(reads ~ rhs, list(rhs=ARGS$group.rhs.expr)))
 }
+message("*** Counting & correcting the number of UMIs per ", paste(ARGS$`group-per`, collapse=", "))
 
 # ******************************************************************************
 # *** Filter with read-count threshold *****************************************
