@@ -49,6 +49,7 @@ Options:
 --threshold THRESHOLD                  remove UMIs with fewer than THRESHOLD reads [Default: 2]
 --molecules MOLECULES                  assume UMIs are initially represented by MOLECULES copies (strands) [Default: 2]
 --group-per KEY1,KEY2,...              counts UMIs per distinct key(s), can be "cell" and/or "gene", "cell" implies --umitools-option --per-cell [Default: gene]
+--skip-groupwise-fits                  skip group-wise model fitting, stop after plotting the global fit
 --groupwise-min-umis MINUMIS           use global estimates for groups with fewer than MINUMIS (strand) UMIs [Default: 5]
 --genewise-min-umis MINUMIS            obsolete name for --groupwise-min-umis
 --cores CORES                          spread group-wise model fitting over CORES cpus [Default: 1]
@@ -479,7 +480,17 @@ if (!is.null(ARGS$`output-plots`)) {
 }
 
 # ******************************************************************************
-# *** Fit gene-wise models *****************************************************
+# *** Exit early if group-wise fits are not asked for **************************
+# ******************************************************************************
+if (ARGS$`skip-groupwise-fits`) {
+  if (!is.null(ARGS$`output-plots`)) {
+    d <- dev.off()
+  }
+  quit(save=FALSE, status=0, runLast=TRUE)
+}
+
+# ******************************************************************************
+# *** Fit group-wise models *****************************************************
 # ******************************************************************************
 message('*** Fitting group-wise models on ', ARGS$cores, ' cores')
 gsm <- gwpcrpois.groupest(group.expr, data=umis, loss=loss.expr,
