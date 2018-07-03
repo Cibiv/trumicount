@@ -391,6 +391,14 @@ message('Overall efficiency ', round(100*gm$efficiency), '%, depth ',
 if (!is.null(ARGS$`output-plots`)) {
   message('*** Opening PDF ', ARGS$`output-plots`, ' for plot output')
   pdf(file=ARGS$`output-plots`, onefile=TRUE, height=3.5, width=8)
+  pdf.close <- function(e) {
+    message('*** Finishing PDF ', ARGS$`output-plots`)
+    dev.off()
+  }
+  environment(pdf.close) <- list2env(list(ARGS=ARGS, dev.off=dev.off),
+                                     parent=baseenv())
+  pdf.guard <- new.env(parent=emptyenv())
+  invisible(reg.finalizer(pdf.guard, pdf.close, onexit=TRUE))
 }
 
 # ******************************************************************************
@@ -485,9 +493,6 @@ if (!is.null(ARGS$`output-plots`)) {
 # *** Exit early if group-wise fits are not asked for **************************
 # ******************************************************************************
 if (ARGS$`skip-groupwise-fits`) {
-  if (!is.null(ARGS$`output-plots`)) {
-    d <- dev.off()
-  }
   quit(save="no", status=0, runLast=TRUE)
 }
 
@@ -549,13 +554,6 @@ if (!is.null(ARGS$`output-plots`)) {
   # Plot prediction
   x <- seq(from=xlim[1], to=xlim[2], length.out=1000)
   lines(x, s + u/x, lty=2)
-}
-
-# ******************************************************************************
-# *** Close Plot Output PDF File ***********************************************
-# ******************************************************************************
-if (!is.null(ARGS$`output-plots`)) {
-  d <- dev.off()
 }
 
 # ******************************************************************************
