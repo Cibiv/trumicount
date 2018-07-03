@@ -380,10 +380,17 @@ loss.expr <- if (ARGS$`combine-strand-umis`) {
 # ******************************************************************************
 message('*** Fitting global PCR and sequencing model')
 library(gwpcR)
-gm <- gwpcrpois.est(umis[, eval(reads.expr)], method="mom", loss=loss.expr,
-                    threshold=ARGS$threshold, molecules=ARGS$molecules)
-message('Overall efficiency ', round(100*gm$efficiency), '%, depth ',
-        round(gm$lambda0, digits=2), ' reads/UMI, loss ', round(100*gm$loss), '%')
+gm <- tryCatch({
+  gwpcrpois.est(umis[, eval(reads.expr)], method="mom", loss=loss.expr,
+               threshold=ARGS$threshold, molecules=ARGS$molecules)
+}, error=function(e) {
+  message('ERROR: Failed to estimate global model parameters!')
+  NULL
+})
+if (!is.null(gm)) {
+  message('Overall efficiency ', round(100*gm$efficiency), '%, depth ',
+          round(gm$lambda0, digits=2), ' reads/UMI, loss ', round(100*gm$loss), '%')
+}
 
 # ******************************************************************************
 # *** Open Plot Output PDF File ************************************************
@@ -436,38 +443,48 @@ if (!is.null(ARGS$`output-plots`)) {
     plot(h.pf, border="grey", freq = TRUE, add=TRUE)
   # Plot main histogram
   plot(h, freq = TRUE, add=TRUE)
-  # Plot model
-  p <- diff(ifelse(h$breaks > 0,
-                   pgwpcrpois(pmax(h$breaks - 1, 0), threshold=0,
-                              molecules=gm$molecules,
-                              efficiency=gm$efficiency,
-                              lambda0=gm$lambda0) /
-                     (1 - gm$p0),
-                   0))
-  points(h$mids, p * length(counts), pch=16, cex=0.7,
-         col=ifelse(h$breaks >= ARGS$threshold, 'black', 'red'))
-  # Plot Loss
-  text(ARGS$threshold/2, par('usr')[4], adj=c(1.0,0.5),
-       paste0("Loss=", format(100*gm$loss, digits=2), '%'),
-       col='red', srt=90, xpd=TRUE)
+  if (!is.null(gm)) {
+    # Plot model
+    p <- diff(ifelse(h$breaks > 0,
+                     pgwpcrpois(pmax(h$breaks - 1, 0), threshold=0,
+                                molecules=gm$molecules,
+                                efficiency=gm$efficiency,
+                                lambda0=gm$lambda0) /
+                       (1 - gm$p0),
+                     0))
+    points(h$mids, p * length(counts), pch=16, cex=0.7,
+           col=ifelse(h$breaks >= ARGS$threshold, 'black', 'red'))
+    # Plot Loss
+    text(ARGS$threshold/2, par('usr')[4], adj=c(1.0,0.5),
+         paste0("Loss=", format(100*gm$loss, digits=2), '%'),
+         col='red', srt=90, xpd=TRUE)
+    # Plot Model Parameters
+    p.txt <- paste0('Efficiency = ', round(100*gm$efficiency), '%\n',
+                    'Depth = ', signif(gm$lambda0, digits=2), ' reads/UMI')
+    text(par("usr")[2], par("usr")[4], p.txt, adj=c(0.0, 1.0), xpd=NA)
+  }
   # Plot Threshold
   lines(c(ARGS$threshold, ARGS$threshold), c(0, par("usr")[4]*2), lwd=2, xpd=TRUE)
   text(ARGS$threshold, par('usr')[4], adj=c(-0.1, 0), xpd=TRUE,
        paste0("Th.=", ARGS$threshold))
-  # Plot Model Parameters
-  p.txt <- paste0('Efficiency = ', round(100*gm$efficiency), '%\n',
-                  'Depth = ', signif(gm$lambda0, digits=2), ' reads/UMI')
-  text(par("usr")[2], par("usr")[4], p.txt, adj=c(0.0, 1.0), xpd=NA)
   # Plot Legend
   lf <- if (!ARGS$`plot-skip-phantoms`)
     c(TRUE, TRUE, TRUE, TRUE)
   else
     c(TRUE, FALSE, TRUE, TRUE)
-  legend(par("usr")[2], par("usr")[4] - strheight(p.txt), xjust=0.0, yjust=1.0, seg.len=0,
-         pch=c(NA,NA,16,16)[lf], col=c(NA,'darkgrey','black','red')[lf],
-         border=c("black","darkgrey",NA,NA)[lf], fill=c(NA,NA,NA,NA)[lf],
-         legend=c("Putative true UMIs", "Putative phantom UMIs", "Predicted True UMIs", "Predicted Loss")[lf],
-         bty='n', xpd=NA)
+  if (!is.null(gm)) {
+    legend(par("usr")[2], par("usr")[4] - strheight(p.txt), xjust=0.0, yjust=1.0, seg.len=0,
+           pch=c(NA,NA,16,16)[lf], col=c(NA,'darkgrey','black','red')[lf],
+           border=c("black","darkgrey",NA,NA)[lf], fill=c(NA,NA,NA,NA)[lf],
+           legend=c("Putative true UMIs", "Putative phantom UMIs", "Predicted True UMIs", "Predicted Loss")[lf],
+           bty='n', xpd=NA)
+  } else {
+    legend(par("usr")[2], par("usr")[4], xjust=0.0, yjust=1.0, seg.len=0,
+           pch=c(NA,NA,16,16)[lf], col=c(NA,'darkgrey','black','red')[lf],
+           border=c("black","darkgrey",NA,NA)[lf], fill=c(NA,NA,NA,NA)[lf],
+           legend=c("Putative true UMIs", "Putative phantom UMIs")[lf],
+           bty='n', xpd=NA)
+  }
   # Plot X-Axis
   bin.l <- head(h.breaks, n=-1)
   bin.r <- tail(h.breaks, n=-1)
@@ -490,9 +507,9 @@ if (!is.null(ARGS$`output-plots`)) {
 }
 
 # ******************************************************************************
-# *** Exit early if group-wise fits are not asked for **************************
+# *** Exit early if group-wise fits are not asked for or fitting failed ********
 # ******************************************************************************
-if (ARGS$`skip-groupwise-fits`) {
+if (ARGS$`skip-groupwise-fits` || is.null(gm)) {
   quit(save="no", status=0, runLast=TRUE)
 }
 
