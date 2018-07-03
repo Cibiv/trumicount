@@ -320,7 +320,7 @@ if (ARGS$`combine-strand-umis`) {
   reads.expr <- expression(reads)
   group.expr <- eval(substitute(reads ~ rhs, list(rhs=ARGS$group.rhs.expr)))
 }
-message("*** Counting & correcting the number of UMIs per ", paste(ARGS$`group-per`, collapse=", "))
+message("*** Counting & correcting the number of UMIs per ", paste(ARGS$`group-per`, collapse=" and "))
 
 # ******************************************************************************
 # *** Filter with read-count threshold *****************************************
@@ -506,6 +506,7 @@ gsm <- gwpcrpois.groupest(group.expr, data=umis, loss=loss.expr,
                                     var.est.distfree=ARGS$`var-est-distfree`,
                                     obs.min.ingroup=ARGS$`groupwise-min-umis`))
 if (!is.null(ARGS$`output-groupwise-fits`)) {
+  message('*** Writing groupwise model details to ', ARGS$`output-groupwise-fits`)
   f <- open_byext(ARGS$`output-groupwise-fits`, open='w')
   write.table(gsm, file=f, col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
   close(f)
@@ -560,6 +561,7 @@ if (!is.null(ARGS$`output-plots`)) {
 # *** Output count table *******************************************************
 # ******************************************************************************
 if (!is.null(ARGS$`output-counts`)) {
+  message('*** Writing corrected UMI groupwise counts to ', ARGS$`output-counts`)
   f <- open_byext(ARGS$`output-counts`, open='w')
   write.table(format(umicounts, digits=ARGS$digits), file=f,
               col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
