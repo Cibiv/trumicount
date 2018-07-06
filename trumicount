@@ -35,6 +35,7 @@ Options:
 --output-counts COUNTSTAB              write bias-corrected per-group counts and models to COUNTSTAB
 --output-umis UMISTAB                  write UMIs reported by `umi_tools group` to UMISTAB
 --output-final-umis FINALUMISTAB       write strand-combined and filtered UMIs to FINALUMISTAB
+--output-readdist READDISTTAB          write global reads/UMI distribution (before and after filtering) to READDISTTAB
 --output-plots PLOT                    write diagnostic plots in PDF format to PLOT
 --output-groupwise-fits GROUPFITSTAB   write group-wise model details to GROUPFITSTAB
 --output-genewise-fits GENEFITSTAB     obsolete name for --output-groupwise-fits
@@ -327,9 +328,9 @@ message("*** Counting & correcting the number of UMIs per ", paste(ARGS$`group-p
 # ******************************************************************************
 # When applying the threshold, we filter based on the strand--specific counts, and
 # require BOTH to be sufficiencly large.
+umis.prefilter <- umis
 if (ARGS$threshold > 0) {
   message('*** Filtering UMIs with fewer than ', ARGS$threshold, ' reads')
-  umis.prefilter <- umis
   umis <- if (ARGS$`combine-strand-umis`)
     umis[(reads.plus >= ARGS$threshold) & (reads.minus >= ARGS$threshold)]
   else
@@ -337,11 +338,36 @@ if (ARGS$threshold > 0) {
 }
 
 # ******************************************************************************
+# *** Determine per-UMI read counts ********************************************
+# ******************************************************************************
+readcounts <- umis[, eval(reads.expr)]
+readcounts.prefilter <- umis.prefilter[, eval(reads.expr)]
+
+# ******************************************************************************
 # *** Output final UMI table ***************************************************
 # ******************************************************************************
 if (!is.null(ARGS$`output-final-umis`)) {
   f <- open_byext(ARGS$`output-final-umis`, open='w')
   write.table(umis, file=f,
+              col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
+  close(f)
+}
+
+# ******************************************************************************
+# *** Output global reads/UMI distribution *************************************
+# ******************************************************************************
+if (!is.null(ARGS$`output-readdist`)) {
+  readdist <- data.table(readcount=0:max(readcounts, readcounts.prefilter),
+                         n.umis.prefilter=0,
+                         n.umis=0)
+  set_numis <- function(col, rc) {
+    r <- rle(sort(rc))
+    readdist[[col]][match(r$values, readdist$readcount)] <<- r$lengths
+  }
+  set_numis('n.umis.prefilter', readcounts.prefilter)
+  set_numis('n.umis', readcounts)
+  f <- open_byext(ARGS$`output-readdist`, open='w')
+  write.table(readdist, file=f,
               col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
   close(f)
 }
@@ -382,7 +408,8 @@ message('*** Fitting global PCR and sequencing model')
 library(gwpcR)
 gm <- tryCatch({
   gwpcrpois.est(umis[, eval(reads.expr)], method="mom", loss=loss.expr,
-               threshold=ARGS$threshold, molecules=ARGS$molecules)
+               threshold=ARGS$threshold, molecules=ARGS$molecules,
+               ctrl=list(maxit=2000))
 }, error=function(e) {
   message('ERROR: Failed to estimate global model parameters!')
   NULL
@@ -413,20 +440,18 @@ if (!is.null(ARGS$`output-plots`)) {
 # ******************************************************************************
 if (!is.null(ARGS$`output-plots`)) {
   message('*** Plotting reads/UMI distribution')
-  counts <- umis[, eval(reads.expr)]
-  counts.prefilter <- umis.prefilter[, eval(reads.expr)]
   x.bin <- ifelse(!is.null(ARGS$`plot-hist-bin`),
                   ARGS$`plot-hist-bin`,
-                  max(1, floor(max(counts) / nclass.Sturges(counts))))
+                  max(1, floor(max(readcounts) / nclass.Sturges(readcounts))))
   h.breaks <- seq(from=0,
-                  to=x.bin*ceiling(max(counts)/x.bin),
+                  to=x.bin*ceiling(max(readcounts)/x.bin),
                   by=x.bin)
   x.max <- ifelse(!is.null(ARGS$`plot-hist-xmax`),
                   ARGS$`plot-hist-xmax`,
                   max(h.breaks))
   # Histograms
-  h <- hist(counts, breaks=h.breaks, right = FALSE, plot=FALSE)
-  h.pf <- hist(counts.prefilter, breaks=h.breaks, right = FALSE, plot=FALSE)
+  h <- hist(readcounts, breaks=h.breaks, right = FALSE, plot=FALSE)
+  h.pf <- hist(readcounts.prefilter, breaks=h.breaks, right = FALSE, plot=FALSE)
   # Determine y range, ensure max. is nicely printable
   y.max <- max((if (!ARGS$`plot-skip-phantoms`) h.pf else h)$counts)
   y.max <- if ((y.max.nice <- signif(y.max, digits=2)) >= y.max)
@@ -452,7 +477,7 @@ if (!is.null(ARGS$`output-plots`)) {
                                 lambda0=gm$lambda0) /
                        (1 - gm$p0),
                      0))
-    points(h$mids, p * length(counts), pch=16, cex=0.7,
+    points(h$mids, p * length(readcounts), pch=16, cex=0.7,
            col=ifelse(h$breaks >= ARGS$threshold, 'black', 'red'))
     # Plot Loss
     text(ARGS$threshold/2, par('usr')[4], adj=c(1.0,0.5),
@@ -521,7 +546,8 @@ gsm <- gwpcrpois.groupest(group.expr, data=umis, loss=loss.expr,
                           threshold=ARGS$threshold, molecules=ARGS$molecules,
                           ctrl=list(cores=ARGS$cores, verbose=ARGS$`verbose`,
                                     var.est.distfree=ARGS$`var-est-distfree`,
-                                    obs.min.ingroup=ARGS$`groupwise-min-umis`))
+                                    obs.min.ingroup=ARGS$`groupwise-min-umis`,
+                                    maxit=2000))
 if (!is.null(ARGS$`output-groupwise-fits`)) {
   message('*** Writing groupwise model details to ', ARGS$`output-groupwise-fits`)
   f <- open_byext(ARGS$`output-groupwise-fits`, open='w')
