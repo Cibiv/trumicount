@@ -148,6 +148,14 @@ open_byext <- function(path, ...) {
     file(path, ...)
 }
 
+format_table <- function(t, ...) {
+  for (n in names(t)) {
+    if (is.numeric(t[[n]]))
+      t[[n]] <- sapply(t[[n]], format, ...)
+  }
+  return(t)
+}
+
 # ******************************************************************************
 # *** Parse arguments **********************************************************
 # ******************************************************************************
@@ -606,7 +614,7 @@ if (!is.null(ARGS$`output-plots`)) {
 if (!is.null(ARGS$`output-counts`)) {
   message('*** Writing corrected UMI groupwise counts to ', ARGS$`output-counts`)
   f <- open_byext(ARGS$`output-counts`, open='w')
-  write.table(format(umicounts, digits=ARGS$digits), file=f,
+  write.table(format_table(umicounts, digits=ARGS$digits), file=f,
               col.names=TRUE, row.names=FALSE, sep="\t", quote=FALSE)
   close(f)
 }
