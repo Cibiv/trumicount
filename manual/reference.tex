@@ -4,12 +4,13 @@
 \item[\textmd{\texttt{-{}-output-counts} \textit{countstab}}:] write bias-corrected per-group counts and models to \textit{countstab}
 \item[\textmd{\texttt{-{}-output-umis} \textit{umistab}}:] write UMIs reported by \guillemotleft\texttt{umi\_tools group}\guillemotright{} to \textit{umistab}
 \item[\textmd{\texttt{-{}-output-final-umis} \textit{finalumistab}}:] write strand-combined and filtered UMIs to \textit{finalumistab}
+\item[\textmd{\texttt{-{}-output-readdist} \textit{readdisttab}}:] write global reads/UMI distribution (before and after filtering) to \textit{readdisttab}
 \item[\textmd{\texttt{-{}-output-plots} \textit{plot}}:] write diagnostic plots in PDF format to \textit{plot}
 \item[\textmd{\texttt{-{}-output-groupwise-fits} \textit{groupfitstab}}:] write group-wise model details to \textit{groupfitstab}
 \item[\textmd{\texttt{-{}-output-genewise-fits} \textit{genefitstab}}:] obsolete name for \texttt{-{}-output-groupwise-fits}
 \item[\textmd{\texttt{-{}-umitools} \textit{umitools}}:] use executable \textit{umitools} to run \guillemotleft\texttt{umi\_tools group}\guillemotright{} (Default: \textrm{`umi\_tools'})
 \item[\textmd{\texttt{-{}-umitools-option} \textit{umitoolsopt}}:] pass \textit{umitoolsopt} to \guillemotleft\texttt{umi\_tools group}\guillemotright{} (see \guillemotleft\texttt{umi\_tools group \texttt{-{}-help}}\guillemotright{})
-\item[\textmd{\texttt{-{}-umi-sep} \textit{umisep}}:] assume \textit{umisep} separates read name and UMI (passed to umi\_tools) (Default: \textrm{`:'})
+\item[\textmd{\texttt{-{}-umi-sep} \textit{umisep}}:] assume \textit{umisep} separates read name and UMI (passed to umi\_tools) (Default: \textrm{`\_'})
 \item[\textmd{\texttt{-{}-umipair-sep} \textit{umipairsep}}:] assume \textit{umipairsep} separates read1 and read2 UMI (see Strand UMIs) (Default: \textrm{`'})
 \item[\textmd{\texttt{-{}-paired} }:] assume BAM file contains paired reads (passed to umi\_tools) (Default: No)
 \item[\textmd{\texttt{-{}-mapping-quality} \textit{mapq}}:] ignored read with mapping quality below \textit{mapq} (passed to umi\_tools) (Default: \textrm{20})

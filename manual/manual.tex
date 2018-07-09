@@ -154,7 +154,7 @@
 
 %XXX Write Me
 
-\section{Installing TRUmiCount}
+\section{Installing TRUmiCount}\label{installation}
 
 \subsection{Installation via Conda (Recommended)}
 
@@ -309,8 +309,8 @@ To be able to separate true UMIs from phantoms and to estimate and correct for t
 If a mapped BAM File is provided as input with ``\ddarg{input-bam}'', TRUmiCount uses UMI-Tools' ``\texttt{group}'' tool to extract a list of UMIs and their read counts from the specified BAM file. Sequencing errors within the UMIs are corrected by UMI-Tools by \emph{merging} similar UMIs into one. When reading BAM file, on top of the defaults mentioned above, UMI-Tools assumes that
 \begin{itemize}
   \item The BAM file must have a corresponding index. A suitable index can be created with ``\texttt{samtools index} \textit{bamfile}''.
-  \item Sequences names are gene names. With the ``\ddarg{gene-tag}'' option, gene names can be read from a \emph{tag} instead, whose name is specified with ``\ddarg{umitools-option} \allowbreak\ddarg{gene-tag=}\allowbreak\textit{tagname}'.
-  \item The UMI was appended to the read name, separated by `:'. A different separator can be specified with ``\ddarg{umi-sep}''
+  \item Sequences names are gene names. With the ``\ddarg{gene-tag}'' option, gene names can be read from a \emph{tag} instead, whose name is specified with ``\ddarg{umitools-option} \allowbreak\ddarg{gene-tag=}\allowbreak\textit{tagname}''.
+  \item The UMI was appended to the read name, separated by `\_'. A different separator can be specified with ``\ddarg{umi-sep}''
   \item The BAM file contains single-end reads (read2 is ignored). To take the mapping position of both mates into account when grouping reads by UMI, specify ``\ddarg{paired}''.
   \item Reads with a mapping quality below 20 should be ignored. This threshold can be changed with ``\ddarg{mapping-quality}''.
 \end{itemize}
@@ -371,6 +371,14 @@ With the option ``\ddarg{filter-strand-umis}'', UMIs are filtered out if their p
 \subsubsection*{Combining strand UMIs into pairs}
 
 With the option ``\ddarg{combine-strand-umis}'', pairs of partner UMIs stemming from the two strands of a single initial template molecules are combined, and the read count threshold is applied to both partners simultaneously (UMIs without a partner are again \emph{not} shown as ``phantom UMIs'' in the diagnostic plots). The actual loss in this mode is $1 - (1-\mathbb{P}(C < T))^2$, because pairs are dropped if \emph{either} of the partner UMIs has a read count below the threshold. TRUmiCount adjust the loss computation accordingly, and states the corrected loss also in the diagnostic plots. The plotted model distribution, however, does not take this adjustment into account, so that the stated loss is no longer simply the sum of the model probabilities for read counts less than $T$.
+
+\subsection{Single-cell Data}\label{single-cell}
+
+TRUmiCount can handle single-cell data where the same library contains data from multiple individual cells, distinguishable by an additional \emph{cell barcode} that is parts of each read in addition to the UMI. To compute corrected UMI counts per cell (i.e. for the total number of UMIs within each individual cell), specify ``\ddarg{group-per cell}''. To compute corrected UMI counts per gene within each cell, specify ``\ddarg{group-per cell,gene}''. If the grouping key contains `cell', and ``\ddarg{input-bam}'' is used to read UMI directly from a BAM file with the help of UMI-Tools, the option ``\ddarg{per-cell}'' is passed to UMI-Tools. 
+
+Note that even when the ``\ddarg{per-cell}'' option is specified, the ``\texttt{group}'' command of the stock version of UMI-Tools (at least up to version 0.5.3) does not output the cell information in a format usable by TRUmiCount. We provide a patched version of UMI-Tools that amends the output by an additional column containing the cell barcode extracted from each read to make it possible for TRUmiCount to use that information. If you followed the installation instructions, you probably have our patched version installed already, if not see \nameref{installation} for how to obtain it.
+
+Currently, the grouping key specified with ``\ddarg{group-per}'' is used to defined \emph{both} the level on which the percentage of lost UMIs is estimated, \emph{and} the level on which UMI counts are output. We plan to allow two separate grouping keys to be specified, so that the loss estimation can be done on a higher level (where more data to compute reliable estimates is available), will still outputting counts for each gene within each individual cell. Currently, if you desire to e.g. estimate the loss on a per-cell level, and use those estimated to computed corrected per-gene counts, you have to run TRUmiCount twice, and then use your own script to use the per-cell correction loss estimates to corrected the counts for all genes within the cell.
 
 \section{Parameter Reference}\label{parameter-reference}
 
