@@ -20,7 +20,7 @@
 # ******************************************************************************
 VERSION <- "0.9.10"
 DOCSTRING <- paste0('
-Usage: trumicount (--input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB) [options]
+Usage: trumicount (--input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB) [options] [--umitools-option UMITOOLSOPT]...
 
 Version ', VERSION, ' Copyright 2017-2018 Florian G. Pflug
 
@@ -269,7 +269,8 @@ umis <- data.table(read.table(umis_con, header=TRUE, sep="\t",
                                            rawumis='numeric', 'reads'='numeric')))
 close(umis_con)
 message('Found ', nrow(umis), ' UMIs for ', length(levels(umis$gene)), ' genes in ',
-        length(unique(umis$cell)), ' cells after grouping of similar UMIs')
+        length(unique(umis$cell)), ' cells within ', sum(umis$reads), ' reads ',
+        'after grouping of similar UMIs')
 
 # ******************************************************************************
 # *** Combine and/or filter UMI strand pairs stemming a single fragment ********
@@ -384,8 +385,9 @@ if (!is.null(ARGS$`output-readdist`)) {
 # ******************************************************************************
 # *** Report final UMI count ***************************************************
 # ******************************************************************************
-message(nrow(umis), ' UMIs remained for ', length(levels(umis$gene)), ' genes for ',
-        length(unique(umis$cell)), ' cells after applying filters')
+message(nrow(umis), ' UMIs remained for ', length(levels(umis$gene)), ' genes in ',
+        length(unique(umis$cell)), ' cells within ', sum(umis$reads), ' reads ',
+        'after applying filters')
 if (nrow(umis) < 2)
   stop("Too few UMIs to continue")
 
