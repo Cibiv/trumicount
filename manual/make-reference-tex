@@ -1,5 +1,6 @@
 #!/bin/bash
 ../trumicount --help 2>&1 \
+        | awk 'BEGIN{o=0;c=0;p=""} /^Options:/ {o=1} o==0 {} /^--/ {print p;p=$0} /^ / {sub(/^ */," ",$0);p=p $0} END {print p}' \
 	| sed -n 's/^\(--[^ ]*\) \([A-Z0-9,.]*\) *\(.*\)$/\\item[\\textmd{\1 \2}:] \3/p' \
 	| sed 's/_/\\_/g' \
 	| sed 's/\(--[a-z0-9-]*\)/\\texttt{\1}/g' \
