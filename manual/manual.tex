@@ -393,6 +393,7 @@ The example data can be downloaded from \url{https://cibiv.github.io/trumicount/
 \begin{shellcode}
 samtools index sg_100g.bam
 samtools index kv_1000g.bam
+samtools index 10xn9k_10c.bam
 \end{shellcode}
 
 \subsection{Single-End Data}
@@ -442,6 +443,24 @@ This command uses UMI-Tools to read (error-corrected) UMIs and their read counts
 \includegraphics[width=0.45\textwidth,page=2]{../examples/sg_100g_comb.pdf}
 \\}
 \caption*{\textbf{\texttt{sg\_100g\_comb.pdf}}. \texttt{sg\_100g.bam} processed in \emph{combine strand UMIs} mode. Plots show individual strand UMIs, not UMI pairs. Phantoms now appear even beyond the threshold, because strand UMIs are also considered phantoms if their \emph{partner UMI} has a read count below the threshold.}
+\end{figure}
+
+\subsection{Single-cell Data}
+
+The file \texttt{10xn9k\_10c.bam} contains a reduced (restricted to 10 individual cells) version of the \emph{9k Brain Cells from an E18 Mouse}\footnote{\url{https://support.10xgenomics.com/single-cell-gene-expression/datasets/2.1.0/neuron_9k}} public dataset provided by 10x Genomics. 
+
+\shellscript{../examples/10xn9k_10c.cmd}
+
+This command uses UMI-Tools to read (error-corrected) UMIs and their read counts from \texttt{10xn9k\_10c.bam} (\ddarg{input-bam}), removes UMIs with fewer than 2 reads (\ddarg{threshold}), compute gene-specific loss estimates for each combination of gene and cell (\ddarg{group-per}) assuming a single initial copy of each UMI (\ddarg{molecules}), writes the bias-corrected counts to \texttt{10xn9k\_10c.tab} (\ddarg{output-counts}), and outputs diagnostic plots to \texttt{10xn9k\_10c.pdf} (\ddarg{output-plots}). 
+
+UMIs are group disregarding the mapping position, i.e. identical UMI sequences found within the same gene are assumed to belong to the same original molecule (\ddarg{umitools-option} \ddarg{per-gene}). The gene a particular read belongs to is read from the read's XF tag in the BAM file (\ddarg{umitools-option} \ddarg{gene-tag=XF}).
+
+\begin{figure}[H]
+{\centering
+\includegraphics[width=0.45\textwidth,page=1]{../examples/10xn9k_10c.pdf}\hfill
+\includegraphics[width=0.45\textwidth,page=2]{../examples/10xn9k_10c.pdf}
+\\}
+\caption*{\textbf{\texttt{10xn9k\_10c.pdf}}. \texttt{10xn9k\_10c.bam} processed with ``\ddarg{group-per cell,gene}''.}
 \end{figure}
 
 \section{License}
