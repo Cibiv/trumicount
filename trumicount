@@ -18,7 +18,7 @@
 # ******************************************************************************
 # *** Arguments Definition *****************************************************
 # ******************************************************************************
-VERSION <- "0.9.10"
+VERSION <- "0.9.11"
 DOCSTRING <- paste0('
 Usage: trumicount (--input-bam INBAM | --input-umitools-group-out GROUPSINTAB | --input-umis UMISINTAB) [options] [--umitools-option UMITOOLSOPT]...
 
