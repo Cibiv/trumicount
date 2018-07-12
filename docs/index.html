@@ -113,6 +113,14 @@ Shiroguchi <i>et al.</i> (Shiroguchi <i>et al.</i> Digital RNA sequencing
 minimizes sequence-dependent bias and amplification noise with optimized
 single-molecule barcodes. <i>PNAS</i> <b>109</b>, 1347-1352, 2012)
 
+<p>
+<a href="10xn9k_10c.bam"><b><var>10xn9k_10c.bam</var></b></a>:
+Mapped reads from 10 single mouse brain cells extracted from the
+<a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/2.1.0/neuron_9k">
+neuron_9k</a> single-cell RNA-seq example dataset provided by
+<a href="https://www.10xgenomics.com/">10x Genomics</a>. The full dataset contains
+about 300,000,000 reads from 9,000 individual E18 mouse brain cells.
+
 <h3>Running TRUmiCount</h3>
 To run TRUmiCount on the example data file <var>kv_1000g.bam</var>, the
 firs must first be downloaded, and index with <var>samtools</var> by doing:
@@ -126,7 +134,7 @@ This indexed BAM-File can then be processed with trumicount to produce a
 table containing bias-corrected numbers of transcript molecules for each
 gene (<var>kv_1000g.tab</var>)
 <pre>
-trumicount --input-bam kv_1000g.bam --molecules 2 --threshold 2 --genewise-min-umis 3 --output-counts kv_1000g.tab
+trumicount --input-bam kv_1000g.bam --umi-sep ':' --molecules 2 --threshold 2 --genewise-min-umis 3 --output-counts kv_1000g.tab
 </pre>
 
 <p>
