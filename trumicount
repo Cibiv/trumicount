@@ -213,7 +213,7 @@ umis_con <- if (!is.null(ARGS$`input-umis`)) {
     message('*** Will use ', ARGS$`umitools`,' to extract UMIs from ', ARGS$`input-bam`)
     cmds[[length(cmds)+1]] <- paste(shQuote(ARGS$`umitools`), 'group', '--group-out /dev/stdout',
                                     '-I', shQuote(ARGS$`input-bam`),
-                                    '-L', ifelse(ARGS$verbose, '/dev/stderr', '/dev/null'),
+                                    ifelse(ARGS$verbose, '--log2stderr', '-L /dev/null'),
                                     '--umi-sep', shQuote(ARGS$`umi-sep`),
                                     ifelse("cell" %in% ARGS$`group-per`, '--per-cell', ''),
                                     ifelse(ARGS$paired, '--paired', ''),
