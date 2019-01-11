@@ -49,3 +49,4 @@ conda install --yes $PKGS
 
 echo "=== Saving explicit package list to $TESTS/$TESTENV_PKGS"
 conda list --explicit > "$TESTS/$TESTENV_PKGS"
+conda list --export > "$TESTS/$TESTENV_REQS"

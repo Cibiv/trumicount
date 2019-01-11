@@ -32,6 +32,7 @@ GWPCR_URL="https://github.com/Cibiv/gwpcR/archive/v$GWPCR_VERSION.tar.gz"
 
 # Test environment package list
 TESTENV_PKGS="testenv-$CONDAOS-$MACHINE.pkgs"
+TESTENV_REQS="testenv-$CONDAOS-$MACHINE.reqs"
 
 # Dependency archive cache
 export CACHE=~/.cache
