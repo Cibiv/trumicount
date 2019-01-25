@@ -370,7 +370,8 @@ if (is.null(ARGS$threshold)) {
 # require BOTH to be sufficiencly large.
 umis.prefilter <- umis
 if (ARGS$threshold > 0) {
-  message('*** Filtering UMIs with fewer than ', ARGS$threshold, ' reads')
+  message('*** Filtering out UMIs with fewer than ', ARGS$threshold, ' reads ',
+          'as putative phantoms')
   umis <- if (ARGS$`combine-strand-umis`)
     umis[(reads.plus >= ARGS$threshold) & (reads.minus >= ARGS$threshold)]
   else
