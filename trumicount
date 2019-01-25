@@ -47,7 +47,8 @@ Options:
 --mapping-quality MAPQ          ignored read with mapping quality below MAPQ (passed to umi_tools) [Default: 20]
 --filter-strand-umis            filtes UMIs where only one strands was observed [Default: FALSE]
 --combine-strand-umis           combine UMIs strand pairs (implies --filter-strand-umis) [Default: FALSE]
---threshold THRESHOLD           remove UMIs with fewer than THRESHOLD reads [Default: 2]
+--threshold THRESHOLD           remove UMIs with fewer than THRESHOLD reads
+--threshold-quantile Q          use quantile Q of the raw read-count distribution for THRESHOLD [Default: 0.2]
 --molecules MOLECULES           assume UMIs are initially represented by MOLECULES copies (strands) [Default: 2]
 --group-per KEY1,KEY2,...       counts UMIs per distinct key(s), can be "cell" and/or "gene",
                                 "cell" implies --umitools-option --per-cell [Default: gene]
@@ -163,7 +164,10 @@ format_table <- function(t, ...) {
 ARGS <- docopt::docopt(DOCSTRING, strip_names=TRUE)
 ARGS$`mapping-quality` <- as.integer(ARGS$`mapping-quality`)
 ARGS$`strand-umis` <- (ARGS$`filter-strand-umis` || ARGS$`combine-strand-umis`)
-ARGS$threshold <- as.integer(ARGS$threshold)
+if (!is.null(ARGS$threshold)) {
+	ARGS$threshold <- as.integer(ARGS$threshold)
+}
+ARGS$threshold.quantile <- as.numeric(ARGS$`threshold-quantile`)
 ARGS$molecules <- as.integer(ARGS$molecules)
 ARGS$`group-per` <- strsplit(ARGS$`group-per`, split=",", fixed=TRUE)[[1]]
 if (length(setdiff(ARGS$`group-per`, c("gene", "cell"))) > 0)
@@ -332,6 +336,22 @@ if (ARGS$`combine-strand-umis`) {
   group.expr <- eval(substitute(reads ~ rhs, list(rhs=ARGS$group.rhs.expr)))
 }
 message("*** Counting & correcting the number of UMIs per ", paste(ARGS$`group-per`, collapse=" and "))
+
+# ******************************************************************************
+# *** Automatically set a (somewhat) sensible threshold if noen was supplied ***
+# ******************************************************************************
+if (is.null(ARGS$threshold)) {
+  counts <- if (ARGS$`combine-strand-umis`)
+    umis[, c(reads.plus, reads.minus)]
+  else
+    umis[, reads]
+  ARGS$threshold <- floor(quantile(counts, ARGS$threshold.quantile,
+                                   na.rm=TRUE, type=2))
+  threshold.qact <- sum(counts < ARGS$threshold) / length(counts)
+  message('*** Autoselected threshold ', ARGS$threshold , ' reads/UMI such that ',
+          round(100*threshold.qact), '% (<= ',
+          round(100*ARGS$threshold.quantile), '%', ') of UMIs are filtered out')
+}
 
 # ******************************************************************************
 # *** Filter with read-count threshold *****************************************
