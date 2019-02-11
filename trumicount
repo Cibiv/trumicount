@@ -53,6 +53,7 @@ Options:
 --group-per KEY1,KEY2,...       counts UMIs per distinct key(s), can be "cell" and/or "gene",
                                 "cell" implies --umitools-option --per-cell [Default: gene]
 --skip-groupwise-fits           skip group-wise model fitting, stop after plotting the global fit
+--include-filter-statistics     add filtered and unfiltered read and UMI counts to count table [Default: FALSE]
 --groupwise-min-umis MINUMIS    use global estimates for groups with fewer than MINUMIS (strand) UMIs [Default: 5]
 --genewise-min-umis MINUMIS     obsolete name for --groupwise-min-umis
 --cores CORES                   spread group-wise model fitting over CORES cpus [Default: 1]
@@ -599,6 +600,21 @@ if (!is.null(ARGS$`output-groupwise-fits`)) {
 cols <- eval(parse(text=paste0("quote(list(", paste(ARGS$`group-per`, collapse=", "), ", ",
                                "n.umis, n.tot, efficiency, depth=lambda0, loss, n.obs))")))
 umicounts <- gsm[, eval(cols)]
+
+# ******************************************************************************
+# *** Add pre-filtering and filtered read and UMI counts ***********************
+# ******************************************************************************
+if (ARGS$`include-filter-statistics`) {
+  statspergroup <- umis[
+    , n.reads := sum(eval(reads.expr))
+    , keyby=eval(ARGS$`group-per`) ]
+  statspergroup.prefilter <- umis.prefilter[
+    , c("n.umis", "n.reads") := list(length(eval(reads.expr)), sum(eval(reads.expr)))
+    , keyby=eval(ARGS$`group-per`) ]
+  umicounts[statspergroup, n.reads := statspergroup[, n.reads] ]
+  umicounts[statspergroup.prefilter, n.umis.prefilter := statspergroup.prefilter[, n.umis] ]
+  umicounts[statspergroup.prefilter, n.reads.prefilter := statspergroup.prefilter[, n.reads] ]
+}
 
 # ******************************************************************************
 # *** Plot loss estimate variances over number of observations  ****************
