@@ -582,7 +582,7 @@ if (ARGS$`skip-groupwise-fits` || is.null(gm)) {
 }
 
 # ******************************************************************************
-# *** Fit group-wise models *****************************************************
+# *** Fit group-wise models ****************************************************
 # ******************************************************************************
 message('*** Fitting group-wise models on ', ARGS$cores, ' cores')
 gsm <- gwpcrpois.groupest(group.expr, data=umis, loss=loss.expr,
