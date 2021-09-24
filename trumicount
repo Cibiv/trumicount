@@ -163,6 +163,9 @@ format_table <- function(t, ...) {
 # *** Parse arguments **********************************************************
 # ******************************************************************************
 ARGS <- docopt::docopt(DOCSTRING, strip_names=TRUE)
+# Newer versionf of docopt replace "-" with "_" if strip_names is set to true.
+# We undo that here (and assume that no argument names actually contain "_")
+names(ARGS) <- gsub("_", "-", names(ARGS), fixed=TRUE)
 ARGS$`mapping-quality` <- as.integer(ARGS$`mapping-quality`)
 if (ARGS$`mapping-quality` < 0)
   stop("Mapping quality threshold must be non-negative")
